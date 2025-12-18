@@ -1,5 +1,10 @@
 package br.com.ifba.biblioteca.reserva.entity;
 
+
+//classe Cliente utilizada de forma PROVISÓRIA
+
+// OBS: Esta classe NÃO é uma entidade JPA. Ela foi criada apenas para permitir o teste e funcionamento
+//da funcionalidade de Reserva, já que o módulo de Cliente ainda não foi implementado por outro integrante do grupo.
 public class Cliente {
 
     private Long id;

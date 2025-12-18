@@ -3,6 +3,7 @@ package br.com.ifba.biblioteca.reserva.controller;
 import br.com.ifba.biblioteca.reserva.entity.Reserva;
 import java.util.List;
 
+//Interface que define o contrato da camada Controller para o gerenciamento de Reservas.
 public interface ReservaIController {
 
     // Criar reserva

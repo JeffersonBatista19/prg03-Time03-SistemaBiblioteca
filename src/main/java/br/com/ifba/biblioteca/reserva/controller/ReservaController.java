@@ -10,7 +10,7 @@ import java.util.List;
 @Controller
 public class ReservaController implements ReservaIController {
 
-    // Injeta o Service, onde ficam as regras de negócio.
+    //Service responsável pelas regras de negócio da Reserva. Injetado pelo Spring.
     @Autowired
     private ReservaIService reservaService;
 

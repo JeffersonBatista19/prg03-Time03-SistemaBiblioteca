@@ -8,8 +8,11 @@ package br.com.ifba.biblioteca.reserva.entity;
  *
  * @author misae
  */
+
+//Enumeração que representa os possíveis estados de uma Reserva.
 public enum StatusReserva {
-    PENDENTE,
-    ATENDIDA,
-    CANCELADA
+    
+    PENDENTE, 
+    ATENDIDA, 
+    CANCELADA 
 }

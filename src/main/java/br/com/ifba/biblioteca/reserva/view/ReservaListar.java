@@ -19,14 +19,19 @@ import org.springframework.stereotype.Component;
  * @author misae
  */
 
-@Component
-@Scope("prototype")
+//Tela responsável por listar, filtrar e gerenciar reservas.
+
+@Component // Define a classe como um Bean gerenciado pelo Spring
+@Scope("prototype") // Cada chamada cria uma nova instância da tela
 public class ReservaListar extends javax.swing.JFrame {
     
+    // Logger para registro de eventos da aplicação
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaListar.class.getName());
 
+    // Serviço responsável pelas regras de negócio de Reserva
     private ReservaService reservaService;
     
+    // Contexto do Spring usado para obter outras telas como Beans
     @Autowired
     private ApplicationContext context;
 
@@ -38,12 +43,14 @@ public class ReservaListar extends javax.swing.JFrame {
      * Creates new form ReservaListar
      */
     
+    //Construtor da tela.
+    //O ReservaService é injetado automaticamente pelo Spring.
     @Autowired
     public ReservaListar(ReservaService reservaService) {
         this.reservaService = reservaService;
-        initComponents();
+        initComponents();// Inicializa os componentes da interface
         setLocationRelativeTo(null); // centraliza
-        preencherComboStatus();
+        preencherComboStatus(); // Preenche o ComboBox com os status possíveis
         carregarTabela(reservaService.findAll());
     }
     
@@ -64,11 +71,11 @@ public class ReservaListar extends javax.swing.JFrame {
             modelo.addRow(linha);
         }
 
-        tblReservas.setModel(modelo);
-        this.reservasExibidas = reservas;
+        tblReservas.setModel(modelo); 
+        this.reservasExibidas = reservas; // Guarda a lista exibida para ações futuras
     }
     
-    //Preenche o combo de status a partir do enum
+    //Preenche o combo de status a partir do enum StatusReserva
     private void preencherComboStatus() {
         cbStatus.removeAllItems();
         for (StatusReserva status : StatusReserva.values()) {
@@ -286,17 +293,21 @@ public class ReservaListar extends javax.swing.JFrame {
 
     }//GEN-LAST:event_txtProcurar1ActionPerformed
 
+    //Abre a tela de cadastro de reserva.
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+        // Obtém a tela ReservaAdicionar como Bean do Spring
         ReservaAdicionar tela = context.getBean(ReservaAdicionar.class);
-        tela.setTelaPai(this);
+        tela.setTelaPai(this); // Define esta tela como tela pai
         tela.setVisible(true);
 
     }//GEN-LAST:event_btnAdicionarActionPerformed
 
+    //Abre a tela de atendimento da reserva selecionada.
     private void btnAtenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtenderActionPerformed
         int linha = tblReservas.getSelectedRow();
 
         if (linha != -1) {
+            // Recupera a reserva correspondente à linha selecionada
             Reserva reserva = reservasExibidas.get(linha);
             ReservaAtender tela = new ReservaAtender(reserva, reservaService);
 
@@ -318,6 +329,7 @@ public class ReservaListar extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbStatusActionPerformed
 
+    //Aplica filtros por status, cliente e exemplar.
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         List<Reserva> filtradas = reservaService.findAll();
 
@@ -345,7 +357,7 @@ public class ReservaListar extends javax.swing.JFrame {
             }
         }
 
-        // Filtro por Exemplar ID
+        // Filtro por Exemplar (numero de tombamento)
         if (!txtExemplarId.getText().isBlank()) {
             try {
                 long exemplarId = Long.parseLong(txtExemplarId.getText());
@@ -364,11 +376,13 @@ public class ReservaListar extends javax.swing.JFrame {
         carregarTabela(filtradas);
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
+    //Recarrega todas as reservas na tabela.
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         carregarTabela(reservaService.findAll());
         JOptionPane.showMessageDialog(this, "Tabela atualizada!");
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
+    //Cancela a reserva selecionada.
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
        int linha = tblReservas.getSelectedRow();
 
@@ -394,7 +408,7 @@ public class ReservaListar extends javax.swing.JFrame {
         );
 
         if (opcao == JOptionPane.YES_OPTION) {
-            reservaService.delete(reserva);
+            reservaService.delete(reserva); // Remove a reserva
             carregarTabela(reservaService.findAll());
             JOptionPane.showMessageDialog(this, "Reserva cancelada!");
         }
