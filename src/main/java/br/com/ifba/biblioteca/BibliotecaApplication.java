@@ -1,6 +1,6 @@
 package br.com.ifba.biblioteca;
 
-import br.com.ifba.biblioteca.exemplar.view.ExemplarListar;
+import br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar;
 import javax.swing.SwingUtilities;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -10,15 +10,19 @@ public class BibliotecaApplication {
 
     public static void main(String[] args) {
 
+        // Inicia o Spring Boot
         var context = new SpringApplicationBuilder(BibliotecaApplication.class)
                 .headless(false) 
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            ExemplarListar tela =
-                    context.getBean(ExemplarListar.class);
+            // 2. MUDOU AQUI: Pedimos a tela EmprestimoListar ao Spring
+            EmprestimoListar tela = context.getBean(EmprestimoListar.class);
+            
             tela.setVisible(true);
-            tela.carregarExemplares();
+            
+            // 3. MUDOU AQUI: Chamamos o método de carregar dessa tela
+            tela.carregarDados(); 
         });
     }
 }
