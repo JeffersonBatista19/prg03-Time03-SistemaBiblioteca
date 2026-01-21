@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+
+
 package br.com.ifba.biblioteca.usuario.controller;
 
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
@@ -16,6 +18,10 @@ import org.springframework.stereotype.Component;
  *
  * @author jeffe
  */
+
+
+
+
 
 @Component
 public class UsuarioController implements UsuarioIController {
@@ -55,4 +61,5 @@ public class UsuarioController implements UsuarioIController {
     public boolean existsByCpf(String cpf) {
         return repository.existsByCpf(cpf);
     }
+
 }

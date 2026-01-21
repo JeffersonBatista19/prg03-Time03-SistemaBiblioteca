@@ -1,6 +1,6 @@
 package br.com.ifba.biblioteca;
 
-import br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar;
+import br.com.ifba.biblioteca.autor.view.AutorListar;
 import javax.swing.SwingUtilities;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,13 +16,14 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            // 2. MUDOU AQUI: Pedimos a tela EmprestimoListar ao Spring
-            EmprestimoListar tela = context.getBean(EmprestimoListar.class);
-            
+            //tela de Autores
+            AutorListar tela = context.getBean(AutorListar.class);
+
+            // Carrega os dados na tabela
+            tela.carregarDados();
+
+            // Mostra a janela
             tela.setVisible(true);
-            
-            // 3. MUDOU AQUI: Chamamos o método de carregar dessa tela
-            tela.carregarDados(); 
         });
     }
 }

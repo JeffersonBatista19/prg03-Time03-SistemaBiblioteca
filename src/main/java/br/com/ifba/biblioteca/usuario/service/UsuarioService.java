@@ -3,6 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
+
+
+
 package br.com.ifba.biblioteca.usuario.service;
 
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
@@ -11,10 +14,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+
+
+
+
+
 /**
  *
  * @author jeffe
  */
+
+
+
+
 
 @Service
 @Slf4j
