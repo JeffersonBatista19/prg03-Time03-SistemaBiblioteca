@@ -48,9 +48,9 @@ public class TesteRapidoDeEmprestimos implements CommandLineRunner {
                 
                 // --- AJUSTE OS ENUMS CONFORME O QUE EXISTE NO SEU PROJETO ---
                 // Se der erro vermelho aqui, apague a linha ou troque pelo valor certo
-                cli.setNivelAcesso(NivelAcesso.USUARIO); 
+                cli.setNivelAcesso(NivelAcesso.RESTRITO); 
                 
-                cli.setTipoPerfil(TipoPerfil.ALUNO);
+                cli.setTipoPerfil(TipoPerfil.CLIENTE);
                 cli.setStatusPessoa(StatusPessoa.ATIVO);
 
                 cli = clienteRepository.save(cli);
