@@ -9,5 +9,4 @@ package br.com.ifba.biblioteca.pessoa.entity;
  * @author misae
  */
 public enum NivelAcesso {
-    USUARIO
 }
