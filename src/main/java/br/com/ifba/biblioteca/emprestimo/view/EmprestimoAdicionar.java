@@ -8,7 +8,7 @@ package br.com.ifba.biblioteca.emprestimo.view;
 import br.com.ifba.biblioteca.emprestimo.controller.EmprestimoIController;
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
-import br.com.ifba.biblioteca.pessoa.entity.Cliente;
+import br.com.ifba.biblioteca.usuario.entity.Usuario;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,21 +188,20 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
             }
 
             // Converte para números (Long)
-            Long idCliente = Long.parseLong(idClienteStr);
-            Long idExemplar = Long.parseLong(idExemplarStr);
+            Long idUsuario = Long.parseLong(txtIdCliente.getText()); // Pode manter o nome da variavel txtIdCliente se quiser, ou renomeie na tela
+            Long idExemplar = Long.parseLong(txtIdExemplar.getText());
 
-            // Cria os objetos apenas com o ID (O Service busca o resto no banco)
-            Cliente cliente = new Cliente();
-            cliente.setId(idCliente);
+            // CRIAÇÃO DO OBJETO CORRETO
+            Usuario usuario = new Usuario() {}; // <--- Trocamos new Cliente()
+            usuario.setId(idUsuario);
 
             Exemplar exemplar = new Exemplar();
             exemplar.setId(idExemplar);
 
             Emprestimo emprestimo = new Emprestimo();
-            emprestimo.setCliente(cliente);
+            emprestimo.setUsuario(usuario); // <--- setUsuario
             emprestimo.setExemplar(exemplar);
 
-            // Manda salvar (O Service vai validar se o aluno existe, se o livro tá livre, etc)
             Emprestimo salvo = emprestimoController.save(emprestimo);
 
             // Mensagem de Sucesso

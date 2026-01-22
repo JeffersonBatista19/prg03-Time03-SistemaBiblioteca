@@ -6,25 +6,28 @@ import br.com.ifba.biblioteca.exemplar.entity.EstadoConservacao;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
 import br.com.ifba.biblioteca.exemplar.entity.StatusExemplar;
 import br.com.ifba.biblioteca.exemplar.repository.ExemplarRepository;
-import br.com.ifba.biblioteca.pessoa.entity.Cliente; 
-import br.com.ifba.biblioteca.pessoa.entity.ClienteRepository;
+
+// Imports de Pessoa e Usuario
 import br.com.ifba.biblioteca.pessoa.entity.NivelAcesso; 
 import br.com.ifba.biblioteca.pessoa.entity.StatusPessoa;
 import br.com.ifba.biblioteca.pessoa.entity.TipoPerfil;
+import br.com.ifba.biblioteca.usuario.entity.Usuario;
+import br.com.ifba.biblioteca.usuario.repository.UsuarioRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-@Component
+//@Component
 public class TesteRapidoDeEmprestimos implements CommandLineRunner {
 
     @Autowired
     private EmprestimoIController emprestimoController;
 
     @Autowired
-    private ClienteRepository clienteRepository; // Repositório correto
+    private UsuarioRepository usuarioRepository; // Renomeado para UsuarioRepository
 
     @Autowired
     private ExemplarRepository exemplarRepository;
@@ -32,52 +35,48 @@ public class TesteRapidoDeEmprestimos implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("=============================================");
-        System.out.println(">>> INICIANDO TESTE AUTOMÁTICO (CLIENTE) <<<");
+        System.out.println(">>> INICIANDO TESTE AUTOMÁTICO (EMPRESTIMO) <<<");
         System.out.println("=============================================");
 
         try {
             // --------------------------------------------------
-            // 1. CRIAR UM CLIENTE FAKE
+            // 1. CRIAR UM USUÁRIO FAKE (SE PRECISAR)
             // --------------------------------------------------
-            if (clienteRepository.count() == 0) { // Só cria se não tiver ninguém
-                Cliente cli = new Cliente();
-                cli.setNomeCompleto("Maria Teste");
-                cli.setCpf("111.222.333-44");
-                cli.setTelefone("71988887777");
-                cli.setDataCadastro(LocalDate.now());
-                
-                // --- AJUSTE OS ENUMS CONFORME O QUE EXISTE NO SEU PROJETO ---
-                // Se der erro vermelho aqui, apague a linha ou troque pelo valor certo
-                cli.setNivelAcesso(NivelAcesso.RESTRITO); 
-                
-                cli.setTipoPerfil(TipoPerfil.CLIENTE);
-                cli.setStatusPessoa(StatusPessoa.ATIVO);
+            Usuario usuarioTeste;
 
-                cli = clienteRepository.save(cli);
-                System.out.println("✅ 1. Cliente criado com ID: " + cli.getId());
+            if (usuarioRepository.count() == 0) {
+                System.out.println("ℹ️ Nenhum usuário encontrado. Criando um novo...");
+                Usuario novoUser = new Usuario(); // <--- Corrigido (U maiúsculo)
+                novoUser.setNomeCompleto("Maria Teste");
+                novoUser.setCpf("111.222.333-44");
+                novoUser.setTelefone("71988887777");
+                novoUser.setDataCadastro(LocalDate.now());
+                
+                // Enums Corretos
+                novoUser.setNivelAcesso(NivelAcesso.RESTRITO); 
+                novoUser.setTipoPerfil(TipoPerfil.CLIENTE);
+                novoUser.setStatusPessoa(StatusPessoa.ATIVO);
+
+                usuarioTeste = usuarioRepository.save(novoUser);
+                System.out.println("✅ 1. Usuário criado com ID: " + usuarioTeste.getId());
             } else {
-                System.out.println("ℹ️ Já existem clientes no banco. Usando o primeiro encontrado.");
+                System.out.println("ℹ️ Já existem usuários no banco. Usando o primeiro encontrado.");
+                usuarioTeste = usuarioRepository.findAll().get(0);
+                System.out.println("✅ Usuário selecionado: " + usuarioTeste.getNomeCompleto());
             }
             
-            // Pega um cliente qualquer do banco para o teste
-            Cliente clienteParaTeste = clienteRepository.findAll().get(0);
-
             // --------------------------------------------------
-            // 2. CRIAR UM EXEMPLAR FAKE
+            // 2. CRIAR/BUSCAR UM EXEMPLAR FAKE
             // --------------------------------------------------
             if (exemplarRepository.count() == 0) {
                 Exemplar livro = new Exemplar();
                 livro.setNumeroTombamento(2025);
                 livro.setLocalizacaoFisica("Corredor B");
-                
-                // --- AJUSTE OS ENUMS ---
-                livro.setConservacao(EstadoConservacao.BOM); // Se der erro, apague ou ajuste
+                livro.setConservacao(EstadoConservacao.BOM); 
                 livro.setStatus(StatusExemplar.DISPONIVEL);
 
                 livro = exemplarRepository.save(livro);
                 System.out.println("✅ 2. Exemplar criado com ID: " + livro.getId());
-            } else {
-                 System.out.println("ℹ️ Já existem exemplares. Usando um disponível.");
             }
 
             // Tenta pegar um exemplar DISPONIVEL
@@ -95,12 +94,13 @@ public class TesteRapidoDeEmprestimos implements CommandLineRunner {
             // 3. REALIZAR O EMPRÉSTIMO
             // --------------------------------------------------
             System.out.println(">>> Tentando emprestar Livro ID " + exemplarParaTeste.getId() + 
-                               " para Cliente ID " + clienteParaTeste.getId() + "...");
+                               " para Usuário ID " + usuarioTeste.getId() + "...");
 
             Emprestimo emp = new Emprestimo();
-            emp.setCliente(clienteParaTeste);   // <--- setCliente
+            emp.setUsuario(usuarioTeste); // <--- MUDANÇA IMPORTANTE: setUsuario (não setCliente)
             emp.setExemplar(exemplarParaTeste);
             
+            // O Controller/Service vai preencher as datas e status
             Emprestimo realizado = emprestimoController.save(emp);
 
             System.out.println("=============================================");

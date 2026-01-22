@@ -5,27 +5,24 @@ package br.com.ifba.biblioteca.emprestimo.entity;
  * @author guilhermeAmedrado
  */
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
-import br.com.ifba.biblioteca.pessoa.entity.Cliente; 
+import br.com.ifba.biblioteca.usuario.entity.Usuario;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "emprestimos")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 public class Emprestimo extends PersistenceEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cliente_id", nullable = false) // Mudou o nome da coluna
-    private Cliente cliente; // <--- Mudou o tipo e nome da variável
+    @JoinColumn(name = "usuario_id", nullable = false) 
+    private Usuario usuario; 
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "exemplar_id", nullable = false)

@@ -9,7 +9,9 @@ package br.com.ifba.biblioteca.pessoa.entity;
  * @author misae
  */
 public enum TipoPerfil {
+
     CLIENTE,
     BIBLIOTECARIO,
     ADMINISTRADOR
+
 }

@@ -80,7 +80,7 @@ public class EmprestimoListar extends javax.swing.JFrame {
             for (br.com.ifba.biblioteca.emprestimo.entity.Emprestimo emp : lista) {
                 modelo.addRow(new Object[]{
                     emp.getId(),
-                    emp.getCliente().getNomeCompleto(), // Mostra o Nome do Cliente
+                    emp.getUsuario().getNomeCompleto(), // Mostra o Nome do Cliente
                     emp.getExemplar().getId(),          // Mostra o ID do Exemplar
                     emp.getDataEmprestimo(),            // Data de quando pegou
                     emp.getDataDevolucaoPrevista(),     // Data de quando tem que devolver
