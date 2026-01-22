@@ -18,17 +18,22 @@ public class ExemplarEditar extends javax.swing.JFrame {
     private ExemplarListar exemplarListar; // instância visível da lista
     private int linhaSelecionada; // linha selecionada na tabela
     private Long idExemplar; // id do exemplar que está sendo editado
+    private String isbn; // ISBN do livro vinculado ao exemplar
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ExemplarEditar.class.getName());
 
    
-    public ExemplarEditar(int tombamento, String conservacao, String local, String status,
+    public ExemplarEditar(int tombamento, String conservacao, String local, String status,String isbn,
                       Long idExemplar, ExemplarListar telaListar) {
     this.exemplarListar = telaListar;
     this.idExemplar = idExemplar;
+    this.isbn = isbn;
 
     initComponents(); // inicializa os componentes da GUI
-    
+    txtIsbn.setText(isbn);  
+    txtIsbn.setEditable(false); 
+    txtIsbn.setBackground(new java.awt.Color(230, 230, 230));
+    btnLivro.setEnabled(false);   // desativa botão
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
     // preenche os campos com os valores atuais
@@ -71,6 +76,10 @@ public class ExemplarEditar extends javax.swing.JFrame {
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         cmbConservacao = new javax.swing.JComboBox<>();
+        jLabel7 = new javax.swing.JLabel();
+        txtIsbn = new javax.swing.JTextField();
+        btnLivro = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -162,6 +171,27 @@ public class ExemplarEditar extends javax.swing.JFrame {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel7.setText("Livro ISBN:");
+
+        txtIsbn.setBackground(new java.awt.Color(255, 255, 255));
+        txtIsbn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIsbnActionPerformed(evt);
+            }
+        });
+
+        btnLivro.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnLivro.setText("Buscar Livro");
+        btnLivro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLivroActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel8.setText("Não editável após o cadastro.");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -169,10 +199,18 @@ public class ExemplarEditar extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(114, 114, 114)
+                        .addComponent(btnSalvar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(121, 121, 121)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel4)
+                        .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbConservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel5)
@@ -180,35 +218,42 @@ public class ExemplarEditar extends javax.swing.JFrame {
                         .addComponent(txtLocal1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel6)
+                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cmbConservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(114, 114, 114)
-                        .addComponent(btnSalvar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancelar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel3)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(spnTombamento))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(121, 121, 121)
-                            .addComponent(jLabel1))))
-                .addContainerGap(67, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnLivro)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(12, 12, 12))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLivro)
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(cmbConservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -216,11 +261,11 @@ public class ExemplarEditar extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtLocal1, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cmbStatus, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(39, 39, 39)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnCancelar))
@@ -256,10 +301,10 @@ public class ExemplarEditar extends javax.swing.JFrame {
             return;
         }
 
-        // busca o exemplar atual
+        // 🔎 busca o exemplar atual no banco
         Exemplar ex = exemplarController.findById(idExemplar);
 
-        // verifica se tombamento mudou e se já existe outro
+        // 🔐 valida tombamento único
         if (novoTombamento != ex.getNumeroTombamento() &&
             exemplarController.existsByNumeroTombamento(novoTombamento)) {
             javax.swing.JOptionPane.showMessageDialog(this,
@@ -269,15 +314,21 @@ public class ExemplarEditar extends javax.swing.JFrame {
             return;
         }
 
-        // atualiza os dados
+        // ✅ atualiza dados
         ex.setNumeroTombamento(novoTombamento);
         ex.setConservacao(novaConservacao);
         ex.setLocalizacaoFisica(novaLocalizacao);
         ex.setStatus(novoStatus);
 
+        // ⭐ CORREÇÃO DO ISBN (OBRIGATÓRIA)
+        ex.setIsbnLivro(this.isbn); 
+        // se for relação:
+        // ex.setLivro(livroController.findByIsbn(this.isbn));
+
+        // 💾 salva no banco
         exemplarController.update(ex);
 
-        // atualiza a tabela
+        // 🔄 atualiza a tabela
         exemplarListar.carregarExemplares();
 
         this.dispose();
@@ -308,6 +359,14 @@ public class ExemplarEditar extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbConservacaoActionPerformed
 
+    private void txtIsbnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIsbnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIsbnActionPerformed
+
+    private void btnLivroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLivroActionPerformed
+        
+    }//GEN-LAST:event_btnLivroActionPerformed
+
     
 
     public void preencherCampos(int tombamento, String conservacao, String local, String status,
@@ -325,6 +384,7 @@ public class ExemplarEditar extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnLivro;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvar1;
     private javax.swing.JComboBox<String> cmbConservacao;
@@ -336,10 +396,13 @@ public class ExemplarEditar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JSpinner spnTombamento;
     private javax.swing.JTextField txtConserva;
+    private javax.swing.JTextField txtIsbn;
     private javax.swing.JTextField txtLocal;
     private javax.swing.JTextField txtLocal1;
     // End of variables declaration//GEN-END:variables

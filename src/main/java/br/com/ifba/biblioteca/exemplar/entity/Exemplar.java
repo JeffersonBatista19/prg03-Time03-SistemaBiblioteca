@@ -1,11 +1,14 @@
 package br.com.ifba.biblioteca.exemplar.entity;
 
+import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,5 +36,9 @@ public class Exemplar extends PersistenceEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusExemplar status;
+    
+    @Column(name = "isbn_livro", nullable = false)
+    private String isbnLivro;   // ← ISBN do livro já existente no banco
+
 }
 

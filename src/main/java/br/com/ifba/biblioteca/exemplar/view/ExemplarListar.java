@@ -55,6 +55,7 @@ public class ExemplarListar extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         spnTombamento = new javax.swing.JSpinner();
+        btnAtualizar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,7 +65,7 @@ public class ExemplarListar extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Tombamento", "Estado de Conservação", "Localização", "Status", "ID"
+                "Tombamento", "Estado de Conservação", "Localização", "Status", "ID", "ISBN"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -99,26 +100,39 @@ public class ExemplarListar extends javax.swing.JFrame {
         spnTombamento.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         spnTombamento.setModel(new javax.swing.SpinnerNumberModel());
 
+        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAdicionar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnEditar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnExcluir))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAdicionar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEditar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnExcluir)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAtualizar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -133,6 +147,8 @@ public class ExemplarListar extends javax.swing.JFrame {
                     .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAtualizar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -210,15 +226,20 @@ try {
     String local = jTable1.getValueAt(linhaSelecionada, 2).toString();
     String status = jTable1.getValueAt(linhaSelecionada, 3).toString();
     Long idExemplar = (Long) jTable1.getValueAt(linhaSelecionada, 4);
+    String isbn = jTable1.getValueAt(linhaSelecionada, 5).toString();
 
     ExemplarEditar editar = context.getBean(
-    ExemplarEditar.class, tombamento, conservacao, local, status, idExemplar, this
+    ExemplarEditar.class, tombamento, conservacao, local, status, isbn, idExemplar, this
 );
 editar.setVisible(true);
 
 
 
     }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+        carregarExemplares();
+    }//GEN-LAST:event_btnAtualizarActionPerformed
     
     public void carregarExemplares() {
     try {
@@ -234,7 +255,8 @@ editar.setVisible(true);
                 ex.getConservacao(),
                 ex.getLocalizacaoFisica(),
                 ex.getStatus(),
-                ex.getId() // coluna ID oculta
+                ex.getId(), // coluna ID oculta
+                ex.getIsbnLivro()      
             });
         }
 
@@ -261,7 +283,8 @@ private void filtrarPorTombamento() {
                     ex.getConservacao(),
                     ex.getLocalizacaoFisica(),
                     ex.getStatus(),
-                    ex.getId()
+                    ex.getId(),
+                    ex.getIsbnLivro()  
                 });
             }
         }
@@ -274,6 +297,7 @@ private void filtrarPorTombamento() {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
+    private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JLabel jLabel2;
