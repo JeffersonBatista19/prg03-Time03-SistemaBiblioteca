@@ -1,5 +1,6 @@
 package br.com.ifba.biblioteca.reserva.entity;
 
+import br.com.ifba.biblioteca.cliente.entity.Cliente;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.Column;
@@ -30,10 +31,11 @@ public class Reserva extends PersistenceEntity {
     @Column(name = "status", nullable = false)
     private StatusReserva status;
 
-    // Cliente que realizou a reserva
-    //OBS: O relacionamento direto com a entidade Cliente ainda não foi implementado
-    @Column(name = "cliente_id", nullable = false)
-    private Long clienteId;
+    //relacionamento muitos para um com Cliente
+    //ou seja, várias reservas podem estar associadas a um mesmo cliente
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", nullable = false)  // Relacionamento com a chave estrangeira
+    private Cliente cliente;
 
     // Exemplar reservado
     @ManyToOne //Relacionamento muitos-para-um, pois um exemplar pode estar associado a várias reservas ao longo do tempo.

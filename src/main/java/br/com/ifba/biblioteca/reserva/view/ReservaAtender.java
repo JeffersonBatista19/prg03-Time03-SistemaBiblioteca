@@ -49,7 +49,7 @@ public class ReservaAtender extends javax.swing.JFrame {
 
     //Preenche campos da tela com os dados da reserva na tela
      private void preencherCampos() {
-        txtCliente.setText(String.valueOf(reserva.getClienteId()));
+        txtCliente.setText(String.valueOf(reserva.getCliente().getId()));
         txtExemplar.setText(
                 String.valueOf(reserva.getExemplar().getNumeroTombamento())
         );

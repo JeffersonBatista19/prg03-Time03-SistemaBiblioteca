@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import br.com.ifba.biblioteca.cliente.entity.Cliente;
+import br.com.ifba.biblioteca.cliente.service.ClienteService;
+
 
 
 /**
@@ -25,7 +28,7 @@ import org.springframework.stereotype.Component;
  */
 
 /*Tela responsável pela criação de uma nova Reserva.
-  Permite selecionar um Cliente (integração provisória)
+  Permite selecionar um Cliente
   e um Exemplar existente para efetivar a reserva.*/
 @Component
 @Scope("prototype")
@@ -38,13 +41,19 @@ public class ReservaAdicionar extends javax.swing.JFrame {
     // Serviço responsável pelas regras de negócio da Reserva
     @Autowired
     private ReservaService reservaService;
+    
+    //serviço responsável pelas regras de negócio de Cliente
+    @Autowired
+    private ClienteService clienteService;
+    
+    
 
     // Contexto Spring usado para criar telas gerenciadas (@Component)
     @Autowired
     private ApplicationContext context;
 
-    // ID do cliente selecionado (integração provisória)
-    private Long clienteIdSelecionado;
+    // Cliente selecionado
+    private Cliente clienteSelecionado;
 
     // Exemplar selecionado
     private Exemplar exemplarSelecionado;
@@ -59,6 +68,11 @@ public class ReservaAdicionar extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null); // centraliza
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        
+        // Deixa os campos de cliente e exemplar não editáveis manualmente
+        txtClienteId.setEditable(false);
+        txtTombamento.setEditable(false); 
+        
 
         // Configuração do spinner de data
         spinnerDataReserva.setModel(new SpinnerDateModel());
@@ -86,7 +100,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         spinnerDataReserva = new javax.swing.JSpinner();
-        spnTombamento = new javax.swing.JSpinner();
+        txtTombamento = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -139,7 +153,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
+                .addContainerGap(47, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnSalvar)
@@ -157,20 +171,22 @@ public class ReservaAdicionar extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtClienteId, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(57, 57, 57)))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(3, 3, 3)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnBuscarExemplar)
-                            .addComponent(btnBuscarCliente))
-                        .addGap(132, 132, 132))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtClienteId, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBuscarCliente)
+                                .addGap(156, 156, 156))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(txtTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnBuscarExemplar)
+                                .addGap(143, 143, 143))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,7 +202,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(btnBuscarExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -205,29 +221,27 @@ public class ReservaAdicionar extends javax.swing.JFrame {
         this.telaPai = telaPai;
     }
 
-    /**
-     * Recebe o ID do cliente selecionado
-     * OBS: Cliente ainda não implementado no projeto
-     */
-    public void setClienteIdSelecionado(Long clienteId) {
-        this.clienteIdSelecionado = clienteId;
-        txtClienteId.setText(String.valueOf(clienteId));
+    
+    //Recebe o ID do cliente selecionado
+    public void setClienteSelecionado(Cliente cliente) {
+        this.clienteSelecionado = cliente;
+        txtClienteId.setText(String.valueOf(cliente.getId()));
     }
 
     
     // Recebe o exemplar selecionado na tela Buscar Exemplar
     public void setExemplarSelecionado(Exemplar exemplar) {
         this.exemplarSelecionado = exemplar;
-        spnTombamento.setValue(exemplar.getNumeroTombamento());
+        txtTombamento.setText(String.valueOf(exemplar.getNumeroTombamento()));
     }
 
     
     // Abre a tela de busca de cliente (dados fictícios para testes)
     private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
-      // Tela de cliente ainda em desenvolvimento por outro integrante
-     BuscarCliente tela = new BuscarCliente(this);
-     tela.setVisible(true);
-
+        // Tela de cliente ainda em desenvolvimento por outro integrante
+        BuscarCliente tela = context.getBean(BuscarCliente.class);
+        tela.setTelaPai(this);
+        tela.setVisible(true);
     }//GEN-LAST:event_btnBuscarClienteActionPerformed
 
     // Abre a tela de busca de exemplar utilizando o contexto Spring
@@ -251,7 +265,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
         try {
             logger.info("Iniciando criação de reserva");
 
-            if (clienteIdSelecionado == null) {
+            if (clienteSelecionado == null) {
                 throw new RuntimeException("Selecione um cliente!");
             }
 
@@ -261,8 +275,8 @@ public class ReservaAdicionar extends javax.swing.JFrame {
 
             Reserva reserva = new Reserva();
 
-            // Integração provisória com Cliente
-            reserva.setClienteId(clienteIdSelecionado);
+            //Cliente selecionado
+            reserva.setCliente(clienteSelecionado);
 
             reserva.setExemplar(exemplarSelecionado);
 
@@ -309,7 +323,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSpinner spinnerDataReserva;
-    private javax.swing.JSpinner spnTombamento;
     private javax.swing.JTextField txtClienteId;
+    private javax.swing.JTextField txtTombamento;
     // End of variables declaration//GEN-END:variables
 }

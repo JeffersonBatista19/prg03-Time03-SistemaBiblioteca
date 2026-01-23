@@ -63,7 +63,7 @@ public class ReservaListar extends javax.swing.JFrame {
 
         for (Reserva r : reservas) {
             Object[] linha = {
-                r.getClienteId(),
+                r.getCliente().getId(),
                 r.getExemplar().getNumeroTombamento(),
                 r.getDataReserva(),
                 r.getStatus()
@@ -346,7 +346,7 @@ public class ReservaListar extends javax.swing.JFrame {
             try {
                 long clienteId = Long.parseLong(txtClienteId.getText());
                 filtradas = filtradas.stream()
-                        .filter(r -> r.getClienteId() == clienteId)
+                        .filter(r -> r.getCliente().getId() == clienteId)
                         .toList();
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this,

@@ -43,7 +43,7 @@ public class ReservaService implements ReservaIService {
         }
 
         // Validação: reserva deve possuir cliente
-        if (reserva.getClienteId() == null) {
+        if (reserva.getCliente() == null) {
             log.warn("Reserva sem cliente.");
             throw new RuntimeException("Reserva deve possuir um cliente!");
         }
