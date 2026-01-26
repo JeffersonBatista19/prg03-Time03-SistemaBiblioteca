@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 
-package br.com.ifba.biblioteca.usuario.repository;
+package br.com.ifba.biblioteca.usuario.service;
 
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
 import java.util.List;
@@ -24,4 +24,6 @@ public interface UsuarioIService {
     Usuario findById(Long id);
 
     Usuario findByLogin(String login);
+    
+    boolean existsByCpf(String cpf);
 }

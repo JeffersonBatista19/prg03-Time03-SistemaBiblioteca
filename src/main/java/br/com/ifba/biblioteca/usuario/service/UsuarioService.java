@@ -3,30 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-
-
-
 package br.com.ifba.biblioteca.usuario.service;
 
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
 import br.com.ifba.biblioteca.usuario.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import org.springframework.stereotype.Service;
-
-
-
-
-
 
 /**
  *
  * @author jeffe
  */
-
-
-
-
 
 @Service
 @Slf4j
@@ -50,32 +39,35 @@ public class UsuarioService implements UsuarioIService {
         }
 
         Usuario salvo = repository.save(usuario);
-
-        log.info("Usuário salvo com sucesso. Login: {}", usuario.getLogin());
-
+        log.info("Usuário salvo com sucesso. Login: {}", salvo.getLogin());
         return salvo;
     }
 
     @Override
     public Usuario update(Usuario usuario) {
 
-        Usuario existente = repository.findById(usuario.getId()).orElse(null);
-
-        if (existente == null) {
-            throw new RuntimeException("Usuário não encontrado.");
+        if (usuario.getId() == null) {
+            throw new RuntimeException("ID não informado para atualização.");
         }
 
-        existente.setLogin(usuario.getLogin());
-        existente.setSenha(usuario.getSenha());
+        Usuario existente = repository.findById(usuario.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado."));
+
+        // Mantém o padrão: atualiza campos
+        existente.setNomeCompleto(usuario.getNomeCompleto());
+        existente.setCpf(usuario.getCpf());
         existente.setTelefone(usuario.getTelefone());
+        existente.setDataCadastro(usuario.getDataCadastro());
+
         existente.setStatusPessoa(usuario.getStatusPessoa());
         existente.setNivelAcesso(usuario.getNivelAcesso());
         existente.setTipoPerfil(usuario.getTipoPerfil());
 
+        existente.setLogin(usuario.getLogin());
+        existente.setSenha(usuario.getSenha());
+
         Usuario atualizado = repository.save(existente);
-
-        log.info("Usuário atualizado com sucesso. ID: {}", existente.getId());
-
+        log.info("Usuário atualizado com sucesso. ID: {}", atualizado.getId());
         return atualizado;
     }
 
@@ -92,5 +84,10 @@ public class UsuarioService implements UsuarioIService {
     @Override
     public Usuario findByLogin(String login) {
         return repository.findByLogin(login);
+    }
+
+    @Override
+    public boolean existsByCpf(String cpf) {
+        return repository.existsByCpf(cpf);
     }
 }

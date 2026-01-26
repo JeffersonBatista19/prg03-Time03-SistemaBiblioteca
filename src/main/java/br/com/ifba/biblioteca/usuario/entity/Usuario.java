@@ -19,7 +19,6 @@ import lombok.Setter;
  * @author jeffe
  */
 
- // Classe abstrata Usuario
 // Representa usuários do sistema (Administrador, Bibliotecário)
 @Entity
 @Table(name = "usuario")
@@ -28,7 +27,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public abstract class Usuario extends Pessoa {
+public class Usuario extends Pessoa {
 
     @Column(nullable = false, unique = true)
     private String login;

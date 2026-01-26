@@ -8,11 +8,10 @@
 package br.com.ifba.biblioteca.usuario.controller;
 
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
-import br.com.ifba.biblioteca.usuario.repository.UsuarioRepository;
 import br.com.ifba.biblioteca.usuario.service.UsuarioIService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 /**
  *
@@ -23,14 +22,11 @@ import org.springframework.stereotype.Component;
 
 
 
-@Component
+@Controller
 public class UsuarioController implements UsuarioIController {
 
     @Autowired
     private UsuarioIService service;
-
-    @Autowired
-    private UsuarioRepository repository;
 
     @Override
     public Usuario save(Usuario usuario) {
@@ -59,7 +55,7 @@ public class UsuarioController implements UsuarioIController {
 
     @Override
     public boolean existsByCpf(String cpf) {
-        return repository.existsByCpf(cpf);
+        return service.existsByCpf(cpf);
     }
 
 }
