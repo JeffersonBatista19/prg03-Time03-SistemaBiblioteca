@@ -46,7 +46,7 @@ public class TesteRapidoDeEmprestimos implements CommandLineRunner {
 
             if (usuarioRepository.count() == 0) {
                 System.out.println("ℹ️ Nenhum usuário encontrado. Criando um novo...");
-                Usuario novoUser = new Usuario(); // <--- Corrigido (U maiúsculo)
+                Usuario novoUser = new Usuario() {};
                 novoUser.setNomeCompleto("Maria Teste");
                 novoUser.setCpf("111.222.333-44");
                 novoUser.setTelefone("71988887777");

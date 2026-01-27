@@ -14,6 +14,7 @@ import javax.swing.table.TableRowSorter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
 
 /**
  *
@@ -39,6 +40,10 @@ public class UsuarioListar extends javax.swing.JFrame {
     public UsuarioListar() {
         initComponents();
         configurarTabela();
+    }
+    
+    @PostConstruct
+    public void init() {
         carregarDados();
     }
     

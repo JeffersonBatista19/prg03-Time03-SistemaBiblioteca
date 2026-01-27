@@ -1,6 +1,6 @@
 package br.com.ifba.biblioteca;
 
-import br.com.ifba.biblioteca.autor.view.AutorListar;
+import br.com.ifba.biblioteca.evento.view.TelaEventosListar;
 import javax.swing.SwingUtilities;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,11 +16,11 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            //tela de Autores
-            AutorListar tela = context.getBean(AutorListar.class);
+            //tela de Eventos
+            TelaEventosListar tela = context.getBean(TelaEventosListar.class);
 
             // Carrega os dados na tabela
-            tela.carregarDados();
+            tela.carregarTabela();
 
             // Mostra a janela
             tela.setVisible(true);
