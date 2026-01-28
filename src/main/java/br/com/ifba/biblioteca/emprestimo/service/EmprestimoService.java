@@ -5,15 +5,14 @@ package br.com.ifba.biblioteca.emprestimo.service;
  * @author guilhermeAmedrado
  */
 
+import br.com.ifba.biblioteca.cliente.entity.Cliente;
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;
 import br.com.ifba.biblioteca.emprestimo.repository.EmprestimoRepository;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
 import br.com.ifba.biblioteca.exemplar.entity.StatusExemplar;
 import br.com.ifba.biblioteca.exemplar.repository.ExemplarRepository;
 import br.com.ifba.biblioteca.pessoa.entity.StatusPessoa;
-import br.com.ifba.biblioteca.pessoa.entity.TipoPerfil;
-import br.com.ifba.biblioteca.usuario.entity.Usuario;
-import br.com.ifba.biblioteca.usuario.repository.UsuarioRepository;
+import br.com.ifba.biblioteca.cliente.repository.ClienteRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,47 +24,59 @@ import java.util.List;
 public class EmprestimoService implements EmprestimoIService {
 
     private final EmprestimoRepository repository;
-    private final UsuarioRepository usuarioRepository; // Trocamos ClienteRepo por UsuarioRepo
+    private final ClienteRepository clienteRepository;
     private final ExemplarRepository exemplarRepository;
 
-    public EmprestimoService(EmprestimoRepository repository,UsuarioRepository usuarioRepository, ExemplarRepository exemplarRepository) {
+    public EmprestimoService(EmprestimoRepository repository, ClienteRepository clienteRepository, ExemplarRepository exemplarRepository) {
         this.repository = repository;
-        this.usuarioRepository = usuarioRepository;
+        this.clienteRepository = clienteRepository;
         this.exemplarRepository = exemplarRepository;
     }
 
     @Override
     @Transactional
     public Emprestimo save(Emprestimo emprestimo) {
-        // 1. Busca USUARIO e Exemplar
-        Usuario usuario = usuarioRepository.findById(emprestimo.getUsuario().getId())
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+        //  Busca Cliente e Exemplar
+        Cliente cliente = clienteRepository.findById(emprestimo.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado."));
 
         Exemplar exemplar = exemplarRepository.findById(emprestimo.getExemplar().getId())
                 .orElseThrow(() -> new RuntimeException("Exemplar não encontrado."));
 
-        // 2. Validações
-        if (usuario.getStatusPessoa() != StatusPessoa.ATIVO) {
+        // Validações do ENUM
+        if (cliente.getStatusPessoa() != StatusPessoa.ATIVO) {
             throw new RuntimeException("Empréstimo negado: Usuário inativo ou bloqueado.");
         }
 
+        // Validação: Cliente possui livros atrasados?
+        if (repository.countLateLoansByCliente(cliente) > 0) {
+            throw new RuntimeException("Empréstimo negado: O cliente possui livros com devolução atrasada.");
+        }
+
+        // Validação: Cliente possui multas pendentes?
+        if (repository.existsByClienteAndMultaIsNotNull(cliente)) {
+            throw new RuntimeException("Empréstimo negado: O cliente possui multas pendentes no sistema.");
+        }
+
         // Verifica limite de livros (exemplo: 3 livros)
-        if (repository.countByUsuarioAndStatusAtivo(usuario) >= 3) {
+        if (repository.countByClienteAndStatusAtivo(cliente) >= 3) {
              throw new RuntimeException("Limite de empréstimos excedido.");
         }
 
-        // 3. Regra de Data (CLIENTE = 14, FUNCIONARIO = 21)
+        // Regra de Data (ALUNO = 14, PROFESSOR = 21)
         int dias = 14; 
-        if (usuario.getTipoPerfil() == TipoPerfil.BIBLIOTECARIO || 
-            usuario.getTipoPerfil() == TipoPerfil.ADMINISTRADOR) {
+        if (cliente.getTipoCliente() == br.com.ifba.biblioteca.cliente.entity.TipoCliente.PROFESSOR) {
             dias = 21;
         }
 
         // Montagem
-        emprestimo.setUsuario(usuario);
+        emprestimo.setCliente(cliente);
+        // emprestimo.setIdUsuarioRedundante(null); // Agora é nullable para evitar conflito de FK
         emprestimo.setExemplar(exemplar);
         emprestimo.setDataEmprestimo(LocalDate.now());
-        emprestimo.setDataDevolucaoPrevista(LocalDate.now().plusDays(dias));
+        LocalDate dataPrevista = LocalDate.now().plusDays(dias);
+        emprestimo.setDataPrevistaDevolucao(dataPrevista);
+        emprestimo.setDataPrevistaDevolucaoRedundante(dataPrevista); // Satisfaz redundância do BD
         emprestimo.setStatus(Emprestimo.StatusEmprestimo.ATIVO);
 
         return repository.save(emprestimo);
@@ -75,10 +86,23 @@ public class EmprestimoService implements EmprestimoIService {
     @Override
     public Emprestimo update(Emprestimo emprestimo) {
         Emprestimo existente = findById(emprestimo.getId());
-        existente.setDataDevolucaoPrevista(emprestimo.getDataDevolucaoPrevista());
+        
+        // Validação: data de devolução não pode ser anterior à data do empréstimo
+        if (emprestimo.getDataPrevistaDevolucao() != null && 
+            emprestimo.getDataPrevistaDevolucao().isBefore(existente.getDataEmprestimo())) {
+            throw new RuntimeException("Erro: A data de devolução não pode ser anterior à data do empréstimo (" + resistente_data_formatada(existente.getDataEmprestimo()) + ").");
+        }
+        
+        existente.setDataPrevistaDevolucao(emprestimo.getDataPrevistaDevolucao());
+        existente.setDataPrevistaDevolucaoRedundante(emprestimo.getDataPrevistaDevolucao()); // Mantém redundância
         existente.setStatus(emprestimo.getStatus());
-        Emprestimo atualizado = repository.save(existente);
-        return atualizado;
+        
+        return repository.save(existente);
+    }
+
+    private String resistente_data_formatada(LocalDate date) {
+        if (date == null) return "N/A";
+        return date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     @Override
@@ -103,4 +127,3 @@ public class EmprestimoService implements EmprestimoIService {
                 .orElseThrow(() -> new RuntimeException("Empréstimo não encontrado."));
     }
 }
-//Atualização final

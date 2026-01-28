@@ -6,7 +6,7 @@ package br.com.ifba.biblioteca.emprestimo.service;
 
 /**
  *
- * @author guilh
+ * @author guilhermeAmedrado
  */
 
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;

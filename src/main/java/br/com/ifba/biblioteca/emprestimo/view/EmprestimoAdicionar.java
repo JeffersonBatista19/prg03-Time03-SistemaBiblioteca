@@ -8,9 +8,15 @@ package br.com.ifba.biblioteca.emprestimo.view;
 import br.com.ifba.biblioteca.emprestimo.controller.EmprestimoIController;
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
-import br.com.ifba.biblioteca.usuario.entity.Usuario;
+import br.com.ifba.biblioteca.cliente.entity.Cliente;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,6 +42,114 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
     
     public EmprestimoAdicionar() {
         initComponents();
+        setTitle("Novo Empréstimo");
+        setLocationRelativeTo(null);
+    }
+    
+    @PostConstruct
+    public void init() {
+        configurarComboBoxes();
+        preencherDados();
+    }
+    
+    private void configurarComboBoxes() {
+        // Renderer para Cliente mostrar o Nome
+        cbCliente.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Cliente) {
+                    setText(((Cliente) value).getNomeCompleto());
+                }
+                return this;
+            }
+        });
+
+        // Renderer para Exemplar mostrar o ID (já que Exemplar não tem Nome direto fácil aqui)
+        cbExemplar.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Exemplar) {
+                    setText("ID: " + ((Exemplar) value).getId() + " - Tombamento: " + ((Exemplar) value).getNumeroTombamento());
+                }
+                return this;
+            }
+        });
+
+        // Sincronização: ComboBox -> Texto
+        cbCliente.addActionListener(e -> {
+            Cliente sel = (Cliente) cbCliente.getSelectedItem();
+            if (sel != null) {
+                txtIdCliente.setText(sel.getId().toString());
+            }
+        });
+
+        cbExemplar.addActionListener(e -> {
+            Exemplar sel = (Exemplar) cbExemplar.getSelectedItem();
+            if (sel != null) {
+                txtIdExemplar.setText(sel.getId().toString());
+            }
+        });
+        
+        // Sincronização: Texto -> ComboBox 
+        txtIdCliente.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sincronizarTextoParaComboCliente();
+            }
+        });
+
+        txtIdExemplar.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                sincronizarTextoParaComboExemplar();
+            }
+        });
+    }
+
+    private void preencherDados() {
+        try {
+            List<Cliente> clientes = emprestimoController.findAllClientes();
+            for (Cliente c : clientes) cbCliente.addItem(c);
+
+            List<Exemplar> exemplares = emprestimoController.findAllExemplares();
+            for (Exemplar ex : exemplares) cbExemplar.addItem(ex);
+            
+            cbCliente.setSelectedItem(null);
+            cbExemplar.setSelectedItem(null);
+            txtIdCliente.setText("");
+            txtIdExemplar.setText("");
+
+        } catch (Exception e) {
+            logger.severe("Erro ao preencher combos: " + e.getMessage());
+        }
+    }
+
+    private void sincronizarTextoParaComboCliente() {
+        try {
+            Long id = Long.parseLong(txtIdCliente.getText());
+            for (int i = 0; i < cbCliente.getItemCount(); i++) {
+                Cliente c = cbCliente.getItemAt(i);
+                if (c.getId().equals(id)) {
+                    cbCliente.setSelectedItem(c);
+                    return;
+                }
+            }
+        } catch (Exception e) {}
+    }
+
+    private void sincronizarTextoParaComboExemplar() {
+        try {
+            Long id = Long.parseLong(txtIdExemplar.getText());
+            for (int i = 0; i < cbExemplar.getItemCount(); i++) {
+                Exemplar ex = cbExemplar.getItemAt(i);
+                if (ex.getId().equals(id)) {
+                    cbExemplar.setSelectedItem(ex);
+                    return;
+                }
+            }
+        } catch (Exception e) {}
     }
 
     /**
@@ -55,6 +169,8 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
         txtIdCliente = new javax.swing.JTextField();
         txtIdExemplar = new javax.swing.JTextField();
+        cbCliente = new javax.swing.JComboBox<>();
+        cbExemplar = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,13 +224,17 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtIdExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(74, Short.MAX_VALUE))
+                        .addComponent(txtIdExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(20, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(btnSalvar)
@@ -130,11 +250,13 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(68, 68, 68)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(txtIdExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIdExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbExemplar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(55, 55, 55)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
@@ -160,56 +282,57 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void txtIdExemplarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdExemplarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIdExemplarActionPerformed
+    private void txtIdExemplarActionPerformed(java.awt.event.ActionEvent evt) {
+        
+    }
 
-    private void txtIdClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIdClienteActionPerformed
+    private void txtIdClienteActionPerformed(java.awt.event.ActionEvent evt) {
+        
+    }
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
         // Fecha a janela atual e volta para a anterior
         SwingUtilities.getWindowAncestor(this).dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            // 1. Pega os textos dos campos
+            // Pega os textos dos campos
             String idClienteStr = txtIdCliente.getText();
             String idExemplarStr = txtIdExemplar.getText();
 
-            // 2. Verifica se está vazio
+            // Verifica se está vazio
             if (idClienteStr.trim().isEmpty() || idExemplarStr.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Preencha os IDs do Cliente e do Exemplar.");
                 return;
             }
 
             // Converte para números (Long)
-            Long idUsuario = Long.parseLong(txtIdCliente.getText()); // Pode manter o nome da variavel txtIdCliente se quiser, ou renomeie na tela
+            Long idCliente = Long.parseLong(txtIdCliente.getText()); 
             Long idExemplar = Long.parseLong(txtIdExemplar.getText());
 
-            // CRIAÇÃO DO OBJETO CORRETO
-            Usuario usuario = new Usuario() {}; // <--- Trocamos new Cliente()
-            usuario.setId(idUsuario);
+            // CRIAÇÃO DO OBJETO 
+            Cliente cliente = new Cliente(); 
+            cliente.setId(idCliente);
 
             Exemplar exemplar = new Exemplar();
             exemplar.setId(idExemplar);
 
             Emprestimo emprestimo = new Emprestimo();
-            emprestimo.setUsuario(usuario); // <--- setUsuario
+            emprestimo.setCliente(cliente); 
             emprestimo.setExemplar(exemplar);
 
             Emprestimo salvo = emprestimoController.save(emprestimo);
 
             // Mensagem de Sucesso
-            JOptionPane.showMessageDialog(this, "Empréstimo realizado!\nDevolução: " + salvo.getDataDevolucaoPrevista());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            JOptionPane.showMessageDialog(this, "Empréstimo realizado!\nDevolução: " + (salvo.getDataPrevistaDevolucao() != null ? salvo.getDataPrevistaDevolucao().format(formatter) : "N/A"));
 
-            // Atualiza a tabela da tela de trás (se ela existir)
+            // Atualiza a tabela da tela de trás 
             if (emprestimoListar != null) {
-                emprestimoListar.carregarDados(); // Você precisará criar esse método público lá no Listar
+                emprestimoListar.carregarDados(); 
             }
 
             // Fecha a janela atual
@@ -220,17 +343,19 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnSalvarActionPerformed
+    }
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JComboBox<Cliente> cbCliente;
+    private javax.swing.JComboBox<Exemplar> cbExemplar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField txtIdCliente;
     private javax.swing.JTextField txtIdExemplar;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration
 }

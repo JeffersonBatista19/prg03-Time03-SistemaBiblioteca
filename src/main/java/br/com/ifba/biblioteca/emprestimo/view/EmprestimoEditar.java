@@ -8,6 +8,7 @@ package br.com.ifba.biblioteca.emprestimo.view;
 import br.com.ifba.biblioteca.emprestimo.controller.EmprestimoIController;
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 
@@ -42,8 +43,10 @@ public class EmprestimoEditar extends javax.swing.JFrame {
     // Pega os dados do objeto e joga na tela
     private void preencherDados() {
         try {
-            // Preenche a data atual
-            txtDataDevolucao.setText(emprestimoAtual.getDataDevolucaoPrevista().toString());
+            // Preenche a data formatada
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            txtDataDevolucao.setText(emprestimoAtual.getDataPrevistaDevolucao() != null ? 
+                    emprestimoAtual.getDataPrevistaDevolucao().format(formatter) : "");
             
             // Seleciona o status atual no combo box
             if (emprestimoAtual.getStatus() != null) {
@@ -55,7 +58,7 @@ public class EmprestimoEditar extends javax.swing.JFrame {
     }
    
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code"
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -152,53 +155,53 @@ public class EmprestimoEditar extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    
-    private void txtDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataDevolucaoActionPerformed
+    private void txtDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtDataDevolucaoActionPerformed
+    }
 
-    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbStatusActionPerformed
+    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_cmbStatusActionPerformed
+    }
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            // 1. Pega os dados da tela
+            // Pega os dados da tela
             String dataStr = txtDataDevolucao.getText();
             String statusStr = (String) cmbStatus.getSelectedItem();
             
-            // 2. Converte para os tipos corretos
-            LocalDate novaData = LocalDate.parse(dataStr);
+            // Converte para os tipos corretos
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate novaData = LocalDate.parse(dataStr, formatter);
             Emprestimo.StatusEmprestimo novoStatus = Emprestimo.StatusEmprestimo.valueOf(statusStr);
             
-            // 3. Atualiza o objeto Empréstimo
-            emprestimoAtual.setDataDevolucaoPrevista(novaData);
+            // Atualiza o objeto Empréstimo
+            emprestimoAtual.setDataPrevistaDevolucao(novaData);
             emprestimoAtual.setStatus(novoStatus);
             
-            // 4. Salva no Banco de Dados
+            // Salva no Banco de Dados
             controller.update(emprestimoAtual);
             
-            // 5. Sucesso
+            // Sucesso
             JOptionPane.showMessageDialog(this, "Empréstimo atualizado com sucesso!");
             
-            // 6. Atualiza a tabela da tela anterior e fecha esta
+            // Atualiza a tabela da tela anterior e fecha esta
             if (telaListagem != null) {
                 telaListagem.carregarDados();
             }
             dispose();
             
         } catch (java.time.format.DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Data inválida! Use o formato AAAA-MM-DD (ex: 2025-12-31).", "Erro de Data", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Data inválida! Use o formato DD/MM/AAAA (ex: 31/12/2025).", "Erro de Data", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnSalvarActionPerformed
+    }
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
         dispose(); // Apenas fecha a janela
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -208,5 +211,5 @@ public class EmprestimoEditar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField txtDataDevolucao;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration
 }

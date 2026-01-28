@@ -1,6 +1,5 @@
 package br.com.ifba.biblioteca;
 
-import br.com.ifba.biblioteca.evento.view.TelaEventosListar;
 import javax.swing.SwingUtilities;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -16,11 +15,11 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            //tela de Eventos
-            TelaEventosListar tela = context.getBean(TelaEventosListar.class);
+            //tela de Emprestimos
+            br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar tela = context.getBean(br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar.class);
 
             // Carrega os dados na tabela
-            tela.carregarTabela();
+            tela.carregarDados();
 
             // Mostra a janela
             tela.setVisible(true);
