@@ -282,22 +282,22 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
         );
 
         pack();
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void txtIdExemplarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void txtIdExemplarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdExemplarActionPerformed
         
-    }
+    }//GEN-LAST:event_txtIdExemplarActionPerformed
 
-    private void txtIdClienteActionPerformed(java.awt.event.ActionEvent evt) {
+    private void txtIdClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdClienteActionPerformed
         
-    }
+    }//GEN-LAST:event_txtIdClienteActionPerformed
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // Fecha a janela atual e volta para a anterior
         SwingUtilities.getWindowAncestor(this).dispose();
-    }
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         try {
             // Pega os textos dos campos
             String idClienteStr = txtIdCliente.getText();
@@ -343,10 +343,10 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
 
-    // Variables declaration - do not modify
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<Cliente> cbCliente;
@@ -357,5 +357,5 @@ public class EmprestimoAdicionar extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField txtIdCliente;
     private javax.swing.JTextField txtIdExemplar;
-    // End of variables declaration
+    // End of variables declaration//GEN-END:variables
 }

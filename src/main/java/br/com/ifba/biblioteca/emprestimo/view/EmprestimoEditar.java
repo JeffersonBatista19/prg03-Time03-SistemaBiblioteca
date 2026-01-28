@@ -58,7 +58,7 @@ public class EmprestimoEditar extends javax.swing.JFrame {
     }
    
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code"
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -155,17 +155,17 @@ public class EmprestimoEditar extends javax.swing.JFrame {
         );
 
         pack();
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void txtDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {
+    private void txtDataDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataDevolucaoActionPerformed
         // TODO add your handling code here:
-    }
+    }//GEN-LAST:event_txtDataDevolucaoActionPerformed
 
-    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {
+    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbStatusActionPerformed
         // TODO add your handling code here:
-    }
+    }//GEN-LAST:event_cmbStatusActionPerformed
 
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         try {
             // Pega os dados da tela
             String dataStr = txtDataDevolucao.getText();
@@ -197,11 +197,11 @@ public class EmprestimoEditar extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose(); // Apenas fecha a janela
-    }
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -211,5 +211,5 @@ public class EmprestimoEditar extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField txtDataDevolucao;
-    // End of variables declaration
+    // End of variables declaration//GEN-END:variables
 }
