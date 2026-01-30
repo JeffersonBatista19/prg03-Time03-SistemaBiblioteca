@@ -6,6 +6,7 @@ package br.com.ifba.biblioteca.emprestimo.entity;
  */
 import br.com.ifba.biblioteca.cliente.entity.Cliente;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
+import br.com.ifba.biblioteca.multa.entity.Multa;
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -51,9 +52,9 @@ public class Emprestimo extends PersistenceEntity {
     @Column(name = "data_devolucao")
     private LocalDate dataDevolucao;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "multa_id")
-    private Multafake multa;
+    @OneToOne(mappedBy = "emprestimo", cascade = CascadeType.ALL)
+    private Multa multa;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_emprestimo", nullable = false)

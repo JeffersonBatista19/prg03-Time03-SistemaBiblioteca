@@ -7,6 +7,7 @@ package br.com.ifba.biblioteca.emprestimo.view;
 
 import br.com.ifba.biblioteca.emprestimo.controller.EmprestimoIController;
 import br.com.ifba.biblioteca.emprestimo.entity.Emprestimo;
+import br.com.ifba.biblioteca.multa.view.MultaGerar;
 import java.awt.event.KeyEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -306,7 +307,36 @@ public class EmprestimoListar extends javax.swing.JFrame {
     private void btnMultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMultasActionPerformed
         //relacionamento com a tela de multas
         
-        JOptionPane.showMessageDialog(this, "integração com a tela de multas.");
+         int linha = tblEmprestimos.getSelectedRow();
+
+    if (linha == -1) {
+        JOptionPane.showMessageDialog(this, "Selecione um empréstimo.");
+        return;
+    }
+
+    int linhaModelo = tblEmprestimos.convertRowIndexToModel(linha);
+    Long id = (Long) tblEmprestimos.getModel().getValueAt(linhaModelo, 0);
+
+    try {
+        Emprestimo emp = emprestimoController.findById(id);
+
+        if (emp == null) {
+            JOptionPane.showMessageDialog(this, "Empréstimo não encontrado.");
+            return;
+        }
+
+        // pega tela pelo Spring
+        MultaGerar tela = context.getBean(MultaGerar.class);
+
+        // ⭐ injeção correta
+        tela.setEmprestimo(emp);   // ESSENCIAL
+        tela.setLocationRelativeTo(null);
+        tela.setVisible(true);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Erro ao abrir multa: " + e.getMessage());
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_btnMultasActionPerformed
 
     
