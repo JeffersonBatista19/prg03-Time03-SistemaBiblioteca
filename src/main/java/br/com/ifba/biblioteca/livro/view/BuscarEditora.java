@@ -1,38 +1,60 @@
 package br.com.ifba.biblioteca.livro.view;
 
 import javax.swing.table.DefaultTableModel;
+import br.com.ifba.biblioteca.editora.entity.Editora;
+import br.com.ifba.biblioteca.editora.service.EditoraService;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class BuscarEditora extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuscarEditora.class.getName());
     private LivroAdicionar telaLivro;
     private LivroEditar telaEditar;
-
     
-    public BuscarEditora(LivroAdicionar telaLivro) {
-        this.telaLivro = telaLivro;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarEditorasFake();
-        setLocationRelativeTo(null);
+    @Autowired
+    private EditoraService editoraService;
+
+
+    // construtor que recebe a tela adicionar e a editora.
+    public BuscarEditora(LivroAdicionar telaLivro, EditoraService editoraService) {
+       this.telaLivro = telaLivro;
+    this.editoraService = editoraService;
+    initComponents();
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    carregarEditoras();
+    setLocationRelativeTo(null);
     }
     
-    public BuscarEditora(LivroEditar telaEditar) {
+    // construtor que recebe a tela editar e a editora.
+    public BuscarEditora(LivroEditar telaEditar, EditoraService editoraService) {
         this.telaEditar = telaEditar;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarEditorasFake();
-        setLocationRelativeTo(null);
+    this.editoraService = editoraService;
+    initComponents();
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    carregarEditoras();
+    setLocationRelativeTo(null);
     }
 
-    private void carregarEditorasFake() {
+    // carregar as editoras existentes.
+    private void carregarEditoras() {
     DefaultTableModel model = (DefaultTableModel) tblEditoras.getModel();
     model.setRowCount(0);
 
-    model.addRow(new Object[]{1, "12.345.678/0001-00", "Companhia das Letras", "(11) 3333-4444", "São Paulo"});
-    model.addRow(new Object[]{2, "98.765.432/0001-99", "Editora Abril", "(11) 9999-8888", "São Paulo"});
-    model.addRow(new Object[]{3, "11.222.333/0001-55", "Rocco", "(21) 2222-3333", "Rio de Janeiro"});
+    List<Editora> editoras = editoraService.findAll();
+
+    for (Editora e : editoras) {
+        model.addRow(new Object[]{
+            e.getId(),
+            e.getCnpj(),
+            e.getNome(),
+            e.getTelefone(),
+            e.getEndereco()
+        });
+    }
 }
+
 
    
     @SuppressWarnings("unchecked")
@@ -179,23 +201,28 @@ public class BuscarEditora extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBuscarIdActionPerformed
 
     private void btnBuscarId1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarId1ActionPerformed
-        int id = (int) spnID.getValue();
+        Long id = Long.valueOf(spnID.getValue().toString());
 
-        DefaultTableModel model = (DefaultTableModel) tblEditoras.getModel();
-        model.setRowCount(0);
+    DefaultTableModel model = (DefaultTableModel) tblEditoras.getModel();
+    model.setRowCount(0);
 
-        if (id == 1) {
-            model.addRow(new Object[]{1, "George Orwell", "Inglês", "Autor de 1984", 6});
-        } else if (id == 2) {
-            model.addRow(new Object[]{2, "Machado de Assis", "Brasileiro", "Realismo", 15});
-        } else if (id == 3) {
-            model.addRow(new Object[]{3, "J. K. Rowling", "Britânica", "Harry Potter", 7});
-        }
+    try {
+        Editora e = editoraService.findById(id);
+        model.addRow(new Object[]{
+            e.getId(),
+            e.getCnpj(),
+            e.getNome(),
+            e.getTelefone(),
+            e.getEndereco()
+        });
+    } catch (RuntimeException ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Editora não encontrada.");
+    }
     }//GEN-LAST:event_btnBuscarId1ActionPerformed
 
     private void btnLimparIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparIDActionPerformed
         spnID.setValue(0);
-        carregarEditorasFake();
+        carregarEditoras();
     }//GEN-LAST:event_btnLimparIDActionPerformed
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
@@ -210,16 +237,25 @@ public class BuscarEditora extends javax.swing.JFrame {
         tblEditoras.getValueAt(linha, 0).toString()
     );
 
-    telaLivro.setEditoraSelecionada(idEditora);
+    String nomeEditora = tblEditoras.getValueAt(linha, 2).toString();
+
+    if (telaLivro != null) {
+        telaLivro.setEditoraSelecionada(idEditora, nomeEditora);
+    } else if (telaEditar != null) {
+        telaEditar.setEditoraSelecionada(idEditora, nomeEditora);
+    }
+
     dispose();
     }//GEN-LAST:event_btnSelecionarActionPerformed
 
+    // fecha a tela BuscarEditora.
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    // atualiza a tabela das editoras existentes.
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarEditorasFake();
+        carregarEditoras();
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     

@@ -1,6 +1,8 @@
 package br.com.ifba.biblioteca.livro.view;
 
 
+import br.com.ifba.biblioteca.autor.service.AutorService;
+import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.biblioteca.livro.service.LivroService;
 import jakarta.annotation.PostConstruct;
@@ -21,6 +23,14 @@ public class LivroListar extends javax.swing.JFrame {
     
     @Autowired // injeta o service de livros.
     private LivroService service;
+    
+    @Autowired // injeta o service de autor.
+    private AutorService autorService;
+    
+    @Autowired // injeta o service de editora.
+    private EditoraService editoraService;
+
+
 
     public LivroListar() {
         initComponents();
@@ -90,7 +100,7 @@ public class LivroListar extends javax.swing.JFrame {
         });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel4.setText("Autor ID:");
+        jLabel4.setText("Autor:");
 
         txtAutor.setBackground(new java.awt.Color(255, 255, 255));
         txtAutor.addActionListener(new java.awt.event.ActionListener() {
@@ -100,7 +110,7 @@ public class LivroListar extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel5.setText("Editora ID");
+        jLabel5.setText("Editora:");
 
         txtEditora.setBackground(new java.awt.Color(255, 255, 255));
         txtEditora.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +120,7 @@ public class LivroListar extends javax.swing.JFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel6.setText("Categoria ID:");
+        jLabel6.setText("Categoria:");
 
         txtCategoria.setBackground(new java.awt.Color(255, 255, 255));
         txtCategoria.addActionListener(new java.awt.event.ActionListener() {
@@ -200,10 +210,6 @@ public class LivroListar extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(jLabel2)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -215,18 +221,23 @@ public class LivroListar extends javax.swing.JFrame {
                                         .addComponent(btnBuscarLivro)
                                         .addGap(18, 18, 18)
                                         .addComponent(btnLimparFiltro))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addComponent(jLabel4)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(txtAutor))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(txtEditora))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addComponent(jLabel6)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(txtCategoria))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                            .addComponent(jLabel3)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                            .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
@@ -309,7 +320,7 @@ public class LivroListar extends javax.swing.JFrame {
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         // abre tela para adicionar livro.
         LivroAdicionar tela =
-        new LivroAdicionar(this, service);
+        new LivroAdicionar(this, service, autorService, editoraService);
 
         tela.setVisible(true);
  
@@ -331,7 +342,7 @@ public class LivroListar extends javax.swing.JFrame {
         tblLivros.getValueAt(linha, 0).toString()
     );
 
-    LivroEditar tela = new LivroEditar(idLivro, service);
+    LivroEditar tela = new LivroEditar(idLivro, service, autorService, editoraService);
     tela.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
@@ -400,44 +411,35 @@ public class LivroListar extends javax.swing.JFrame {
                 .toList();
     }
 
-    // Filtro por Autor ID
+    // Filtro por nome do Autor.
     if (!txtAutor.getText().isBlank()) {
-        try {
-            Long autorId = Long.parseLong(txtAutor.getText());
-            filtrados = filtrados.stream()
-                    .filter(l -> l.getAutorNome().equals(autorId))
-                    .toList();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Autor ID deve ser numérico!",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-    }
+    String autor = txtAutor.getText().toLowerCase();
+    filtrados = filtrados.stream()
+            .filter(l -> l.getAutorNome().toLowerCase().contains(autor))
+            .toList();
+}
 
-    // filtro por Editora ID.
-    if (!txtEditora.getText().isBlank()) {
-        try {
-            Long editoraId = Long.parseLong(txtEditora.getText());
-            filtrados = filtrados.stream()
-                    .filter(l -> l.getEditoraNome().equals(editoraId))
-                    .toList();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Editora ID deve ser numérico!",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-    }
 
-    // Filtro por Categoria ID
+   // Filtro por nome da Editora.
+if (!txtEditora.getText().isBlank()) {
+    String nomeEditora = txtEditora.getText().toLowerCase();
+
+    filtrados = filtrados.stream()
+            .filter(l ->
+                l.getEditora() != null &&
+                l.getEditora().getNome() != null &&
+                l.getEditora().getNome().toLowerCase().contains(nomeEditora)
+            )
+            .toList();
+}
+
+
+    // Filtro por Categoria ID.
     if (!txtCategoria.getText().isBlank()) {
         try {
             Long categoriaId = Long.parseLong(txtCategoria.getText());
             filtrados = filtrados.stream()
-                    .filter(l -> l.getCategoriaNome().equals(categoriaId))
+                    .filter(l -> l.getCategoriaId().equals(categoriaId))
                     .toList();
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this,
@@ -448,7 +450,7 @@ public class LivroListar extends javax.swing.JFrame {
         }
     }
 
-    // Filtro por Ano de Publicação
+    // Filtro por Ano de Publicação.
     int ano = (int) spnAno.getValue();
     if (ano > 0) {
         filtrados = filtrados.stream()
@@ -456,23 +458,28 @@ public class LivroListar extends javax.swing.JFrame {
                 .toList();
     }
 
-    // Atualiza a tabela com os filtrados
+    // Atualiza a tabela com os filtrados.
     DefaultTableModel model = (DefaultTableModel) tblLivros.getModel();
     model.setRowCount(0);
 
     for (Livro l : filtrados) {
+        
+        String nomeAutor = l.getAutorNome();
+
+        
         model.addRow(new Object[]{
             l.getId(),
             l.getTitulo(),
             l.getIsbn(),
-            l.getAutorNome(),
-            l.getEditoraNome(),
-            l.getCategoriaNome(),
+            nomeAutor,
+            l.getEditora().getNome(),
+            l.getCategoriaId(),
             l.getAnoPublicacao()
         });
     }
     }//GEN-LAST:event_btnBuscarLivroActionPerformed
 
+    // botão pra limpar os campos de busca.
     private void btnLimparFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparFiltroActionPerformed
         txtTitulo.setText("");
         txtIsbn.setText("");
@@ -484,29 +491,22 @@ public class LivroListar extends javax.swing.JFrame {
         carregarLivros();
     }//GEN-LAST:event_btnLimparFiltroActionPerformed
 
+    // carrega os livros da tabela.
     public void carregarLivros() {
-    try {
-        List<Livro> livros = service.findAll();
+   try {
+        List<Object[]> dados = service.findAllComNomeAutor();
 
         DefaultTableModel model =
             (DefaultTableModel) tblLivros.getModel();
 
         model.setRowCount(0); // limpa tabela
 
-        for (Livro l : livros) {
-            model.addRow(new Object[]{
-                l.getId(),
-                l.getTitulo(),
-                l.getIsbn(),
-                l.getAutorNome(),
-                l.getEditoraNome(),
-                l.getCategoriaNome(),
-                l.getAnoPublicacao()
-     });
+        for (Object[] linha : dados) {
+            model.addRow(linha);
         }
 
     } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(
+        JOptionPane.showMessageDialog(
             this,
             "Erro ao carregar livros: " + e.getMessage()
         );

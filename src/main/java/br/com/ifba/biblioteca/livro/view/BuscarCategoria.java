@@ -34,6 +34,7 @@ public class BuscarCategoria extends javax.swing.JFrame {
 }
 
 
+
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -196,7 +197,7 @@ public class BuscarCategoria extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        int linhaSelecionada = tblCategoria.getSelectedRow();
+         int linhaSelecionada = tblCategoria.getSelectedRow();
 
     if (linhaSelecionada == -1) {
         javax.swing.JOptionPane.showMessageDialog(
@@ -212,13 +213,14 @@ public class BuscarCategoria extends javax.swing.JFrame {
         tblCategoria.getValueAt(linhaSelecionada, 0).toString()
     );
 
-    if (telaLivro != null) {
-        telaLivro.setCategoriaSelecionada(idCategoria);
-    } else if (telaEditar != null) {
-        telaEditar.setCategoriaSelecionada(idCategoria);
-    }
+    String nomeCategoria =
+        tblCategoria.getValueAt(linhaSelecionada, 1).toString();
 
-dispose();
+    if (telaLivro != null) {
+        telaLivro.setCategoriaSelecionada(idCategoria, nomeCategoria);
+    } else if (telaEditar != null) {
+        telaEditar.setCategoriaSelecionada(idCategoria, nomeCategoria);
+    }
 
     dispose();
     }//GEN-LAST:event_btnSelecionarActionPerformed

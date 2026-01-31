@@ -20,4 +20,7 @@ public interface LivroIService {
     boolean existsByIsbn(String isbn);
     
     public boolean existsByTitulo(String titulo);
+    
+    
+
 }

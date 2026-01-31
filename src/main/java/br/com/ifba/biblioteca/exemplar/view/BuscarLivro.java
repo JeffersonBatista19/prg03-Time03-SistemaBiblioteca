@@ -208,8 +208,8 @@ public class BuscarLivro extends javax.swing.JFrame {
                 livro.getTitulo(),
                 livro.getIsbn(),
                 livro.getAutorNome(),
-                livro.getEditoraNome(),
-                livro.getCategoriaNome(),
+                livro.getEditora(),
+                livro.getCategoriaId(),
                 livro.getAnoPublicacao()
             });
         } else {
@@ -261,8 +261,8 @@ public class BuscarLivro extends javax.swing.JFrame {
                 l.getTitulo(),
                 l.getIsbn(),
                 l.getAutorNome(),
-                l.getEditoraNome(),
-                l.getCategoriaNome(),
+                l.getEditora(),
+                l.getCategoriaId(),
                 l.getAnoPublicacao()
      });
         }

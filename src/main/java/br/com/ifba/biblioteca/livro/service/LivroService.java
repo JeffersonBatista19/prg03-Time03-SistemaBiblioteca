@@ -2,6 +2,8 @@ package br.com.ifba.biblioteca.livro.service;
 
 import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.biblioteca.livro.repository.LivroRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,10 @@ public class LivroService implements LivroIService {
     // Injeta o repositório de livros para acessar o banco
     @Autowired
     private LivroRepository livroRepository;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @Override
     public Livro save(Livro livro) {
@@ -60,5 +66,24 @@ public class LivroService implements LivroIService {
     public boolean existsByTitulo(String titulo) {
         return livroRepository.existsByTitulo(titulo);
     }
+    
+    
+    public List<Object[]> findAllComNomeAutor() {
+    List<Livro> livros = livroRepository.findAll();
+
+    return livros.stream().map(l -> new Object[]{
+        l.getId(),
+        l.getTitulo(),
+        l.getIsbn(),
+        l.getAutorNome(),
+        l.getEditora().getNome(),
+        l.getCategoriaId(),    
+        l.getAnoPublicacao()
+    }).toList();
+}
+
+
+
+
 
 }

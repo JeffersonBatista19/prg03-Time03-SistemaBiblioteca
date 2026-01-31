@@ -1,53 +1,69 @@
 package br.com.ifba.biblioteca.livro.view;
 
+import br.com.ifba.biblioteca.autor.service.AutorService;
+import br.com.ifba.biblioteca.editora.entity.Editora;
+import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.biblioteca.livro.service.LivroService;
 import javax.swing.JOptionPane;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class LivroEditar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LivroEditar.class.getName());
     
-    private Long idAutorSelecionado;
+    private String autorSelecionado;
     private Long idEditoraSelecionada;
     private Long idCategoriaSelecionada;
     private LivroService service;
     private Long idLivro;
+    private AutorService autorService;
+    private EditoraService editoraService;
+
+
     
      // construtor recebe id do livro e service
-    public LivroEditar(Long idLivro, LivroService service) {
-        this.service = service;
-        this.idLivro = idLivro;
+    public LivroEditar(Long idLivro, LivroService service, AutorService autorService,  EditoraService editoraService) {
+    this.service = service;
+    this.idLivro = idLivro;
+    this.autorService = autorService;
+    this.editoraService = editoraService;
 
-        initComponents();
-        
-        
-        txtIsbn.setEditable(false); // isbn não editável
-        spnAno.setEnabled(false); // ano não editável
-        
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE); // fecha só esta janela
+    initComponents();
 
-        carregarLivro(); // carrega ao abrir.
-    }
+    txtIsbn.setEditable(false); // ISBN não editável
+    spnAno.setEnabled(false); // Ano de publicação não editável
+
+    setLocationRelativeTo(null);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+    carregarLivro();
+}
+
     
     public void setEditoraSelecionada(Long idEditora, String nomeEditora) {
         txtEditora.setText(nomeEditora);
         this.idEditoraSelecionada = idEditora;
     }
     
-   public void setAutorSelecionado(Long idAutor, String nomeAutor) {
-        txtAutor.setText(nomeAutor);
-        this.idAutorSelecionado = idAutor;
-    }
+   public void setAutor(String nomeAutor){
+    this.autorSelecionado = nomeAutor;
+    txtAutor.setText(nomeAutor);
+}
 
-   public void setCategoriaSelecionada(Long idCategoria) {
-        this.idCategoriaSelecionada = idCategoria;
-        txtCategoria.setText(idCategoria.toString()); // depois pode trocar por nome
-    }
+
+
+   public void setCategoriaSelecionada(Long idCategoria, String nomeCategoria) {
+    this.idCategoriaSelecionada = idCategoria;
+    txtCategoria.setText(nomeCategoria);
+}
+
     
-    // carrega dados do livro na tela
+    // carrega dados do livro na tela.
     private void carregarLivro() {
         try {
             Livro livro = service.findById(idLivro); // busca livro pelo id
@@ -57,9 +73,18 @@ public class LivroEditar extends javax.swing.JFrame {
             spnAno.setValue(livro.getAnoPublicacao());
             
             // popula ids selecionados
-            idAutorSelecionado = livro.getAutorNome();
-            idEditoraSelecionada = livro.getEditoraNome();
-            idCategoriaSelecionada = livro.getCategoriaNome();
+            autorSelecionado = livro.getAutorNome();
+            idEditoraSelecionada = livro.getEditora().getId();
+            txtEditora.setText(livro.getEditora().getNome());
+
+            idCategoriaSelecionada = livro.getCategoriaId();
+
+if (idCategoriaSelecionada != null) {
+    txtCategoria.setText(idCategoriaSelecionada.toString());
+} else {
+    txtCategoria.setText("");
+}
+
 
 
         } catch (Exception e) {
@@ -132,7 +157,7 @@ public class LivroEditar extends javax.swing.JFrame {
         });
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel5.setText("Novo ID Autor:");
+        jLabel5.setText("Novo Autor:");
 
         txtAutor.setBackground(new java.awt.Color(255, 255, 255));
         txtAutor.addActionListener(new java.awt.event.ActionListener() {
@@ -150,7 +175,7 @@ public class LivroEditar extends javax.swing.JFrame {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel6.setText("Novo ID Editora:");
+        jLabel6.setText("Novz Editora:");
 
         txtEditora.setBackground(new java.awt.Color(255, 255, 255));
         txtEditora.addActionListener(new java.awt.event.ActionListener() {
@@ -168,7 +193,7 @@ public class LivroEditar extends javax.swing.JFrame {
         });
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel7.setText("Novo ID Categoria:");
+        jLabel7.setText("Nova Categoria:");
 
         txtCategoria.setBackground(new java.awt.Color(255, 255, 255));
         txtCategoria.addActionListener(new java.awt.event.ActionListener() {
@@ -237,27 +262,6 @@ public class LivroEditar extends javax.swing.JFrame {
                         .addComponent(jLabel9))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnAutor))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditora))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCategoria))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8)
@@ -265,10 +269,30 @@ public class LivroEditar extends javax.swing.JFrame {
                                 .addComponent(spnAno, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel10))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnSalvar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnCancelar)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtCategoria)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnCategoria))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtEditora)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnEditora))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(txtAutor)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(btnAutor))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(btnSalvar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnCancelar)))
                                 .addGap(12, 12, 12)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -347,16 +371,27 @@ public class LivroEditar extends javax.swing.JFrame {
 
         // atualiza campos editáveis
         livro.setTitulo(txtTitulo.getText().trim());
-        livro.setAutorNome(idAutorSelecionado);
-        livro.setEditoraNome(idEditoraSelecionada);
-        livro.setCategoriaNome(idCategoriaSelecionada);
+        livro.setAutorNome(autorSelecionado);
+        
+        Editora editora = new Editora();
+        editora.setId(idEditoraSelecionada);
+        livro.setEditora(editora);
+        livro.setEditoraNome(txtEditora.getText());
+
+        livro.setCategoriaId(idCategoriaSelecionada);
+        livro.setCategoriaNome(txtCategoria.getText());
+
 
         // não altera:
         // livro.setIsbn(...)
         // livro.setAnoPublicacao(...)
 
         // regra de aviso pra titulo repetido.
-        if (service.existsByTitulo(livro.getTitulo())) {
+        Livro livroAtual = service.findById(idLivro);
+
+        if (!livroAtual.getTitulo().equals(livro.getTitulo())
+        && service.existsByTitulo(livro.getTitulo())) {
+    
             int opcao = JOptionPane.showConfirmDialog(
                 this,
                 "Já existe um livro com esse título.\nDeseja continuar mesmo assim?",
@@ -388,22 +423,25 @@ public class LivroEditar extends javax.swing.JFrame {
     }
 
     }//GEN-LAST:event_btnSalvarActionPerformed
-
+    
+    // botão buscar categoria
     private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
         BuscarCategoria tela = new BuscarCategoria(this); // abre buscar categoria
         tela.setLocationRelativeTo(this);
         tela.setVisible(true);
     }//GEN-LAST:event_btnCategoriaActionPerformed
 
+    // botão buscar editora
     private void btnEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditoraActionPerformed
-         BuscarEditora tela = new BuscarEditora(this); // abre buscar editora
-        tela.setLocationRelativeTo(this);
-        tela.setVisible(true);
+         BuscarEditora tela = new BuscarEditora(this, editoraService);
+    tela.setLocationRelativeTo(this);
+    tela.setVisible(true);
     }//GEN-LAST:event_btnEditoraActionPerformed
 
+    // botão buscar autor
     private void btnAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutorActionPerformed
-        BuscarAutor tela = new BuscarAutor(this); // abre buscar autor
-        tela.setLocationRelativeTo(this); // centraliza em relação ao LivroEditar.
+        BuscarAutor tela = new BuscarAutor(this, autorService);
+        tela.setLocationRelativeTo(this);
         tela.setVisible(true);
     }//GEN-LAST:event_btnAutorActionPerformed
 

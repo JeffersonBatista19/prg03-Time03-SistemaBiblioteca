@@ -1,5 +1,8 @@
 package br.com.ifba.biblioteca.livro.view;
 
+import br.com.ifba.biblioteca.autor.entity.Autor;
+import br.com.ifba.biblioteca.autor.service.AutorService;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 public class BuscarAutor extends javax.swing.JFrame {
@@ -7,32 +10,49 @@ public class BuscarAutor extends javax.swing.JFrame {
      // referência da tela que chamou (LivroAdicionar)
     private LivroAdicionar telaLivro;
     private LivroEditar telaEditar;
+    private AutorService autorService;
+
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuscarAutor.class.getName());
     
-    public BuscarAutor(LivroAdicionar telaLivro) {
-        this.telaLivro = telaLivro;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarAutoresFake();
-        setLocationRelativeTo(null);
-    }
-    
-     public BuscarAutor(LivroEditar telaEditar) {
-        this.telaEditar = telaEditar;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarAutoresFake();
-        setLocationRelativeTo(null);
-    }
+    // construtor que recebe a tela adicionar e o autor.
+    public BuscarAutor(LivroAdicionar telaLivro, AutorService autorService) {
+    this.telaLivro = telaLivro;
+    this.autorService = autorService;
+    initComponents();
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    carregarAutores();
+    setLocationRelativeTo(null);
+}
 
-     private void carregarAutoresFake() {
-        DefaultTableModel model = (DefaultTableModel) tblAutores.getModel();
-        model.setRowCount(0);
+     // construtor que recebe a tela editar e o autor.
+public BuscarAutor(LivroEditar telaEditar, AutorService autorService) {
+    this.telaEditar = telaEditar;
+    this.autorService = autorService;
+    initComponents();
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    carregarAutores();
+    setLocationRelativeTo(null);
+}
 
-        model.addRow(new Object[]{1, "George Orwell", "Inglês", "Autor de 1984", 6});
-        model.addRow(new Object[]{2, "Machado de Assis", "Brasileiro", "Realismo", 15});
-        model.addRow(new Object[]{3, "J. K. Rowling", "Britânica", "Harry Potter", 7});
+
+
+    // carrega os autores existente no banco.
+     private void carregarAutores() {
+       DefaultTableModel model = (DefaultTableModel) tblAutores.getModel();
+    model.setRowCount(0);
+
+    List<Autor> autores = autorService.findAll();
+
+    for (Autor autor : autores) {
+        model.addRow(new Object[]{
+            autor.getId(),
+            autor.getNome(),
+            autor.getNacionalidade(),
+            autor.getBiografia(),
+            autor.getQuantidadeObras()
+        });
+    }
     }
  
     @SuppressWarnings("unchecked")
@@ -171,8 +191,9 @@ public class BuscarAutor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // botão de selecionar o autor.
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        int linhaSelecionada = tblAutores.getSelectedRow();
+            int linhaSelecionada = tblAutores.getSelectedRow();
 
     if (linhaSelecionada == -1) {
         javax.swing.JOptionPane.showMessageDialog(
@@ -184,40 +205,61 @@ public class BuscarAutor extends javax.swing.JFrame {
         return;
     }
 
-    Long idAutor = Long.valueOf(
-        tblAutores.getValueAt(linhaSelecionada, 0).toString()
-    );
+    String nomeAutor = tblAutores.getValueAt(linhaSelecionada, 1).toString();
 
-    telaLivro.setAutorSelecionado(idAutor);
+    if (telaLivro != null) {
+        telaLivro.setAutor(nomeAutor);
+    }
+
+    if (telaEditar != null) {
+        telaEditar.setAutor(nomeAutor);
+    }
+
     dispose();
+
     }//GEN-LAST:event_btnSelecionarActionPerformed
 
+    // fecha essa tela buscar autor.
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIdActionPerformed
-        int id = (int) spnID.getValue();
+        Long id = Long.valueOf(spnID.getValue().toString());
 
     DefaultTableModel model = (DefaultTableModel) tblAutores.getModel();
     model.setRowCount(0);
 
-    if (id == 1) {
-        model.addRow(new Object[]{1, "George Orwell", "Inglês", "Autor de 1984", 6});
-    } else if (id == 2) {
-        model.addRow(new Object[]{2, "Machado de Assis", "Brasileiro", "Realismo", 15});
-    } else if (id == 3) {
-        model.addRow(new Object[]{3, "J. K. Rowling", "Britânica", "Harry Potter", 7});
+    try {
+        Autor autor = autorService.findById(id);
+
+        model.addRow(new Object[]{
+            autor.getId(),
+            autor.getNome(),
+            autor.getNacionalidade(),
+            autor.getBiografia(),
+            autor.getQuantidadeObras()
+        });
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Autor não encontrado.",
+            "Aviso",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
     }
     }//GEN-LAST:event_btnBuscarIdActionPerformed
 
+    // limpa os campos de busca.
     private void btnLimparIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparIDActionPerformed
         spnID.setValue(0);
-        carregarAutoresFake();
+        carregarAutores();
     }//GEN-LAST:event_btnLimparIDActionPerformed
 
+    // atualiza a tabela de autores.
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarAutoresFake();
+        carregarAutores();
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     
