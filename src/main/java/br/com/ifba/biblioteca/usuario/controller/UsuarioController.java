@@ -19,9 +19,6 @@ import org.springframework.stereotype.Controller;
  */
 
 
-
-
-
 @Controller
 public class UsuarioController implements UsuarioIController {
 

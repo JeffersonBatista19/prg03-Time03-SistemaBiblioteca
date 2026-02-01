@@ -15,11 +15,10 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            // Volta para a tela original do projeto (EmpréstimoListar)
-            br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar tela = 
-                context.getBean(br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar.class);
-            
-            tela.setVisible(true);
-        });
+    br.com.ifba.biblioteca.categoria.view.CategoriaListar tela =
+        context.getBean(br.com.ifba.biblioteca.categoria.view.CategoriaListar.class);
+
+    tela.setVisible(true);
+});
     }
 }
