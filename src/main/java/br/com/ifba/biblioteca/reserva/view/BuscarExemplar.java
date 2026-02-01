@@ -186,7 +186,7 @@ public class BuscarExemplar extends javax.swing.JFrame {
             return;
         }
 
-        // Retorna o exemplar selecionado para a tela pai
+        // Retorna o exemplar selecionado para a tela pai (que é o ReservaAdicionar)
         telaPai.setExemplarSelecionado(exemplar);
 
         // Fecha a tela

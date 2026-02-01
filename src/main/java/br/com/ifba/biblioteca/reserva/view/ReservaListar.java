@@ -29,6 +29,7 @@ public class ReservaListar extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaListar.class.getName());
 
     // Serviço responsável pelas regras de negócio de Reserva
+    @Autowired
     private ReservaService reservaService;
     
     // Contexto do Spring usado para obter outras telas como Beans
@@ -44,14 +45,11 @@ public class ReservaListar extends javax.swing.JFrame {
      */
     
     //Construtor da tela.
-    //O ReservaService é injetado automaticamente pelo Spring.
-    @Autowired
-    public ReservaListar(ReservaService reservaService) {
-        this.reservaService = reservaService;
+    public ReservaListar() {
         initComponents();// Inicializa os componentes da interface
         setLocationRelativeTo(null); // centraliza
         preencherComboStatus(); // Preenche o ComboBox com os status possíveis
-        carregarTabela(reservaService.findAll());
+        
     }
     
     
@@ -73,6 +71,10 @@ public class ReservaListar extends javax.swing.JFrame {
 
         tblReservas.setModel(modelo); 
         this.reservasExibidas = reservas; // Guarda a lista exibida para ações futuras
+    }
+    
+    public void carregarDados() {
+        carregarTabela(reservaService.findAll());
     }
     
     //Preenche o combo de status a partir do enum StatusReserva

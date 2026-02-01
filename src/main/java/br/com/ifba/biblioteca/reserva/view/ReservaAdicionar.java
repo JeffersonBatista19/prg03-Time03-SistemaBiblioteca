@@ -222,7 +222,7 @@ public class ReservaAdicionar extends javax.swing.JFrame {
     }
 
     
-    //Recebe o ID do cliente selecionado
+    //recebe o cliente selecionado da tela BuscarCliente
     public void setClienteSelecionado(Cliente cliente) {
         this.clienteSelecionado = cliente;
         txtClienteId.setText(String.valueOf(cliente.getId()));
@@ -236,11 +236,11 @@ public class ReservaAdicionar extends javax.swing.JFrame {
     }
 
     
-    // Abre a tela de busca de cliente (dados fictícios para testes)
+    // Abre a tela de busca de cliente
     private void btnBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarClienteActionPerformed
-        // Tela de cliente ainda em desenvolvimento por outro integrante
+        
         BuscarCliente tela = context.getBean(BuscarCliente.class);
-        tela.setTelaPai(this);
+        tela.setTelaPai(this); // passa referência desta tela
         tela.setVisible(true);
     }//GEN-LAST:event_btnBuscarClienteActionPerformed
 
@@ -290,10 +290,10 @@ public class ReservaAdicionar extends javax.swing.JFrame {
 
             reserva.setStatus(StatusReserva.PENDENTE);
 
-            // Persiste a reserva no sistema
+            // salva a reserva no sistema
             reservaService.save(reserva);
 
-            if (telaPai != null) {
+            if (telaPai != null) { //atualiza a tabela da tela pai,
                 telaPai.carregarTabela(reservaService.findAll());
             }
 

@@ -28,9 +28,7 @@ public class BuscarCliente extends javax.swing.JFrame {
     
     private  ClienteService clienteService;
 
-
-    
-    
+    //construtor com injeção do serviço ClienteService
     @Autowired
     public BuscarCliente(ClienteService clienteService) {
         initComponents();
@@ -39,7 +37,7 @@ public class BuscarCliente extends javax.swing.JFrame {
         logger.info("Tela BuscarCliente aberta");
         atualizarTabela(clienteService.findAll()); //atualiza a tabela com todos os clientes
         
-        // Esconde a coluna ID
+        // Esconde a coluna ID 
         tblClientes1.getColumnModel().getColumn(0).setMinWidth(0);
         tblClientes1.getColumnModel().getColumn(0).setMaxWidth(0);
         tblClientes1.getColumnModel().getColumn(0).setWidth(0);
@@ -47,8 +45,8 @@ public class BuscarCliente extends javax.swing.JFrame {
     }
     
     public void setTelaPai(ReservaAdicionar telaPai) {
-         this.telaPai = telaPai;
-        setLocationRelativeTo(telaPai);
+        this.telaPai = telaPai;
+        setLocationRelativeTo(telaPai);// centraliza
     }
 
     
@@ -59,7 +57,7 @@ public class BuscarCliente extends javax.swing.JFrame {
 
         for (Cliente c : clientes) {
             model.addRow(new Object[]{
-                c.getId(),
+                c.getId(), // ID escondido, mas necessário internamente
                 c.getNomeCompleto(),
                 c.getCpf(),
                 c.getTelefone(),
@@ -192,9 +190,9 @@ public class BuscarCliente extends javax.swing.JFrame {
                             .addComponent(btnAtualizar, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(404, 404, 404)
+                .addGap(426, 426, 426)
                 .addComponent(jLabel1)
-                .addContainerGap(525, Short.MAX_VALUE))
+                .addContainerGap(503, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,7 +243,7 @@ public class BuscarCliente extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    //Botão Selecionar – envia o ID do cliente para ReservaAdicionar
+    //envia o cliente selecionado para a tela de reserva
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
         int linha = tblClientes1.getSelectedRow();
 
@@ -257,7 +255,7 @@ public class BuscarCliente extends javax.swing.JFrame {
         Long clienteId = (Long) tblClientes1.getValueAt(linha, 0);
         Cliente cliente = clienteService.findById(clienteId);
 
-        // Envia o cliente selecionado para a tela de reserva
+        // Envia o cliente selecionado para a tela de ReservaAdicionar
         telaPai.setClienteSelecionado(cliente);
 
         this.dispose(); // Fecha a tela após selecionar
