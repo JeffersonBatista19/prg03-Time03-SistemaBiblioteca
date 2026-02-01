@@ -22,6 +22,7 @@ public interface EmprestimoRepository extends JpaRepository<Emprestimo, Long> {
     @Query("SELECT COUNT(e) FROM Emprestimo e WHERE e.cliente = :cliente AND e.status = 'ATIVO' AND e.dataPrevistaDevolucao < CURRENT_DATE")
     long countLateLoansByCliente(Cliente cliente);
 
-    // Verifica se o cliente possui qualquer multa registrada
-    boolean existsByClienteAndMultaIsNotNull(Cliente cliente);
+    // Conta quantas multas PENDENTES o cliente tem 
+    @Query("SELECT COUNT(m) FROM Multa m JOIN m.emprestimo e WHERE e.cliente = :cliente AND m.status = 'PENDENTE'")
+    long countPendingFinesByCliente(Cliente cliente);
 }

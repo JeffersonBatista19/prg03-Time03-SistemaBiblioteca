@@ -42,7 +42,7 @@ public class EmprestimoListar extends javax.swing.JFrame {
         setTitle("Gestão de Empréstimos");
         setLocationRelativeTo(null);
         configurarTabela();
-        carregarDados();
+        // Leitura de dados deve ser feita após a injeção de dependência (@PostConstruct ou chamada explícita)
     }
     
     private void configurarTabela() {

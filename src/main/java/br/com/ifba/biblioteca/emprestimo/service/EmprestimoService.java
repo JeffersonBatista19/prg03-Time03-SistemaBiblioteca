@@ -27,10 +27,13 @@ public class EmprestimoService implements EmprestimoIService {
     private final ClienteRepository clienteRepository;
     private final ExemplarRepository exemplarRepository;
 
-    public EmprestimoService(EmprestimoRepository repository, ClienteRepository clienteRepository, ExemplarRepository exemplarRepository) {
+    private final br.com.ifba.biblioteca.reserva.repository.ReservaRepository reservaRepository;
+
+    public EmprestimoService(EmprestimoRepository repository, ClienteRepository clienteRepository, ExemplarRepository exemplarRepository, br.com.ifba.biblioteca.reserva.repository.ReservaRepository reservaRepository) {
         this.repository = repository;
         this.clienteRepository = clienteRepository;
         this.exemplarRepository = exemplarRepository;
+        this.reservaRepository = reservaRepository;
     }
 
     @Override
@@ -48,19 +51,34 @@ public class EmprestimoService implements EmprestimoIService {
             throw new RuntimeException("Empréstimo negado: Usuário inativo ou bloqueado.");
         }
 
-        // Validação: Cliente possui livros atrasados?
+        //Cliente possui livros atrasados?
         if (repository.countLateLoansByCliente(cliente) > 0) {
             throw new RuntimeException("Empréstimo negado: O cliente possui livros com devolução atrasada.");
         }
 
-        // Validação: Cliente possui multas pendentes?
-        if (repository.existsByClienteAndMultaIsNotNull(cliente)) {
+        //Cliente possui multas pendentes (STATUS = PENDENTE)?
+        if (repository.countPendingFinesByCliente(cliente) > 0) {
             throw new RuntimeException("Empréstimo negado: O cliente possui multas pendentes no sistema.");
         }
 
         // Verifica limite de livros (exemplo: 3 livros)
         if (repository.countByClienteAndStatusAtivo(cliente) >= 3) {
              throw new RuntimeException("Limite de empréstimos excedido.");
+        }
+
+        // Busca reservas pendentes para este exemplar
+        List<br.com.ifba.biblioteca.reserva.entity.Reserva> reservas = 
+            reservaRepository.findByExemplarAndStatus(exemplar, br.com.ifba.biblioteca.reserva.entity.StatusReserva.PENDENTE);
+
+        for (br.com.ifba.biblioteca.reserva.entity.Reserva reserva : reservas) {
+            if (!reserva.getCliente().getId().equals(cliente.getId())) {
+                // Se o exemplar está reservado para OUTRA pessoa
+                throw new RuntimeException("Empréstimo bloqueado: Este exemplar está reservado para o cliente " + reserva.getCliente().getNomeCompleto());
+            } else {
+                // Se é a reserva DESTE cliente, atualizamos para ATENDIDA
+                reserva.setStatus(br.com.ifba.biblioteca.reserva.entity.StatusReserva.ATENDIDA);
+                reservaRepository.save(reserva);
+            }
         }
 
         // Regra de Data (ALUNO = 14, PROFESSOR = 21)
