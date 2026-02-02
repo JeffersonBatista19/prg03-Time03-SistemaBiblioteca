@@ -4,7 +4,9 @@ import br.com.ifba.biblioteca.autor.view.AutorListar;
 import br.com.ifba.biblioteca.categoria.view.CategoriaListar;
 import br.com.ifba.biblioteca.cliente.view.ClienteListar;
 import br.com.ifba.biblioteca.editora.view.EditoraListar;
+import br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar;
 import br.com.ifba.biblioteca.evento.view.TelaEventosListar;
+import br.com.ifba.biblioteca.exemplar.view.ExemplarListar;
 import br.com.ifba.biblioteca.livro.view.LivroListar;
 import br.com.ifba.biblioteca.reserva.view.ReservaListar;
 import br.com.ifba.biblioteca.usuario.view.UsuarioListar;
@@ -57,6 +59,8 @@ public class TelaPrincipal extends javax.swing.JFrame {
         btnEventos = new javax.swing.JButton();
         btnUsuarios = new javax.swing.JButton();
         btnLivros = new javax.swing.JButton();
+        btnEmprestimo = new javax.swing.JButton();
+        btnExemplar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         btnSair = new javax.swing.JButton();
 
@@ -146,6 +150,22 @@ public class TelaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnEmprestimo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnEmprestimo.setText("Empréstimo");
+        btnEmprestimo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmprestimoActionPerformed(evt);
+            }
+        });
+
+        btnExemplar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnExemplar.setText("Exemplar");
+        btnExemplar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExemplarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -153,25 +173,29 @@ public class TelaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE))
-                .addGap(83, 83, 83)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExemplar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnLivros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnAutores, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnClientes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
+                            .addComponent(btnEmprestimo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(83, 83, 83)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(btnLivros, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnAutores, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnReservas, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGap(117, 117, 117)
+                                        .addComponent(btnEventos, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(117, 117, 117)
-                                .addComponent(btnEventos, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(btnEditoras, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCategorias)))
+                                .addComponent(btnEditoras, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCategorias)))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -190,8 +214,11 @@ public class TelaPrincipal extends javax.swing.JFrame {
                 .addGap(27, 27, 27)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnEventos)
-                    .addComponent(btnAutores))
-                .addGap(67, 67, 67))
+                    .addComponent(btnAutores)
+                    .addComponent(btnEmprestimo))
+                .addGap(34, 34, 34)
+                .addComponent(btnExemplar)
+                .addContainerGap())
         );
 
         btnSair.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -319,6 +346,18 @@ public class TelaPrincipal extends javax.swing.JFrame {
         tela.setVisible(true);
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
+    private void btnEmprestimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmprestimoActionPerformed
+       EmprestimoListar tela = context.getBean(EmprestimoListar.class);
+        tela.setLocationRelativeTo(this);
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnEmprestimoActionPerformed
+
+    private void btnExemplarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExemplarActionPerformed
+        ExemplarListar tela = context.getBean(ExemplarListar.class);
+        tela.setLocationRelativeTo(this);
+        tela.setVisible(true);
+    }//GEN-LAST:event_btnExemplarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -329,7 +368,9 @@ public class TelaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton btnCategorias;
     private javax.swing.JButton btnClientes;
     private javax.swing.JButton btnEditoras;
+    private javax.swing.JButton btnEmprestimo;
     private javax.swing.JButton btnEventos;
+    private javax.swing.JButton btnExemplar;
     private javax.swing.JButton btnLivros;
     private javax.swing.JButton btnReservas;
     private javax.swing.JButton btnSair;
