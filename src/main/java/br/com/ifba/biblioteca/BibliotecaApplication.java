@@ -1,6 +1,7 @@
 package br.com.ifba.biblioteca;
 
 
+import br.com.ifba.biblioteca.emprestimo.view.EmprestimoListar;
 import br.com.ifba.biblioteca.menu.view.TelaPrincipal;
 import javax.swing.SwingUtilities;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,8 +17,8 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            TelaPrincipal tela =
-                context.getBean(TelaPrincipal.class);
+            EmprestimoListar tela =
+                context.getBean(EmprestimoListar.class);
             tela.setVisible(true);
         });
     }

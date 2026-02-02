@@ -35,6 +35,7 @@ public class LivroListar extends javax.swing.JFrame {
     public LivroListar() {
         initComponents();
         setLocationRelativeTo(null); // centraliza
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
     }
     

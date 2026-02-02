@@ -37,6 +37,9 @@ public class LivroEditar extends javax.swing.JFrame {
 
     txtIsbn.setEditable(false); // ISBN não editável
     spnAno.setEnabled(false); // Ano de publicação não editável
+    txtAutor.setEditable(false); 
+    txtEditora.setEditable(false);
+    txtCategoria.setEditable(false); 
 
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -175,7 +178,7 @@ if (idCategoriaSelecionada != null) {
         });
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel6.setText("Novz Editora:");
+        jLabel6.setText("Nova Editora:");
 
         txtEditora.setBackground(new java.awt.Color(255, 255, 255));
         txtEditora.addActionListener(new java.awt.event.ActionListener() {

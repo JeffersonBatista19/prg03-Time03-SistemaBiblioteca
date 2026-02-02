@@ -238,7 +238,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI" size="12" style="3"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Novz Editora:"/>
+        <Property name="text" type="java.lang.String" value="Nova Editora:"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtEditora">

@@ -29,6 +29,7 @@ public class ExemplarListar extends javax.swing.JFrame {
         initComponents();
         spnTombamento.addChangeListener(e -> filtrarPorTombamento());
         setLocationRelativeTo(null); // centraliza
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
         // Esconde a coluna ID
     jTable1.getColumnModel().getColumn(4).setMinWidth(0);

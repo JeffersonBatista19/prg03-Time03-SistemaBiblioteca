@@ -29,6 +29,9 @@ public class LivroAdicionar extends javax.swing.JFrame {
     this.autorService = autorService;
     this.editoraService = editoraService;
     initComponents();
+    txtAutor.setEditable(false); 
+    txtEditora.setEditable(false);
+    txtCategoria.setEditable(false); 
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 }
