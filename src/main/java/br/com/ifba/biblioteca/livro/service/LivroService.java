@@ -77,7 +77,7 @@ public class LivroService implements LivroIService {
         l.getIsbn(),
         l.getAutorNome(),
         l.getEditora().getNome(),
-        l.getCategoriaId(),    
+        l.getCategoria().getId(),
         l.getAnoPublicacao()
     }).toList();
 }

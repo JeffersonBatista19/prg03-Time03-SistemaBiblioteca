@@ -2,6 +2,7 @@ package br.com.ifba.biblioteca.livro.view;
 
 
 import br.com.ifba.biblioteca.autor.service.AutorService;
+import br.com.ifba.biblioteca.categoria.service.CategoriaService;
 import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.biblioteca.livro.service.LivroService;
@@ -29,6 +30,9 @@ public class LivroListar extends javax.swing.JFrame {
     
     @Autowired // injeta o service de editora.
     private EditoraService editoraService;
+    
+    @Autowired // injeta o service de categoria.
+    private CategoriaService categoriaService;
 
 
 
@@ -321,7 +325,7 @@ public class LivroListar extends javax.swing.JFrame {
     private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
         // abre tela para adicionar livro.
         LivroAdicionar tela =
-        new LivroAdicionar(this, service, autorService, editoraService);
+        new LivroAdicionar(this, service, autorService, editoraService, categoriaService);
 
         tela.setVisible(true);
  
@@ -343,7 +347,7 @@ public class LivroListar extends javax.swing.JFrame {
         tblLivros.getValueAt(linha, 0).toString()
     );
 
-    LivroEditar tela = new LivroEditar(idLivro, service, autorService, editoraService);
+    LivroEditar tela = new LivroEditar(idLivro, service, autorService, editoraService, categoriaService);
     tela.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
@@ -435,21 +439,19 @@ if (!txtEditora.getText().isBlank()) {
 }
 
 
-    // Filtro por Categoria ID.
-    if (!txtCategoria.getText().isBlank()) {
-        try {
-            Long categoriaId = Long.parseLong(txtCategoria.getText());
-            filtrados = filtrados.stream()
-                    .filter(l -> l.getCategoriaId().equals(categoriaId))
-                    .toList();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Categoria ID deve ser numérico!",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-    }
+   // Filtro por nome da Categoria
+if (!txtCategoria.getText().isBlank()) {
+    String nomeCategoria = txtCategoria.getText().toLowerCase();
+
+    filtrados = filtrados.stream()
+            .filter(l ->
+                l.getCategoriaNome() != null &&
+                l.getCategoriaNome().toLowerCase().contains(nomeCategoria)
+            )
+            .toList();
+}
+
+
 
     // Filtro por Ano de Publicação.
     int ano = (int) spnAno.getValue();
@@ -473,8 +475,9 @@ if (!txtEditora.getText().isBlank()) {
             l.getTitulo(),
             l.getIsbn(),
             nomeAutor,
-            l.getEditora().getNome(),
-            l.getCategoriaId(),
+            l.getEditora() != null ? l.getEditora().getNome() : "",
+           l.getCategoriaNome(),
+
             l.getAnoPublicacao()
         });
     }

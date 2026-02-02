@@ -1,6 +1,8 @@
 package br.com.ifba.biblioteca.livro.view;
 
 import br.com.ifba.biblioteca.autor.service.AutorService;
+import br.com.ifba.biblioteca.categoria.entity.Categoria;
+import br.com.ifba.biblioteca.categoria.service.CategoriaService;
 import br.com.ifba.biblioteca.editora.entity.Editora;
 import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
@@ -15,7 +17,9 @@ public class LivroAdicionar extends javax.swing.JFrame {
     private LivroListar telaListar;
     private AutorService autorService;
     private EditoraService editoraService;
+    private CategoriaService categoriaService;
 
+    
     private Long idEditoraSelecionada;
     private Long idCategoriaSelecionada;
 
@@ -23,11 +27,12 @@ public class LivroAdicionar extends javax.swing.JFrame {
 
   
     // construtor recebe tela listar, service, autor e editora.
-    public LivroAdicionar(LivroListar telaListar, LivroService service, AutorService autorService, EditoraService editoraService) {
+    public LivroAdicionar(LivroListar telaListar, LivroService service, AutorService autorService, EditoraService editoraService, CategoriaService categoriaService) {
     this.telaListar = telaListar;
     this.service = service;
     this.autorService = autorService;
     this.editoraService = editoraService;
+    this.categoriaService = categoriaService;
     initComponents();
     txtAutor.setEditable(false); 
     txtEditora.setEditable(false);
@@ -305,18 +310,21 @@ public void setCategoriaSelecionada(Long idCategoria, String nomeCategoria) {
     }//GEN-LAST:event_btnEditoraActionPerformed
 
     private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
-        BuscarCategoria tela = new BuscarCategoria(this); // abre tela buscar categoria.
-        tela.setVisible(true);
+            BuscarCategoria tela =
+        new BuscarCategoria(this, categoriaService);
+    tela.setVisible(true);
     }//GEN-LAST:event_btnCategoriaActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-        // cadastra livro com dados dos campos.
-        String titulo = txtTitulo.getText();
+    String titulo = txtTitulo.getText();
     String isbn = txtIsbn.getText();
 
-    if (titulo.isEmpty() || isbn.isEmpty()) {
+    if (titulo.isEmpty() || isbn.isEmpty()
+        || idCategoriaSelecionada == null
+        || idEditoraSelecionada == null) {
+
         JOptionPane.showMessageDialog(this,
-            "Preencha todos os campos!",
+            "Preencha todos os campos e selecione autor, editora e categoria!",
             "Erro",
             JOptionPane.ERROR_MESSAGE);
         return;
@@ -326,30 +334,27 @@ public void setCategoriaSelecionada(Long idCategoria, String nomeCategoria) {
         Livro livro = new Livro();
         livro.setTitulo(titulo);
         livro.setIsbn(isbn);
+        livro.setAnoPublicacao((Integer) spnAno.getValue());
         livro.setAutorNome(txtAutor.getText());
-        livro.setCategoriaId(idCategoriaSelecionada);
+
+        // categoria (relacionamento)
+        Categoria categoria = new Categoria();
+        categoria.setId(idCategoriaSelecionada);
+        livro.setCategoria(categoria);
         livro.setCategoriaNome(txtCategoria.getText());
 
-        livro.setAnoPublicacao((Integer) spnAno.getValue());
-        
+        // editora (relacionamento)
         Editora editora = new Editora();
-editora.setId(idEditoraSelecionada);
+        editora.setId(idEditoraSelecionada);
+        livro.setEditora(editora);
+        livro.setEditoraNome(txtEditora.getText());
 
-livro.setEditora(editora);
-livro.setEditoraNome(txtEditora.getText());
-
-
-
-        // service salva no banco.
-       service.save(livro);
+        service.save(livro);
 
         JOptionPane.showMessageDialog(this,
             "Livro \"" + titulo + "\" adicionado com sucesso!");
 
-        // atualiza tabela.
         telaListar.carregarLivros();
-
-        // fecha a tabela.
         this.dispose();
 
     } catch (Exception e) {

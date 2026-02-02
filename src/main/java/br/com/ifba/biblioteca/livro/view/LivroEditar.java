@@ -1,6 +1,8 @@
 package br.com.ifba.biblioteca.livro.view;
 
 import br.com.ifba.biblioteca.autor.service.AutorService;
+import br.com.ifba.biblioteca.categoria.entity.Categoria;
+import br.com.ifba.biblioteca.categoria.service.CategoriaService;
 import br.com.ifba.biblioteca.editora.entity.Editora;
 import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
@@ -23,15 +25,17 @@ public class LivroEditar extends javax.swing.JFrame {
     private Long idLivro;
     private AutorService autorService;
     private EditoraService editoraService;
+    private CategoriaService categoriaService;
 
 
     
      // construtor recebe id do livro e service
-    public LivroEditar(Long idLivro, LivroService service, AutorService autorService,  EditoraService editoraService) {
+    public LivroEditar(Long idLivro, LivroService service, AutorService autorService,  EditoraService editoraService, CategoriaService categoriaService) {
     this.service = service;
     this.idLivro = idLivro;
     this.autorService = autorService;
     this.editoraService = editoraService;
+    this.categoriaService = categoriaService;
 
     initComponents();
 
@@ -68,37 +72,42 @@ public class LivroEditar extends javax.swing.JFrame {
     
     // carrega dados do livro na tela.
     private void carregarLivro() {
-        try {
-            Livro livro = service.findById(idLivro); // busca livro pelo id
+    try {
+        Livro livro = service.findById(idLivro);
 
-            txtTitulo.setText(livro.getTitulo());
-            txtIsbn.setText(livro.getIsbn());
-            spnAno.setValue(livro.getAnoPublicacao());
-            
-            // popula ids selecionados
-            autorSelecionado = livro.getAutorNome();
+        // dados básicos
+        txtTitulo.setText(livro.getTitulo());
+        txtAutor.setText(livro.getAutorNome());
+
+        // categoria
+        if (livro.getCategoria() != null) {
+            idCategoriaSelecionada = livro.getCategoria().getId();
+            txtCategoria.setText(livro.getCategoriaNome());
+        } else {
+            idCategoriaSelecionada = null;
+            txtCategoria.setText("");
+        }
+
+        // editora
+        if (livro.getEditora() != null) {
             idEditoraSelecionada = livro.getEditora().getId();
-            txtEditora.setText(livro.getEditora().getNome());
+            txtEditora.setText(livro.getEditoraNome());
+        } else {
+            idEditoraSelecionada = null;
+            txtEditora.setText("");
+        }
 
-            idCategoriaSelecionada = livro.getCategoriaId();
-
-if (idCategoriaSelecionada != null) {
-    txtCategoria.setText(idCategoriaSelecionada.toString());
-} else {
-    txtCategoria.setText("");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Erro ao carregar livro: " + e.getMessage(),
+            "Erro",
+            JOptionPane.ERROR_MESSAGE
+        );
+        dispose();
+    }
 }
 
-
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                "Erro ao carregar livro: " + e.getMessage(),
-                "Erro",
-                JOptionPane.ERROR_MESSAGE
-            );
-            dispose(); // fecha janela se houver erro
-        }
-    }
 
 
     @SuppressWarnings("unchecked")
@@ -369,32 +378,30 @@ if (idCategoriaSelecionada != null) {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         try {
-         // busca livro existente
         Livro livro = service.findById(idLivro);
 
-        // atualiza campos editáveis
+        // campos editáveis
         livro.setTitulo(txtTitulo.getText().trim());
         livro.setAutorNome(autorSelecionado);
-        
+
+        // editora
         Editora editora = new Editora();
         editora.setId(idEditoraSelecionada);
         livro.setEditora(editora);
         livro.setEditoraNome(txtEditora.getText());
 
-        livro.setCategoriaId(idCategoriaSelecionada);
+        // categoria
+        Categoria categoria = new Categoria();
+        categoria.setId(idCategoriaSelecionada);
+        livro.setCategoria(categoria);
         livro.setCategoriaNome(txtCategoria.getText());
 
-
-        // não altera:
-        // livro.setIsbn(...)
-        // livro.setAnoPublicacao(...)
-
-        // regra de aviso pra titulo repetido.
+        // valida título duplicado
         Livro livroAtual = service.findById(idLivro);
 
-        if (!livroAtual.getTitulo().equals(livro.getTitulo())
-        && service.existsByTitulo(livro.getTitulo())) {
-    
+        if (!livroAtual.getTitulo().equalsIgnoreCase(livro.getTitulo())
+                && service.existsByTitulo(livro.getTitulo())) {
+
             int opcao = JOptionPane.showConfirmDialog(
                 this,
                 "Já existe um livro com esse título.\nDeseja continuar mesmo assim?",
@@ -408,13 +415,11 @@ if (idCategoriaSelecionada != null) {
             }
         }
 
-        // salva no banco.
         service.update(livro);
 
         JOptionPane.showMessageDialog(this,
             "Livro atualizado com sucesso!");
 
-        // fecha a tela.
         dispose();
 
     } catch (Exception e) {
@@ -429,7 +434,7 @@ if (idCategoriaSelecionada != null) {
     
     // botão buscar categoria
     private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
-        BuscarCategoria tela = new BuscarCategoria(this); // abre buscar categoria
+        BuscarCategoria tela = new BuscarCategoria(this, categoriaService); // abre buscar categoria
         tela.setLocationRelativeTo(this);
         tela.setVisible(true);
     }//GEN-LAST:event_btnCategoriaActionPerformed

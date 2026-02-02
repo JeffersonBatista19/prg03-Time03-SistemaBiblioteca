@@ -1,17 +1,10 @@
 package br.com.ifba.biblioteca.livro.entity;
 
 import br.com.ifba.infrastructure.entity.PersistenceEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import br.com.ifba.biblioteca.editora.entity.Editora;
-
+import br.com.ifba.biblioteca.categoria.entity.Categoria;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "livro")
@@ -34,20 +27,21 @@ public class Livro extends PersistenceEntity {
     @Column(name = "autor_nome", nullable = false)
     private String autorNome;
 
+    // relacionamento categoria
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
 
-    // categoria SEM relacionamento (não existe classe)
-    @Column(name = "categoria_id", nullable = false)
-    private Long categoriaId;
-    
-    @Column(name = "categoria_nome", nullable = false)
+    // usado só na VIEW
+    @Transient
     private String categoriaNome;
 
-    // editora relacionamento
-    @ManyToOne
+    // relacionamento editora
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "editora_id", nullable = false)
     private Editora editora;
-    
-    @Column(name = "editora_nome", nullable = false)
-    private String editoraNome;
 
+    // usado só na VIEW
+    @Transient
+    private String editoraNome;
 }

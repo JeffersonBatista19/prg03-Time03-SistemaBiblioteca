@@ -1,37 +1,67 @@
 package br.com.ifba.biblioteca.livro.view;
 
+import br.com.ifba.biblioteca.categoria.entity.Categoria;
+import br.com.ifba.biblioteca.categoria.service.CategoriaService;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+@Component
+@Scope("prototype")
 public class BuscarCategoria extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuscarCategoria.class.getName());
     private LivroAdicionar telaLivro;
     private LivroEditar telaEditar;
-    
-    public BuscarCategoria(LivroAdicionar telaLivro) {
-        this.telaLivro = telaLivro;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarCategoriasFake();
-        setLocationRelativeTo(null);
-    }
-    
-    public BuscarCategoria(LivroEditar telaEditar) {
-        this.telaEditar = telaEditar;
-        initComponents();
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        carregarCategoriasFake();
-        setLocationRelativeTo(null);
-    }
-    
-    private void carregarCategoriasFake() {
-    DefaultTableModel model = (DefaultTableModel) tblCategoria.getModel();
-    model.setRowCount(0);
+    private CategoriaService categoriaService;
 
-    model.addRow(new Object[]{1, "Ficção", "Livros de ficção"});
-    model.addRow(new Object[]{2, "Romance", "Histórias românticas"});
-    model.addRow(new Object[]{3, "Tecnologia", "Livros técnicos e científicos"});
+    
+    public BuscarCategoria(LivroAdicionar telaLivro, CategoriaService categoriaService) {
+        this.telaLivro = telaLivro;
+        this.categoriaService = categoriaService;
+        initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        carregarCategorias();
+        setLocationRelativeTo(null);
+    }
+    
+    public BuscarCategoria(LivroEditar telaEditar, CategoriaService categoriaService) {
+        this.telaEditar = telaEditar;
+        this.categoriaService = categoriaService;
+        initComponents();
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        carregarCategorias();
+        setLocationRelativeTo(null);
+    }
+    
+    private void carregarCategorias() {
+    try {
+        DefaultTableModel model =
+            (DefaultTableModel) tblCategoria.getModel();
+        model.setRowCount(0);
+
+        List<Categoria> categorias = categoriaService.findAllAtivas();
+
+        for (Categoria c : categorias) {
+            model.addRow(new Object[]{
+                c.getId(),
+                c.getNome(),
+                c.getDescricao()
+            });
+        }
+
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Erro ao carregar categorias: " + e.getMessage(),
+            "Erro",
+            javax.swing.JOptionPane.ERROR_MESSAGE
+        );
+    }
 }
+
 
 
 
@@ -171,21 +201,31 @@ public class BuscarCategoria extends javax.swing.JFrame {
     private void btnBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIdActionPerformed
         int id = (int) spnID.getValue();
 
-        DefaultTableModel model = (DefaultTableModel) tblCategoria.getModel();
-        model.setRowCount(0);
+    DefaultTableModel model =
+        (DefaultTableModel) tblCategoria.getModel();
+    model.setRowCount(0);
 
-        if (id == 1) {
-            model.addRow(new Object[]{1, "George Orwell", "Inglês", "Autor de 1984", 6});
-        } else if (id == 2) {
-            model.addRow(new Object[]{2, "Machado de Assis", "Brasileiro", "Realismo", 15});
-        } else if (id == 3) {
-            model.addRow(new Object[]{3, "J. K. Rowling", "Britânica", "Harry Potter", 7});
-        }
+    try {
+        Categoria c = categoriaService.findByIdAtiva((long) id);
+        model.addRow(new Object[]{
+            c.getId(),
+            c.getNome(),
+            c.getDescricao()
+        });
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Categoria não encontrada.",
+            "Aviso",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+    }
+
     }//GEN-LAST:event_btnBuscarIdActionPerformed
 
     private void btnLimparIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparIDActionPerformed
         spnID.setValue(0);
-        carregarCategoriasFake();
+        carregarCategorias();
     }//GEN-LAST:event_btnLimparIDActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -193,7 +233,7 @@ public class BuscarCategoria extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarCategoriasFake();
+        carregarCategorias();
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
