@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  *
- * @author guilherme
+ * @author guilhermeAmedrado
  */
 
 @Controller // Define que esta classe é um Controller (conecta a tela ao service)
