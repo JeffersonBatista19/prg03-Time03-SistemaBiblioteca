@@ -7,6 +7,7 @@ import br.com.ifba.biblioteca.multa.entity.StatusMulta;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -18,18 +19,17 @@ public class MultaEditar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MultaEditar.class.getName());
 
+    @Autowired
     private MultaIController multaController;
     private Multa multaAtual;
     
-    public MultaEditar(Long idMulta) {
+    public MultaEditar() {
         initComponents();
-        
-        AnnotationConfigApplicationContext context =
-            new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-    this.multaController = context.getBean(MultaIController.class);
+       
 
     configurarCombos();
     configurarTela();
+    setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     public void setMultaId(Long id) {
@@ -58,7 +58,7 @@ public class MultaEditar extends javax.swing.JFrame {
     spnDataPrevista.setEnabled(false);
     spnDataDevolucao.setEnabled(false);
     ftdTotal.setEditable(false);       
-    cmbStatus.setEnabled(false);      
+    cmbStatus.setEnabled(true); // esse vai ser editável     
 }
      
      private void calcularTotal() {

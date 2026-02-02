@@ -35,7 +35,7 @@ public class MultaGerar extends javax.swing.JFrame {
         initComponents();
         configurarTela();
         configurarCombos();
-      
+      setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     public void setMultaController(MultaIController controller){
@@ -47,7 +47,7 @@ public void setEmprestimo(Emprestimo emp){
     carregarEmprestimoTela(emp);
 }
 
-
+    // método onde decide se os campos vão ser editaveis ou não.
     private void configurarTela() {
     ftdTotal.setEditable(false);
     cmbStatus.setEnabled(false);
@@ -65,7 +65,7 @@ public void setEmprestimo(Emprestimo emp){
     cmbStatus.setSelectedItem(StatusMulta.PENDENTE);
 }
 
-    
+    // método pra calcular o total (dias de atraso * valor da multa)
     private void calcularTotal() {
     try {
         int dias = (int) spnDias.getValue();
@@ -87,6 +87,7 @@ public void setEmprestimo(Emprestimo emp){
         cmbStatus.setModel(model);
     }
     
+    
     public void carregarEmprestimoTela(Emprestimo emp) {
     this.emprestimo = emp;
 
@@ -107,12 +108,13 @@ public void setEmprestimo(Emprestimo emp){
 
     ftdPorDia.setValue(10.00); // R$ 10 padrão.
 
-    calcularTotal();
+    calcularTotal(); // chama o metodo onde calcula o total da multa.
 
     cmbStatus.setSelectedItem(StatusMulta.PENDENTE);
 }
 
 
+     // método pra calcular o dia de atraso.
     private int calcularDiasAtraso(Emprestimo emp) {
     if (emp.getDataDevolucao() == null || emp.getDataPrevistaDevolucao() == null) {
         return 0;

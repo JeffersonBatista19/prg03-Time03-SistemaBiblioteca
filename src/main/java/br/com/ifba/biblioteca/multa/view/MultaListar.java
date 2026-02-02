@@ -37,6 +37,7 @@ public class MultaListar extends javax.swing.JFrame {
     
     public MultaListar() {
         initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     public void carregarTela() {
@@ -75,6 +76,7 @@ public class MultaListar extends javax.swing.JFrame {
         jTable1.setModel(tableModel);
     }
    
+   // método pra carregar as multas.
    private void carregarMultas() {
     tableModel.setRowCount(0);
 
@@ -134,6 +136,7 @@ public class MultaListar extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         btnVisualizar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
 
         jLabel4.setText("Livro:");
 
@@ -329,6 +332,14 @@ public class MultaListar extends javax.swing.JFrame {
             }
         });
 
+        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtualizarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -336,21 +347,21 @@ public class MultaListar extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(btnVisualizar)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnEditar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(352, 352, 352)
-                                .addComponent(jLabel1)))
+                        .addGap(352, 352, 352)
+                        .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1))))
+                            .addComponent(jScrollPane1)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnVisualizar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnEditar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAtualizar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -365,7 +376,8 @@ public class MultaListar extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnVisualizar)
-                    .addComponent(btnEditar))
+                    .addComponent(btnEditar)
+                    .addComponent(btnAtualizar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -482,6 +494,7 @@ tela.setVisible(true);
 
     }//GEN-LAST:event_btnVisualizarActionPerformed
 
+    // botão de editar
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
         int linha = jTable1.getSelectedRow();
     if (linha < 0) {
@@ -497,9 +510,14 @@ tela.setVisible(true);
     tela.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+        carregarMultas();
+    }//GEN-LAST:event_btnAtualizarActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnLimpar;

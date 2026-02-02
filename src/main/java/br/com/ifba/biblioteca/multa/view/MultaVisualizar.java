@@ -3,6 +3,7 @@ package br.com.ifba.biblioteca.multa.view;
 import br.com.ifba.biblioteca.BibliotecaApplication;
 import br.com.ifba.biblioteca.multa.controller.MultaIController;
 import br.com.ifba.biblioteca.multa.entity.Multa;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -13,20 +14,15 @@ public class MultaVisualizar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MultaVisualizar.class.getName());
 
+    @Autowired
     private MultaIController multaController;
     private Multa multa;
     private Long idMulta;
     
-    public MultaVisualizar() {
-       
-         
-         AnnotationConfigApplicationContext context =
-        new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-
-this.multaController = context.getBean(MultaIController.class);
-
+    public MultaVisualizar() { 
         initComponents();
         bloquearCampos();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
     
     public void setMultaId(Long id){
@@ -228,17 +224,17 @@ this.multaController = context.getBean(MultaIController.class);
         jLabel5.setText("Data Empréstimo:");
 
         spnDataEmprestimo.setModel(new javax.swing.SpinnerDateModel());
-        spnDataEmprestimo.setEditor(new javax.swing.JSpinner.DateEditor(spnDataEmprestimo, "dd/mm/yyyy"));
+        spnDataEmprestimo.setEditor(new javax.swing.JSpinner.DateEditor(spnDataEmprestimo, "dd/MM/yyyy"));
 
         jLabel6.setText("Data Prevista:");
 
         spnDataPrevista.setModel(new javax.swing.SpinnerDateModel());
-        spnDataPrevista.setEditor(new javax.swing.JSpinner.DateEditor(spnDataPrevista, "dd/mm/yyyy"));
+        spnDataPrevista.setEditor(new javax.swing.JSpinner.DateEditor(spnDataPrevista, "dd/MM/yyyy"));
 
         jLabel7.setText("Data Devolução:");
 
         spnDataDevolucao.setModel(new javax.swing.SpinnerDateModel());
-        spnDataDevolucao.setEditor(new javax.swing.JSpinner.DateEditor(spnDataDevolucao, "dd/mm/yyyy"));
+        spnDataDevolucao.setEditor(new javax.swing.JSpinner.DateEditor(spnDataDevolucao, "dd/MM/yyyy"));
 
         jLabel15.setText("Status:");
 
@@ -351,7 +347,7 @@ this.multaController = context.getBean(MultaIController.class);
         jLabel8.setText("Data da emissão:");
 
         spnDataEmissao.setModel(new javax.swing.SpinnerDateModel());
-        spnDataEmissao.setEditor(new javax.swing.JSpinner.DateEditor(spnDataEmissao, "dd/mm/yyyy"));
+        spnDataEmissao.setEditor(new javax.swing.JSpinner.DateEditor(spnDataEmissao, "dd/MM/yyyy"));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);

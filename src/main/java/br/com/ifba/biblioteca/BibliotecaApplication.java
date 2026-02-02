@@ -17,8 +17,8 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            EmprestimoListar tela =
-                context.getBean(EmprestimoListar.class);
+            TelaPrincipal tela =
+                context.getBean(TelaPrincipal.class);
             tela.setVisible(true);
         });
     }
