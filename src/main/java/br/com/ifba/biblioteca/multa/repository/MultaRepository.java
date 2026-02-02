@@ -29,10 +29,10 @@ public interface MultaRepository extends JpaRepository<Multa, Long> {
     );
 
     // cliente (via relacionamento).
-    List<Multa> findByEmprestimo_Cliente_NomeContainingIgnoreCase(String nome);
+    List<Multa> findByEmprestimo_Cliente_NomeCompletoContainingIgnoreCase(String nomeCliente);
 
     // exemplar.
-    List<Multa> findByEmprestimo_Exemplar_Livro_TituloContainingIgnoreCase(String titulo);
+  //  List<Multa> findByEmprestimo_Exemplar_Livro_TituloContainingIgnoreCase(String titulo);
 
     // empréstimo ID.
     Optional<Multa> findByEmprestimo_Id(Long idEmprestimo);

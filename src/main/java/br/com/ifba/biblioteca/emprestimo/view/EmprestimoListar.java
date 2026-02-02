@@ -306,9 +306,9 @@ public class EmprestimoListar extends javax.swing.JFrame {
 
     private void btnMultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMultasActionPerformed
         //relacionamento com a tela de multas
-        
-         int linha = tblEmprestimos.getSelectedRow();
+            int linha = tblEmprestimos.getSelectedRow();
 
+    // valida seleção.
     if (linha == -1) {
         JOptionPane.showMessageDialog(this, "Selecione um empréstimo.");
         return;
@@ -318,6 +318,7 @@ public class EmprestimoListar extends javax.swing.JFrame {
     Long id = (Long) tblEmprestimos.getModel().getValueAt(linhaModelo, 0);
 
     try {
+        // busca emprestimo.
         Emprestimo emp = emprestimoController.findById(id);
 
         if (emp == null) {
@@ -325,18 +326,25 @@ public class EmprestimoListar extends javax.swing.JFrame {
             return;
         }
 
-        // pega tela pelo Spring
-        MultaGerar tela = context.getBean(MultaGerar.class);
+        // bloqueia multa duplicada.
+        if (emp.getMulta() != null) {
+            JOptionPane.showMessageDialog(this,
+                "Este empréstimo já possui uma multa gerada.");
+            return;
+        }
 
-        // ⭐ injeção correta
-        tela.setEmprestimo(emp);   // ESSENCIAL
+        // abre a tela multa gerar.
+        MultaGerar tela = context.getBean(MultaGerar.class);
+        tela.setEmprestimo(emp);          // ⭐ ESSENCIAL
         tela.setLocationRelativeTo(null);
         tela.setVisible(true);
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Erro ao abrir multa: " + e.getMessage());
+        JOptionPane.showMessageDialog(this,
+            "Erro ao abrir multa: " + e.getMessage());
         e.printStackTrace();
     }
+
     }//GEN-LAST:event_btnMultasActionPerformed
 
     

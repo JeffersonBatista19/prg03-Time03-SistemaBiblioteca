@@ -137,11 +137,13 @@ public class MultaService implements MultaIService {
 
     @Override
     public List<Multa> findByCliente(String nomeCliente) {
-        return multaRepository.findByEmprestimo_Cliente_NomeContainingIgnoreCase(nomeCliente);
+        return multaRepository
+    .findByEmprestimo_Cliente_NomeCompletoContainingIgnoreCase(nomeCliente);
+
     }
 
-    @Override
-    public List<Multa> findByLivro(String tituloLivro) {
-        return multaRepository.findByEmprestimo_Exemplar_Livro_TituloContainingIgnoreCase(tituloLivro);
-    }
+  //  @Override
+  //  public List<Multa> findByLivro(String tituloLivro) {
+  //      return multaRepository.findByEmprestimo_Exemplar_Livro_TituloContainingIgnoreCase(tituloLivro);
+  //  }
 }

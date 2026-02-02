@@ -51,5 +51,5 @@ public interface MultaIService {
 
     List<Multa> findByCliente(String nomeCliente);
 
-    List<Multa> findByLivro(String tituloLivro);
+  //  List<Multa> findByLivro(String tituloLivro);
 }

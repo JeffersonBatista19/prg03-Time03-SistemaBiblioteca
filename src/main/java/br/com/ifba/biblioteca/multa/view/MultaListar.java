@@ -4,37 +4,46 @@ import br.com.ifba.biblioteca.multa.controller.MultaIController;
 import br.com.ifba.biblioteca.multa.entity.Multa;
 import br.com.ifba.biblioteca.multa.entity.StatusMulta;
 import br.com.ifba.biblioteca.BibliotecaApplication;
+import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-
+@Component
+@Scope("prototype")
 public class MultaListar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MultaListar.class.getName());
     
+    @Autowired
     private MultaIController multaController;
+    
+    @Autowired
+    private ApplicationContext context;
+
+
     private DefaultTableModel tableModel;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     
     public MultaListar() {
         initComponents();
-
-    AnnotationConfigApplicationContext context =
-            new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-
-    this.multaController = context.getBean(MultaIController.class);
-
+    }
+    
+    public void carregarTela() {
     configurarCombos();
     configurarTabela();
     carregarMultas();
-    
-    }
+}
 
     public void setMultaController(MultaIController multaController) {
     this.multaController = multaController;
@@ -70,7 +79,15 @@ public class MultaListar extends javax.swing.JFrame {
     tableModel.setRowCount(0);
 
     List<Multa> todas = multaController.findAll();
+
+    if (todas == null) return;
+
     for (Multa m : todas) {
+
+        if (m.getEmprestimo() == null) continue;
+        if (m.getEmprestimo().getCliente() == null) continue;
+        if (m.getEmprestimo().getExemplar() == null) continue;
+
         tableModel.addRow(new Object[]{
             m.getId(),
             m.getEmprestimo().getCliente().getNomeCompleto(),
@@ -78,11 +95,12 @@ public class MultaListar extends javax.swing.JFrame {
             m.getEmprestimo().getId(),
             m.getDiasAtraso(),
             m.getValorTotal(),
-            sdf.format(m.getDataGeracao()),
+            m.getDataGeracao().format(dtf),
             m.getStatus()
         });
     }
 }
+
 
 
     
@@ -423,7 +441,7 @@ public class MultaListar extends javax.swing.JFrame {
                     m.getEmprestimo().getId(),
                     m.getDiasAtraso(),
                     m.getValorTotal(),
-                    sdf.format(m.getDataGeracao()),
+                    m.getDataGeracao().format(dtf),
                     m.getStatus()
                 });
             }
@@ -455,8 +473,7 @@ public class MultaListar extends javax.swing.JFrame {
         return;
     }
     Long id = (Long) jTable1.getValueAt(linha, 0);
-    AnnotationConfigApplicationContext context =
-        new AnnotationConfigApplicationContext(BibliotecaApplication.class);
+   
 
 MultaVisualizar tela = context.getBean(MultaVisualizar.class);
 tela.setMultaId(id);
@@ -474,27 +491,12 @@ tela.setVisible(true);
 
     Long id = (Long) jTable1.getValueAt(linha, 0);
 
-    AnnotationConfigApplicationContext context =
-        new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-
     MultaEditar tela = context.getBean(MultaEditar.class);
     tela.setMultaId(id);   // método setter.
     tela.setLocationRelativeTo(null);
     tela.setVisible(true);
     }//GEN-LAST:event_btnEditarActionPerformed
 
-    
-   public static void main(String args[]) {
-
-    AnnotationConfigApplicationContext context =
-        new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-
-    java.awt.EventQueue.invokeLater(() -> {
-        MultaListar tela = context.getBean(MultaListar.class);
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-    });
-}
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

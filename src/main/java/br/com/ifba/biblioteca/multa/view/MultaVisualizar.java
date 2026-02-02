@@ -4,8 +4,11 @@ import br.com.ifba.biblioteca.BibliotecaApplication;
 import br.com.ifba.biblioteca.multa.controller.MultaIController;
 import br.com.ifba.biblioteca.multa.entity.Multa;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-
+@Component
+@Scope("prototype")
 public class MultaVisualizar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MultaVisualizar.class.getName());

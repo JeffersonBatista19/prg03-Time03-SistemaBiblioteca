@@ -11,23 +11,28 @@ import javax.swing.JOptionPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 
+@Component
+@Scope("prototype")
 public class MultaGerar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MultaGerar.class.getName());
 
+    @Autowired
     private MultaIController multaController;
+    
     private Emprestimo emprestimo;
+    
+    @Autowired
+    private ApplicationContext context;
+
 
     
     public MultaGerar() {
         initComponents();
-
-        ApplicationContext context =
-        new AnnotationConfigApplicationContext(BibliotecaApplication.class);
-
-    this.multaController = context.getBean(MultaIController.class);
         configurarTela();
         configurarCombos();
       
@@ -53,8 +58,8 @@ public void setEmprestimo(Emprestimo emp){
     spnDataEmprestimo.setEnabled(false);
     spnDataPrevista.setEnabled(false);
     spnDataDevolucao.setEnabled(false);
-    spnDias.setEnabled(false);
-    ftdPorDia.setEnabled(false);
+    spnDias.setEnabled(true);
+    ftdPorDia.setEnabled(true);
 
 
     cmbStatus.setSelectedItem(StatusMulta.PENDENTE);
@@ -62,20 +67,20 @@ public void setEmprestimo(Emprestimo emp){
 
     
     private void calcularTotal() {
-        try {
-            int dias = (int) spnDias.getValue();
-            Object valorObj = ftdPorDia.getValue();
-            if (valorObj == null) return;
+    try {
+        int dias = (int) spnDias.getValue();
+        Number n = (Number) ftdPorDia.getValue();
+        if (n == null) return;
 
-            BigDecimal valorDia = new BigDecimal(valorObj.toString());
-            BigDecimal total = valorDia.multiply(BigDecimal.valueOf(dias));
+        BigDecimal valorDia = BigDecimal.valueOf(n.doubleValue());
+        BigDecimal total = valorDia.multiply(BigDecimal.valueOf(dias));
 
-            ftdTotal.setValue(total);
-
-        } catch (Exception e) {
-            // silencioso
-        }
+        ftdTotal.setValue(total);
+    } catch (Exception e) {
+        // silencioso
     }
+}
+
     
     private void configurarCombos() {
         DefaultComboBoxModel model = new DefaultComboBoxModel(StatusMulta.values());
@@ -83,9 +88,11 @@ public void setEmprestimo(Emprestimo emp){
     }
     
     public void carregarEmprestimoTela(Emprestimo emp) {
+    this.emprestimo = emp;
+
     spnId.setValue(emp.getId());
     txtAluno.setText(emp.getCliente().getNomeCompleto());
-    txtAluno1.setText(emp.getExemplar().getIsbnLivro()); 
+    txtAluno1.setText(emp.getExemplar().getIsbnLivro());
 
     spnDataEmprestimo.setValue(java.sql.Date.valueOf(emp.getDataEmprestimo()));
     spnDataPrevista.setValue(java.sql.Date.valueOf(emp.getDataPrevistaDevolucao()));
@@ -94,7 +101,29 @@ public void setEmprestimo(Emprestimo emp){
         spnDataDevolucao.setValue(java.sql.Date.valueOf(emp.getDataDevolucao()));
     }
 
+    // valores da multa.
+    int diasAtraso = calcularDiasAtraso(emp);
+    spnDias.setValue(diasAtraso);
+
+    ftdPorDia.setValue(10.00); // R$ 10 padrão.
+
+    calcularTotal();
+
     cmbStatus.setSelectedItem(StatusMulta.PENDENTE);
+}
+
+
+    private int calcularDiasAtraso(Emprestimo emp) {
+    if (emp.getDataDevolucao() == null || emp.getDataPrevistaDevolucao() == null) {
+        return 0;
+    }
+
+    long diff = java.time.temporal.ChronoUnit.DAYS.between(
+        emp.getDataPrevistaDevolucao(),
+        emp.getDataDevolucao()
+    );
+
+    return (int) Math.max(diff, 0);
 }
 
 
@@ -391,7 +420,9 @@ public void setEmprestimo(Emprestimo emp){
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
          try {
     int dias = (int) spnDias.getValue();
-    BigDecimal valorPorDia = (BigDecimal) ftdPorDia.getValue();
+    Number n = (Number) ftdPorDia.getValue();
+    BigDecimal valorPorDia = BigDecimal.valueOf(n.doubleValue());
+
 
     Multa multa = multaController.gerarMultaManual(
         emprestimo, dias, valorPorDia
@@ -399,7 +430,14 @@ public void setEmprestimo(Emprestimo emp){
 
     JOptionPane.showMessageDialog(this,
         "Multa gerada com sucesso!\nID: " + multa.getId());
+    
+    //  abre a tela de listar multas
+        MultaListar tela = context.getBean(MultaListar.class);
+        tela.carregarTela();
+        tela.setLocationRelativeTo(null);
+        tela.setVisible(true);
 
+    
     this.dispose();
 
 } catch (Exception e) {
