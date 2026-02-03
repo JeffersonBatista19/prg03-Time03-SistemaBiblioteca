@@ -49,7 +49,7 @@ public class ExemplarController implements ExemplarIController {
     
     @Override
     public boolean existsByNumeroTombamento(int tombamento) {
-    return exemplarRepository.existsByNumeroTombamento(tombamento);
+    return service.existsByNumeroTombamento(tombamento);
     }
 }
 

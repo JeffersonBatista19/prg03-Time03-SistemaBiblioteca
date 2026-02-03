@@ -89,4 +89,9 @@ public class ExemplarService implements ExemplarIService {
     public Exemplar findByNumeroTombamento(int numeroTombamento) {
         return repository.findByNumeroTombamento(numeroTombamento);
     }
+    
+    @Override
+    public boolean existsByNumeroTombamento(int numeroTombamento) {
+        return repository.existsByNumeroTombamento(numeroTombamento);
+    }
 }

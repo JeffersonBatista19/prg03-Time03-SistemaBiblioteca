@@ -51,7 +51,7 @@ public class LivroController implements LivroIController {
 
     @Override
     public boolean existsByIsbn(String isbn) {
-        return repository.existsByIsbn(isbn);
+        return service.existsByIsbn(isbn);
     }
     
   

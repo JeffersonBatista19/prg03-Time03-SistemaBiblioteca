@@ -16,4 +16,7 @@ public interface ExemplarIService {
     Exemplar findById(Long id);
 
     Exemplar findByNumeroTombamento(int numeroTombamento);
+     
+    boolean existsByNumeroTombamento(int tombamento);
+     
 }
