@@ -118,7 +118,7 @@ public class CategoriaListar extends javax.swing.JFrame {
         btnAtualizar = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Buscar Nome: ");
 
