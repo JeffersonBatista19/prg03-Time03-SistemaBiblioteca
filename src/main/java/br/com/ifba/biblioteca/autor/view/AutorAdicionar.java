@@ -5,61 +5,117 @@ import br.com.ifba.biblioteca.autor.entity.Autor;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Tela para cadastrar novos autores.
- * @author guilherme
- */
 public class AutorAdicionar extends JFrame {
 
     private AutorIController controller;
-    private AutorListar telaPai; // Referência para atualizar a tabela depois
+    private AutorListar telaPai; 
 
-    private JTextField txtNome = new JTextField(20);
-    private JTextField txtNacionalidade = new JTextField(20);
-    private JTextField txtAnoNasc = new JTextField(10);
-    private JTextField txtAnoFalec = new JTextField(10);
-    private JTextArea txtBiografia = new JTextArea(5, 20);
+    private JTextField txtNome;
+    private JTextField txtNacionalidade;
+    private JTextField txtAnoNasc;
+    private JTextField txtAnoFalec;
+    private JTextArea txtBiografia;
+    private JButton btnSalvar;
+    private JButton btnVoltar;
 
-    // Construtor recebe o controller e a tela de listagem
     public AutorAdicionar(AutorIController controller, AutorListar telaPai) {
         super("Adicionar Autor");
         this.controller = controller;
         this.telaPai = telaPai;
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximizado
     }
 
     private void initComponents() {
-        setSize(400, 500);
-        setLayout(new GridLayout(6, 2, 10, 10)); // Layout em grade
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        add(new JLabel("Nome:"));
-        add(txtNome);
+        // --- FORMULÁRIO CENTRAL ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
 
-        add(new JLabel("Nacionalidade:"));
-        add(txtNacionalidade);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        add(new JLabel("Ano Nascimento:"));
-        add(txtAnoNasc);
+        // Header
+        JLabel lblHeader = new JLabel("NOVO AUTOR");
+        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblHeader, gbc);
 
-        add(new JLabel("Ano Falecimento:"));
-        add(txtAnoFalec);
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        add(new JLabel("Biografia:"));
-        add(new JScrollPane(txtBiografia));
+        // Campos
+        adicionarCampo(pnlForm, gbc, 1, "Nome:", txtNome = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 2, "Nacionalidade:", txtNacionalidade = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 3, "Ano Nascimento:", txtAnoNasc = new JTextField(10));
+        adicionarCampo(pnlForm, gbc, 4, "Ano Falecimento:", txtAnoFalec = new JTextField(10));
 
-        JButton btnSalvar = new JButton("Salvar");
-        JButton btnCancelar = new JButton("Cancelar");
-
-        add(btnSalvar);
-        add(btnCancelar);
-
-        // Ação do botão Salvar
-        btnSalvar.addActionListener(e -> salvarAutor());
+        // Biografia
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        pnlForm.add(new JLabel("Biografia:"), gbc);
         
-        // Ação do botão Cancelar
-        btnCancelar.addActionListener(e -> dispose());
+        txtBiografia = new JTextArea(5, 30);
+        txtBiografia.setLineWrap(true);
+        txtBiografia.setWrapStyleWord(true);
+        JScrollPane scrollBio = new JScrollPane(txtBiografia);
+        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0.5; // Expand vertical
+        pnlForm.add(scrollBio, gbc);
+
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTOES SUL ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114));
+        
+        btnSalvar = new JButton("Salvar");
+        estilizarBotao(btnSalvar, new Color(46, 204, 113));
+
+        pnlBotoes.add(btnVoltar);
+        pnlBotoes.add(btnSalvar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+
+        btnVoltar.addActionListener(e -> dispose());
+        btnSalvar.addActionListener(e -> salvarAutor());
+    }
+
+    private void adicionarCampo(JPanel pnl, GridBagConstraints gbc, int row, String label, Component comp) {
+        gbc.gridx = 0; gbc.gridy = row;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pnl.add(new JLabel(label), gbc);
+        gbc.gridx = 1; gbc.gridy = row;
+        pnl.add(comp, gbc);
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 
     private void salvarAutor() {
@@ -69,24 +125,38 @@ public class AutorAdicionar extends JFrame {
             autor.setNacionalidade(txtNacionalidade.getText());
             autor.setBiografia(txtBiografia.getText());
 
-            // Converte os números (se estiver vazio, deixa null ou 0)
-            if (!txtAnoNasc.getText().isEmpty()) {
-                autor.setAnoNascimento(Integer.parseInt(txtAnoNasc.getText()));
-            }
-            if (!txtAnoFalec.getText().isEmpty()) {
-                autor.setAnoFalecimento(Integer.parseInt(txtAnoFalec.getText()));
+            // Validação Ano Nascimento
+            String anoNascStr = txtAnoNasc.getText();
+            if (anoNascStr != null && !anoNascStr.trim().isEmpty()) {
+                try {
+                    autor.setAnoNascimento(Integer.parseInt(anoNascStr.trim()));
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("Ano de Nascimento inválido! Digite apenas números.");
+                }
+            } else {
+                 throw new RuntimeException("O Ano de Nascimento é obrigatório.");
             }
 
-            controller.save(autor); // Chama o controller
+            // Validação Ano Falecimento (Opcional)
+            String anoFalecStr = txtAnoFalec.getText();
+            if (anoFalecStr != null && !anoFalecStr.trim().isEmpty()) {
+                try {
+                     autor.setAnoFalecimento(Integer.parseInt(anoFalecStr.trim()));
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("Ano de Falecimento inválido! Digite apenas números (ou deixe vazio).");
+                }
+            } else {
+                autor.setAnoFalecimento(null); // Explicitamente null se estiver vazio
+            }
+
+            controller.save(autor); 
             JOptionPane.showMessageDialog(this, "Autor salvo com sucesso!");
             
-            telaPai.carregarDados(); // Atualiza a tabela da outra tela
-            dispose(); // Fecha esta janela
+            if(telaPai != null) telaPai.carregarDados(); 
+            dispose(); 
 
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Anos devem ser números válidos!");
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Erro ao salvar: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro de Validação", JOptionPane.WARNING_MESSAGE);
         }
     }
 }

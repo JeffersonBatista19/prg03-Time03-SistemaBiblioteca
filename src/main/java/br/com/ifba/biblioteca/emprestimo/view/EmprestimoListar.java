@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmprestimoListar extends javax.swing.JFrame {
    
-// Variável para controlar o filtro da tabela
     private TableRowSorter<DefaultTableModel> sorter;
 
     @Autowired
@@ -31,65 +30,77 @@ public class EmprestimoListar extends javax.swing.JFrame {
     @Autowired
     private ApplicationContext context;
 
+    @Autowired
+    private br.com.ifba.biblioteca.livro.service.LivroService livroService;
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EmprestimoListar.class.getName());
     
-    /**
-     * Creates new form EmprestimoAdicionar
-     */
+    // VARIÁVEIS DE COMPONENTES DE TELA
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblEmprestimos;
+    private javax.swing.JButton btnAdicionar;
+    private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnMultas;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField txtBuscar;
     
     public EmprestimoListar() {
         initComponents();
         setTitle("Gestão de Empréstimos");
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         configurarTabela();
-        // Leitura de dados deve ser feita após a injeção de dependência (@PostConstruct ou chamada explícita)
     }
     
     private void configurarTabela() {
-        // Define os nomes das colunas da tabela
-        String[] colunas = {"ID", "Cliente", "Exemplar", "Data Emp.", "Devolução", "Status"};
+        String[] colunas = {"ID", "Livro", "Cliente", "Exemplar", "Data Emp.", "Devolução", "Status"};
         
-        // Cria um modelo de tabela (onde os dados ficam guardados)
         javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Isso impede que o usuário edite a célula clicando duas vezes
+                return false;
             }
         };
         
-        // Aplica esse modelo na sua tabela visual (tblEmprestimos)
         tblEmprestimos.setModel(modelo);
-        
-        
-        // Cria o classificador (sorter) baseado no modelo que acabamos de criar
         sorter = new javax.swing.table.TableRowSorter<>(modelo);
-        
-        // Avisa a tabela que ela deve usar esse classificador
         tblEmprestimos.setRowSorter(sorter);
     }
     
-    
     public void carregarDados() {
         try {
-            // Pega o modelo da tabela para poder mexer nele
             javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) tblEmprestimos.getModel();
-            
-            // Limpa as linhas antigas para não duplicar
             modelo.setRowCount(0); 
 
-            // Busca a lista atualizada do banco usando o Controller
             java.util.List<br.com.ifba.biblioteca.emprestimo.entity.Emprestimo> lista = emprestimoController.findAll();
 
-            // Adiciona cada empréstimo como uma nova linha na tabela
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             for (br.com.ifba.biblioteca.emprestimo.entity.Emprestimo emp : lista) {
+                // Busca o título do livro usando o ISBN do exemplar
+                String tituloLivro = "Não encontrado";
+                if (emp.getExemplar() != null && emp.getExemplar().getIsbnLivro() != null) {
+                    try {
+                        String isbnBusca = emp.getExemplar().getIsbnLivro();
+                        br.com.ifba.biblioteca.livro.entity.Livro livro = livroService.findByIsbn(isbnBusca);
+                        if (livro != null) {
+                            tituloLivro = livro.getTitulo();
+                        } else {
+                            tituloLivro = "Não enc. (" + isbnBusca + ")";
+                        }
+                    } catch (Exception ex) {
+                        tituloLivro = "Erro busca";
+                    }
+                }
+
                 modelo.addRow(new Object[]{
                     emp.getId(),
-                    emp.getCliente().getNomeCompleto(), // Mostra o Nome do Cliente
-                    emp.getExemplar().getId(),          // Mostra o ID do Exemplar
-                    emp.getDataEmprestimo() != null ? emp.getDataEmprestimo().format(formatter) : "",            // Data de quando pegou
-                    emp.getDataPrevistaDevolucao() != null ? emp.getDataPrevistaDevolucao().format(formatter) : "",     // Data de quando tem que devolver
-                    emp.getStatus()                     // Se está ATIVO, ATRASADO, etc
+                    tituloLivro,
+                    emp.getCliente().getNomeCompleto(),
+                    emp.getExemplar().getId(),
+                    emp.getDataEmprestimo() != null ? emp.getDataEmprestimo().format(formatter) : "",
+                    emp.getDataPrevistaDevolucao() != null ? emp.getDataPrevistaDevolucao().format(formatter) : "",
+                    emp.getStatus()
                 });
             }
         } catch (Exception e) {
@@ -97,157 +108,111 @@ public class EmprestimoListar extends javax.swing.JFrame {
         }
     }
     
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // COMPONENTES A MÃO (MANUTENÇÃO MAIS FÁCIL e VISUAL PROFISSIONAL)
     private void initComponents() {
+        // Layout Principal: BorderLayout para expandir a tabela no centro
+        setLayout(new java.awt.BorderLayout());
+        
+        // Configuração Janela
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); // NÃO FECHA O PROGRAMA TODO
+        getContentPane().setBackground(new java.awt.Color(240, 242, 245));
 
+        // --- PAINEL TOPO (Filtros e Botões) ---
+        javax.swing.JPanel pnlTopo = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(new java.awt.Color(255, 255, 255));
+        pnlTopo.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(200, 200, 200)));
+
+        jLabel2 = new javax.swing.JLabel("Buscar por ID/Nome:");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        
+        txtBuscar = new javax.swing.JTextField(20);
+        txtBuscar.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        
+        btnAdicionar = new javax.swing.JButton("Novo Empréstimo");
+        estilizarBotao(btnAdicionar, new java.awt.Color(46, 204, 113));
+        
+        btnEditar = new javax.swing.JButton("Editar");
+        estilizarBotao(btnEditar, new java.awt.Color(52, 152, 219));
+        
+        btnExcluir = new javax.swing.JButton("Devolver/Excluir");
+        estilizarBotao(btnExcluir, new java.awt.Color(231, 76, 60));
+        
+        btnMultas = new javax.swing.JButton("Ver Multas");
+        estilizarBotao(btnMultas, new java.awt.Color(241, 196, 15));
+        btnMultas.setForeground(java.awt.Color.DARK_GRAY); // Multa amarelinho texto escuro
+        
+        javax.swing.JButton btnVoltar = new javax.swing.JButton("Voltar");
+        estilizarBotao(btnVoltar, new java.awt.Color(99, 110, 114)); // Cinza escuro
+        
+        pnlTopo.add(jLabel2);
+        pnlTopo.add(txtBuscar);
+        pnlTopo.add(btnAdicionar);
+        pnlTopo.add(btnEditar);
+        pnlTopo.add(btnExcluir);
+        pnlTopo.add(btnMultas);
+        pnlTopo.add(btnVoltar); // Adiciona ao painel
+
+        add(pnlTopo, java.awt.BorderLayout.NORTH);
+
+        // --- PAINEL CENTRO (Tabela) ---
         jScrollPane1 = new javax.swing.JScrollPane();
         tblEmprestimos = new javax.swing.JTable();
-        btnAdicionar = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        btnMultas = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        tblEmprestimos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "", "", "", ""
-            }
-        ));
+        tblEmprestimos.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        tblEmprestimos.setRowHeight(25);
+        tblEmprestimos.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        
         jScrollPane1.setViewportView(tblEmprestimos);
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        btnAdicionar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAdicionar.setText("Adicionar");
-        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdicionarActionPerformed(evt);
-            }
-        });
-
-        btnExcluir.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnExcluir.setText("Excluir");
-        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExcluirActionPerformed(evt);
-            }
-        });
-
-        btnEditar.setText("Editar");
-        btnEditar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditarActionPerformed(evt);
-            }
-        });
-
-        btnMultas.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnMultas.setText("Multas");
-        btnMultas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMultasActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Buscar por ID:");
-
+        // Listeners
+        btnAdicionar.addActionListener(evt -> btnAdicionarActionPerformed(evt));
+        btnExcluir.addActionListener(evt -> btnExcluirActionPerformed(evt));
+        btnEditar.addActionListener(evt -> btnEditarActionPerformed(evt));
+        btnMultas.addActionListener(evt -> btnMultasActionPerformed(evt));
+        btnVoltar.addActionListener(evt -> dispose()); // Fecha a janela atual
+        
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBuscarKeyReleased(evt);
             }
         });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(108, 108, 108)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAdicionar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnExcluir)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnMultas)))
-                .addContainerGap(100, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAdicionar)
-                        .addComponent(btnEditar)
-                        .addComponent(btnExcluir)
-                        .addComponent(btnMultas)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(27, Short.MAX_VALUE))
-        );
-
+        
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
+    
+    // Método utilitário para deixar os botões bonitos (Flat Design)
+    private void estilizarBotao(javax.swing.JButton btn, java.awt.Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(java.awt.Color.WHITE);
+        btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
 
-    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {
       try {  
-            // Pega a tela de Adicionar que o Spring criou
             EmprestimoAdicionar telaAdicionar = context.getBean(EmprestimoAdicionar.class);
-            
-            // Passa a referência desta lista (para atualizar a tabela depois)
             telaAdicionar.setEmprestimoListar(this);
-            
-            // Configurações de exibição
-            telaAdicionar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE); // Fecha só ela, não o app todo
-            telaAdicionar.setLocationRelativeTo(null); // Centraliza na tela
-            
-            // Mostra a janela diretamente! (Sem criar JDialog)
+            telaAdicionar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+            telaAdicionar.setLocationRelativeTo(null);
             telaAdicionar.setVisible(true);
-            
         } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Erro ao abrir tela: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btnAdicionarActionPerformed
+    }
 
-    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        // Verifica seleção
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {
         int linhaSelecionada = tblEmprestimos.getSelectedRow();
-
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um empréstimo para excluir/devolver!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Converte índice visual para modelo (por causa da busca/filtro)
         int linhaModelo = tblEmprestimos.convertRowIndexToModel(linhaSelecionada);
         Long id = (Long) tblEmprestimos.getModel().getValueAt(linhaModelo, 0);
 
-        // Confirmação
         int confirmacao = JOptionPane.showConfirmDialog(this,
                 "Tem certeza que deseja remover este empréstimo?\nIsso devolverá o livro ao estoque.",
                 "Confirmar Exclusão",
@@ -257,21 +222,17 @@ public class EmprestimoListar extends javax.swing.JFrame {
             try {
                 Emprestimo remover = new Emprestimo();
                 remover.setId(id);
-
                 emprestimoController.delete(remover);
-
                 carregarDados();
                 JOptionPane.showMessageDialog(this, "Empréstimo removido com sucesso!");
-
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Erro ao excluir: " + e.getMessage());
             }
         }
-    }//GEN-LAST:event_btnExcluirActionPerformed
+    }
 
-    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {
         int linhaSelecionada = tblEmprestimos.getSelectedRow();
-
         if (linhaSelecionada == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um empréstimo para editar!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
@@ -282,16 +243,14 @@ public class EmprestimoListar extends javax.swing.JFrame {
 
         try {
             Emprestimo emp = emprestimoController.findById(id);
-
             EmprestimoEditar editar = new EmprestimoEditar(emprestimoController, this, emp);
             editar.setVisible(true);
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Erro ao buscar dados: " + e.getMessage());
         }
-    }//GEN-LAST:event_btnEditarActionPerformed
+    }
 
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {
         String texto = txtBuscar.getText();
         if (texto.trim().length() == 0) {
             sorter.setRowFilter(null);
@@ -299,84 +258,66 @@ public class EmprestimoListar extends javax.swing.JFrame {
             try {
                 sorter.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + texto));
             } catch (Exception e) {
-                // Ignora erro
             }
         }
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
-    private void btnMultasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMultasActionPerformed
-        //relacionamento com a tela de multas
-            int linha = tblEmprestimos.getSelectedRow();
-
-    // valida seleção.
-    if (linha == -1) {
-        JOptionPane.showMessageDialog(this, "Selecione um empréstimo.");
-        return;
     }
 
-    int linhaModelo = tblEmprestimos.convertRowIndexToModel(linha);
-    Long id = (Long) tblEmprestimos.getModel().getValueAt(linhaModelo, 0);
-
-    try {
-        // busca emprestimo.
-        Emprestimo emp = emprestimoController.findById(id);
-
-        if (emp == null) {
-            JOptionPane.showMessageDialog(this, "Empréstimo não encontrado.");
+    private void btnMultasActionPerformed(java.awt.event.ActionEvent evt) {
+        int linha = tblEmprestimos.getSelectedRow();
+        if (linha == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um empréstimo.");
             return;
         }
 
-        // bloqueia multa duplicada.
-        if (emp.getMulta() != null) {
-            JOptionPane.showMessageDialog(this,
-                "Este empréstimo já possui uma multa gerada.");
-            return;
+        int linhaModelo = tblEmprestimos.convertRowIndexToModel(linha);
+        Long id = (Long) tblEmprestimos.getModel().getValueAt(linhaModelo, 0);
+
+        try {
+            Emprestimo emp = emprestimoController.findById(id);
+            if (emp == null) {
+                JOptionPane.showMessageDialog(this, "Empréstimo não encontrado.");
+                return;
+            }
+
+            if (emp.getMulta() != null) {
+                // Se já existe multa, abre a tela de visualização
+                try {
+                    br.com.ifba.biblioteca.multa.view.MultaVisualizar telaVisualizar = 
+                        context.getBean(br.com.ifba.biblioteca.multa.view.MultaVisualizar.class);
+                    telaVisualizar.setMultaId(emp.getMulta().getId());
+                    telaVisualizar.setLocationRelativeTo(null);
+                    telaVisualizar.setVisible(true);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, "Erro ao abrir visualização da multa: " + ex.getMessage());
+                }
+                return;
+            }
+
+            MultaGerar tela = context.getBean(MultaGerar.class);
+            tela.setEmprestimo(emp);
+            tela.setLocationRelativeTo(null);
+            tela.setVisible(true);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao abrir multa: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        // abre a tela multa gerar.
-        MultaGerar tela = context.getBean(MultaGerar.class);
-        tela.setEmprestimo(emp);          // ⭐ ESSENCIAL
-        tela.setLocationRelativeTo(null);
-        tela.setVisible(true);
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "Erro ao abrir multa: " + e.getMessage());
-        e.printStackTrace();
     }
-
-    }//GEN-LAST:event_btnMultasActionPerformed
-
     
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-       try {
+        try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (Exception ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new EmprestimoListar().setVisible(true);
         });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar;
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnExcluir;
-    private javax.swing.JButton btnMultas;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblEmprestimos;
-    private javax.swing.JTextField txtBuscar;
-    // End of variables declaration//GEN-END:variables
 }

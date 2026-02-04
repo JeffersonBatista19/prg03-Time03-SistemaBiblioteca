@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 public interface LivroRepository extends JpaRepository<Livro, Long> {
 
     Livro findByIsbn(String isbn); // procura pelo ISBN.
+    
+    Livro findByIsbnIgnoreCase(String isbn); // Procura ignorando case e espaços (útil para inputs manuais)
 
     boolean existsByIsbn(String isbn); // Verifica se já existe algum livro com o ISBN informado.
     

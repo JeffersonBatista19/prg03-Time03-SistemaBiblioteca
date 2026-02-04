@@ -1,5 +1,5 @@
-
 package br.com.ifba.biblioteca.exemplar.view;
+
 import br.com.ifba.biblioteca.exemplar.controller.ExemplarController;
 import br.com.ifba.biblioteca.exemplar.entity.EstadoConservacao;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
@@ -9,341 +9,196 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 
 @Component
 @Scope("prototype")
-public class ExemplarAdicionar extends javax.swing.JPanel {
+public class ExemplarAdicionar extends javax.swing.JFrame { // Mudado para JFrame para manter padrao 'Maximizado'
     
     @Autowired
     private ExemplarController exemplarController;
 
     @Autowired
-    private ExemplarListar exemplarListar; // para atualizar a tabela
+    private ExemplarListar exemplarListar;
     
     @Autowired
     private ApplicationContext context;
 
+    private JTextField txtIsbn, txtLocal;
+    private JSpinner spnTombamento;
+    private JComboBox<String> cmbConservacao, cmbStatus;
+    private JButton btnLivro, btnCriar, btnCancelar;
 
-
-    
     public ExemplarAdicionar() {
         initComponents();
-        txtIsbn.setEditable(false); 
-        txtIsbn.setBackground(new java.awt.Color(230, 230, 230));
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+    }
+    
+    private void initComponents() {
+        setTitle("Adicionar Exemplar");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+        
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Header
+        JLabel lblTitulo = new JLabel("ADICIONANDO EXEMPLAR");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Livro ISBN
+        gbc.gridx = 0; gbc.gridy = 1;
+        pnlForm.add(new JLabel("Livro ISBN:"), gbc);
+        txtIsbn = new JTextField(15);
+        txtIsbn.setEditable(false);
+        gbc.gridx = 1; gbc.gridy = 1;
+        pnlForm.add(txtIsbn, gbc);
+        btnLivro = new JButton("Buscar Livro");
+        estilizarBotao(btnLivro, new Color(52, 152, 219));
+        gbc.gridx = 2; gbc.gridy = 1;
+        pnlForm.add(btnLivro, gbc);
+
+        // Tombamento
+        gbc.gridx = 0; gbc.gridy = 2;
+        pnlForm.add(new JLabel("Tombamento:"), gbc);
+        spnTombamento = new JSpinner(new javax.swing.SpinnerNumberModel());
+        gbc.gridx = 1; gbc.gridy = 2;
+        pnlForm.add(spnTombamento, gbc);
+        
+        // Conservação
+        gbc.gridx = 0; gbc.gridy = 3;
+        pnlForm.add(new JLabel("Conservação:"), gbc);
+        cmbConservacao = new JComboBox<>(new String[] { "NOVO", "BOM", "REGULAR", "RUIM" });
+        gbc.gridx = 1; gbc.gridy = 3;
+        pnlForm.add(cmbConservacao, gbc);
+        
+        // Localização
+        gbc.gridx = 0; gbc.gridy = 4;
+        pnlForm.add(new JLabel("Localização:"), gbc);
+        txtLocal = new JTextField(20);
+        gbc.gridx = 1; gbc.gridy = 4;
+        pnlForm.add(txtLocal, gbc);
+        
+        // Status
+        gbc.gridx = 0; gbc.gridy = 5;
+        pnlForm.add(new JLabel("Status:"), gbc);
+        cmbStatus = new JComboBox<>(new String[] { "DISPONIVEL", "EMPRESTADO", "RESERVADO", "INATIVO" });
+        gbc.gridx = 1; gbc.gridy = 5;
+        pnlForm.add(cmbStatus, gbc);
+
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTOES SUL ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnCancelar = new JButton("Voltar");
+        estilizarBotao(btnCancelar, new Color(99, 110, 114));
+        
+        btnCriar = new JButton("Criar");
+        estilizarBotao(btnCriar, new Color(46, 204, 113));
+
+        pnlBotoes.add(btnCancelar);
+        pnlBotoes.add(btnCriar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+        
+        // Listeners
+        btnLivro.addActionListener(e -> buscarLivro());
+        btnCancelar.addActionListener(e -> dispose());
+        btnCriar.addActionListener(e -> criarExemplar());
+    }
+
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
     public void setExemplarListar(ExemplarListar exemplarListar) {
-    this.exemplarListar = exemplarListar;
-}
+        this.exemplarListar = exemplarListar;
+    }
     
     public void setIsbnLivro(String isbn) {
-    txtIsbn.setText(isbn);
-}
-
-
-
-   
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        txtAutor = new javax.swing.JTextField();
-        btnAutor = new javax.swing.JButton();
-        btnCriar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        btnCancelar = new javax.swing.JButton();
-        cmbStatus = new javax.swing.JComboBox<>();
-        txtLocal = new javax.swing.JTextField();
-        spnTombamento = new javax.swing.JSpinner();
-        cmbConservacao = new javax.swing.JComboBox<>();
-        jLabel6 = new javax.swing.JLabel();
-        txtIsbn = new javax.swing.JTextField();
-        btnLivro = new javax.swing.JButton();
-
-        txtAutor.setBackground(new java.awt.Color(255, 255, 255));
-        txtAutor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtAutorActionPerformed(evt);
-            }
-        });
-
-        btnAutor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAutor.setText("Buscar Autor");
-        btnAutor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAutorActionPerformed(evt);
-            }
-        });
-
-        btnCriar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCriar.setText("Criar");
-        btnCriar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCriarActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 14)); // NOI18N
-        jLabel1.setText("ADICIONANDO EXEMPLAR");
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Número Tombamento:");
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setText("Estado Conservação:");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setText("Localização:");
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel5.setText("Status:");
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        cmbStatus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DISPONIVEL", "EMPRESTADO", "RESERVADO", "INATIVO" }));
-        cmbStatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbStatusActionPerformed(evt);
-            }
-        });
-
-        txtLocal.setBackground(new java.awt.Color(255, 255, 255));
-
-        spnTombamento.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        spnTombamento.setModel(new javax.swing.SpinnerNumberModel());
-
-        cmbConservacao.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        cmbConservacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NOVO", "BOM", "REGULAR", "RUIM" }));
-        cmbConservacao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmbConservacaoActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setText("Livro ISBN:");
-
-        txtIsbn.setBackground(new java.awt.Color(255, 255, 255));
-        txtIsbn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtIsbnActionPerformed(evt);
-            }
-        });
-
-        btnLivro.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnLivro.setText("Buscar Livro");
-        btnLivro.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLivroActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(106, 106, 106)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnLivro))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbConservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel5)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addComponent(btnCriar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancelar)))
-                .addContainerGap(101, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLivro))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(cmbConservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCriar)
-                    .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnCriarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriarActionPerformed
-        try {
-        // ler valores do formulário.
-        int tombamento = (Integer) spnTombamento.getValue();
-        String conservacaoStr = (String) cmbConservacao.getSelectedItem();
-        String local = txtLocal.getText();
-        String statusStr = (String) cmbStatus.getSelectedItem();
-        String isbn = txtIsbn.getText(); // <<< ISBN do livro selecionado
-
-        // validações.
-        if (isbn == null || isbn.trim().isEmpty()) {
-            throw new RuntimeException("Selecione um livro antes de criar o exemplar.");
-        }
-
-        if (local == null || local.trim().isEmpty()) {
-            throw new RuntimeException("Localização física é obrigatória.");
-        }
-
-        if (conservacaoStr == null || conservacaoStr.trim().isEmpty()) {
-            throw new RuntimeException("Estado de conservação é obrigatório.");
-        }
-
-        if (statusStr == null || statusStr.trim().isEmpty()) {
-            throw new RuntimeException("Status do exemplar é obrigatório.");
-        }
-        
-
-        // conversões.
-        EstadoConservacao conservacao = EstadoConservacao.valueOf(conservacaoStr);
-        StatusExemplar status = StatusExemplar.valueOf(statusStr);
-
-        // criar objeto.
-        Exemplar exemplar = new Exemplar();
-        exemplar.setNumeroTombamento(tombamento);
-        exemplar.setConservacao(conservacao);
-        exemplar.setLocalizacaoFisica(local);
-        exemplar.setStatus(status);
-        exemplar.setIsbnLivro(isbn); // vínculo lógico com Livro via ISBN.
-
-  
-        exemplarController.save(exemplar);
-
-        // atualizar tabela.
-        if (exemplarListar != null) {
-            javax.swing.table.DefaultTableModel model =
-                (javax.swing.table.DefaultTableModel) exemplarListar.getjTable1().getModel();
-
-            model.addRow(new Object[]{
-                tombamento,
-                isbn,
-                conservacaoStr,
-                local,
-                statusStr
-            });
-        }
-
-        javax.swing.JOptionPane.showMessageDialog(this, "Exemplar criado com sucesso!");
-
-        // fechar tela.
-        javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
-
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Erro ao criar exemplar: " + e.getMessage()
-        );
+        txtIsbn.setText(isbn);
     }
-    }//GEN-LAST:event_btnCriarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        SwingUtilities.getWindowAncestor(this).dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void cmbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbStatusActionPerformed
-
-    private void cmbConservacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbConservacaoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbConservacaoActionPerformed
-
-    private void txtAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAutorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAutorActionPerformed
-
-    private void txtIsbnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIsbnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIsbnActionPerformed
-
-    private void btnAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutorActionPerformed
-        
-    }//GEN-LAST:event_btnAutorActionPerformed
-
-    private void btnLivroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLivroActionPerformed
-        BuscarLivro tela = context.getBean(BuscarLivro.class); // Spring cria
-        tela.setTelaExemplar(this); // injeta a tela manualmente
-        tela.carregarLivros();      // carrega com service já injetado
+    
+    private void buscarLivro() {
+        BuscarLivro tela = context.getBean(BuscarLivro.class);
+        tela.setTelaExemplar(this); // Nota: Isso exige mudança em BuscarLivro para aceitar ExemplarAdicionar como JFrame agora
+        tela.carregarLivros();
         tela.setVisible(true);
-    }//GEN-LAST:event_btnLivroActionPerformed
+    }
+    
+    private void criarExemplar() {
+         try {
+            int tombamento = (Integer) spnTombamento.getValue();
+            String conservacaoStr = (String) cmbConservacao.getSelectedItem();
+            String local = txtLocal.getText();
+            String statusStr = (String) cmbStatus.getSelectedItem();
+            String isbn = txtIsbn.getText();
 
+            if (isbn == null || isbn.trim().isEmpty()) throw new RuntimeException("Selecione um livro antes de criar o exemplar.");
+            if (local == null || local.trim().isEmpty()) throw new RuntimeException("Localização física é obrigatória.");
+            if (conservacaoStr == null || conservacaoStr.trim().isEmpty()) throw new RuntimeException("Estado de conservação é obrigatório.");
+            if (statusStr == null || statusStr.trim().isEmpty()) throw new RuntimeException("Status do exemplar é obrigatório.");
+            
+            Exemplar exemplar = new Exemplar();
+            exemplar.setNumeroTombamento(tombamento);
+            exemplar.setConservacao(EstadoConservacao.valueOf(conservacaoStr));
+            exemplar.setLocalizacaoFisica(local);
+            exemplar.setStatus(StatusExemplar.valueOf(statusStr));
+            exemplar.setIsbnLivro(isbn); 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAutor;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCriar;
-    private javax.swing.JButton btnLivro;
-    private javax.swing.JComboBox<String> cmbConservacao;
-    private javax.swing.JComboBox<String> cmbStatus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JSpinner spnTombamento;
-    private javax.swing.JTextField txtAutor;
-    private javax.swing.JTextField txtIsbn;
-    private javax.swing.JTextField txtLocal;
-    // End of variables declaration//GEN-END:variables
+            exemplarController.save(exemplar);
+
+            if (exemplarListar != null) {
+                exemplarListar.carregarExemplares();
+            }
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Exemplar criado com sucesso!");
+            this.dispose();
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao criar exemplar: " + e.getMessage());
+        }
+    }
 }

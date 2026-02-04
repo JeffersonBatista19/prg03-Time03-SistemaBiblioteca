@@ -1,24 +1,18 @@
 package br.com.ifba.biblioteca.evento.view;
 
-/**
- *
- * @author guilhermeAmedrado
- */
-
 import br.com.ifba.biblioteca.evento.controller.EventoController;
 import br.com.ifba.biblioteca.evento.entity.Evento;
 import br.com.ifba.biblioteca.evento.entity.Localfake;
-import br.com.ifba.biblioteca.evento.entity.Localfake;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Component
+
+@org.springframework.stereotype.Component
 public class TelaEventoAdicionar extends JFrame {
 
     @Autowired
@@ -30,75 +24,99 @@ public class TelaEventoAdicionar extends JFrame {
 
     // Componentes de Texto
     private JTextField txtTitulo, txtDescricao, txtVagas, txtDataHorario;
-    
-    
-    
-    // --- LÓGICA DE TRANSIÇÃO DO LOCAL ---
     private JComboBox<Localfake> cbLocal; 
-    
-    
-    
-    
     private JButton btnSalvar, btnVoltar;
 
     public TelaEventoAdicionar() {
         setTitle("Cadastrar Novo Evento");
-        setSize(550, 450);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximizado
         setLocationRelativeTo(null); 
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        JPanel painelFundo = new JPanel();
-        painelFundo.setLayout(new BoxLayout(painelFundo, BoxLayout.Y_AXIS));
-        painelFundo.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // --- FORMULÁRIO CENTRAL ---
+        JPanel painelForm = new JPanel(new GridBagLayout());
+        painelForm.setBackground(Color.WHITE);
+        painelForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
 
-        JPanel painelForm = new JPanel(new GridLayout(5, 2, 10, 15));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        txtTitulo = new JTextField();
-        txtDescricao = new JTextField();
-        txtVagas = new JTextField();
-        txtDataHorario = new JTextField();
+        // Titulo
+        JLabel lblHeader = new JLabel("NOVO EVENTO");
+        lblHeader.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        painelForm.add(lblHeader, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        // Configuração do Local (Versão atual: JComboBox)
+        // Campos
+        adicionarCampo(painelForm, gbc, 1, "Título:", txtTitulo = new JTextField(20));
+        adicionarCampo(painelForm, gbc, 2, "Descrição:", txtDescricao = new JTextField(20));
+        adicionarCampo(painelForm, gbc, 3, "Vagas:", txtVagas = new JTextField(10));
+        adicionarCampo(painelForm, gbc, 4, "Data (dd/MM/yyyy HH:mm):", txtDataHorario = new JTextField(15));
+        
+        gbc.gridx = 0; gbc.gridy = 5;
+        painelForm.add(new JLabel("Local:"), gbc);
         cbLocal = new JComboBox<>();
+        gbc.gridx = 1; gbc.gridy = 5;
+        painelForm.add(cbLocal, gbc);
 
-        painelForm.add(new JLabel("Título:"));
-        painelForm.add(txtTitulo);
-        
-        painelForm.add(new JLabel("Descrição:"));
-        painelForm.add(txtDescricao);
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(painelForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
 
-        painelForm.add(new JLabel("Local:"));
-        painelForm.add(cbLocal); 
-        
-        painelForm.add(new JLabel("Vagas:"));
-        painelForm.add(txtVagas);
+        // --- BOTOES SUL ---
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        painelBotoes.setBackground(Color.WHITE);
+        painelBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
 
-        painelForm.add(new JLabel("Data (dd/MM/yyyy HH:mm):"));
-        painelForm.add(txtDataHorario);
-
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114));
+        
         btnSalvar = new JButton("Salvar Evento");
+        estilizarBotao(btnSalvar, new Color(46, 204, 113));
 
         painelBotoes.add(btnVoltar);
         painelBotoes.add(btnSalvar);
+        add(painelBotoes, BorderLayout.SOUTH);
 
-        painelFundo.add(painelForm);
-        painelFundo.add(painelBotoes);
-        add(painelFundo);
-
-        btnVoltar.addActionListener(e -> voltarParaListagem()); // Aciona a volta para a tela principal
-        btnSalvar.addActionListener(e -> salvarEvento()); // Aciona a lógica de salvar o evento
+        btnVoltar.addActionListener(e -> voltarParaListagem()); 
+        btnSalvar.addActionListener(e -> salvarEvento()); 
+    }
+    
+    private void adicionarCampo(JPanel pnl, GridBagConstraints gbc, int row, String label, Component comp) {
+        gbc.gridx = 0; gbc.gridy = row;
+        pnl.add(new JLabel(label), gbc);
+        gbc.gridx = 1; gbc.gridy = row;
+        pnl.add(comp, gbc);
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 
     private void salvarEvento() {
         try {
             String strData = txtDataHorario.getText().trim();
-            // Se o usuário digitar apenas a data (10 caracteres), adiciona o horário padrão
             if (strData.length() == 10) {
                 strData += " 00:00";
             }
-            
             DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             LocalDateTime data = LocalDateTime.parse(strData, df);
 
@@ -107,19 +125,11 @@ public class TelaEventoAdicionar extends JFrame {
             e.setDescricao(txtDescricao.getText());
             e.setLimiteVagas(Integer.parseInt(txtVagas.getText()));
             e.setDataHorario(data);
-            
-            
-
-            //VERSÃO ATUAL (Localfake)
             e.setLocalEntity((Localfake) cbLocal.getSelectedItem());
 
-            
-            
-            
-            // Tenta salvar o evento usando o controlador
             eventoController.save(e);
             JOptionPane.showMessageDialog(this, "Evento salvo com sucesso!");
-            voltarParaListagem(); // Retorna para a tela de listagem se tudo der certo
+            voltarParaListagem();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -127,15 +137,17 @@ public class TelaEventoAdicionar extends JFrame {
     }
 
     private void voltarParaListagem() {
-        telaListar.carregarTabela();
-        telaListar.setVisible(true);
+        if (telaListar != null) {
+             telaListar.carregarTabela();
+             telaListar.setVisible(true);
+        }
         this.dispose();
     }
     
     public void preencherLocais() {
-        cbLocal.removeAllItems(); // Limpa a lista atual de locais
+        cbLocal.removeAllItems(); 
         for (Localfake l : eventoController.findAllLocais()) {
-            cbLocal.addItem(l); // Adiciona cada local vindo do banco na caixa de seleção
+            cbLocal.addItem(l); 
         }
     }
 }

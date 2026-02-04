@@ -48,6 +48,7 @@ public class ExemplarService implements ExemplarIService {
         existente.setConservacao(exemplar.getConservacao());
         existente.setLocalizacaoFisica(exemplar.getLocalizacaoFisica());
         existente.setStatus(exemplar.getStatus());
+        existente.setIsbnLivro(exemplar.getIsbnLivro()); 
 
         Exemplar atualizado = repository.save(existente);
 

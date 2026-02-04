@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package br.com.ifba.biblioteca.categoria.view;
 
 import br.com.ifba.biblioteca.categoria.controller.CategoriaIController;
@@ -14,44 +10,136 @@ import javax.swing.table.DefaultTableModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-
-/**
- *
- * @author jeffe
- */
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 @Component
 @Scope("prototype")
-
 public class CategoriaListar extends javax.swing.JFrame {
     
     @Autowired
     private CategoriaIController categoriaController;
 
-    private DefaultTableModel modeloTabela;
+    private JTable tblCategorias;
+    private JTextField txtBuscaNome;
+    private JButton btnBuscar, btnLimpar, btnAdicionar, btnEditar, btnInativar, btnAtualizar, btnVoltar;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CategoriaListar.class.getName());
 
-    /**
-     * Creates new form CategoriaListar
-     */
     public CategoriaListar() {
         initComponents();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        modeloTabela = (DefaultTableModel) tblCategorias.getModel();
-        tblCategorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
-
     }
     
-     @PostConstruct
+    @PostConstruct
     public void init() {
         carregarCategorias();
     }
     
+    private void initComponents() {
+        setTitle("Gestão de Categorias");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+
+        // --- PAINEL TOPO ---
+        JPanel pnlTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(Color.WHITE);
+        pnlTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+
+        pnlTopo.add(new JLabel("Nome:"));
+        txtBuscaNome = new JTextField(20);
+        txtBuscaNome.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscaNome.addActionListener(e -> buscarPorNome());
+        pnlTopo.add(txtBuscaNome);
+        
+        btnBuscar = new JButton("Buscar");
+        estilizarBotao(btnBuscar, new Color(52, 152, 219));
+        pnlTopo.add(btnBuscar);
+        
+        btnAdicionar = new JButton("Adicionar");
+        estilizarBotao(btnAdicionar, new Color(46, 204, 113));
+        pnlTopo.add(btnAdicionar);
+        
+        btnEditar = new JButton("Editar");
+        estilizarBotao(btnEditar, new Color(243, 156, 18));
+        pnlTopo.add(btnEditar);
+        
+        btnInativar = new JButton("Inativar");
+        estilizarBotao(btnInativar, new Color(231, 76, 60));
+        pnlTopo.add(btnInativar);
+        
+        btnAtualizar = new JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new Color(241, 196, 15));
+        btnAtualizar.setForeground(Color.DARK_GRAY);
+        pnlTopo.add(btnAtualizar);
+        
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114));
+        pnlTopo.add(btnVoltar);
+        
+        add(pnlTopo, BorderLayout.NORTH);
+
+        // --- TABELA ---
+        String[] colunas = {"ID", "Nome", "Descrição"};
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+            @Override
+             public boolean isCellEditable(int row, int column) {
+                 return false;
+             }
+        };
+        tblCategorias = new JTable(modelo);
+        tblCategorias.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblCategorias.setRowHeight(25);
+        tblCategorias.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        tblCategorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        add(new JScrollPane(tblCategorias), BorderLayout.CENTER);
+
+        // LISTENERS
+        btnBuscar.addActionListener(e -> buscarPorNome());
+        btnLimpar = new JButton("Limpar"); // Botão extra não adicionado ao painel visualmente antes, mas pode ser util na lógica
+        // Para manter consistencia com o codigo anterior e UI, o botao buscar ja faz o filtro.
+        // O Atualizar serve como reset.
+        
+        btnAdicionar.addActionListener(e -> {
+            try {
+                CategoriaAdicionar tela = new CategoriaAdicionar(this, categoriaController);
+                tela.setVisible(true);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        
+        btnEditar.addActionListener(e -> editarCategoria());
+        btnInativar.addActionListener(e -> inativarCategoria());
+        btnAtualizar.addActionListener(e -> {
+            txtBuscaNome.setText("");
+            carregarCategorias();
+        });
+        btnVoltar.addActionListener(e -> dispose());
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
     private void carregarCategorias() {
         try {
             List<Categoria> categorias = categoriaController.findAllAtivas();
@@ -61,229 +149,67 @@ public class CategoriaListar extends javax.swing.JFrame {
         }
     }
     
-     private void preencherTabela(List<Categoria> categorias) {
-        modeloTabela.setRowCount(0);
-
+    private void preencherTabela(List<Categoria> categorias) {
+        DefaultTableModel modelo = (DefaultTableModel) tblCategorias.getModel();
+        modelo.setRowCount(0);
         if (categorias == null) return;
-
         for (Categoria c : categorias) {
-            modeloTabela.addRow(new Object[]{
-                c.getId(), c.getNome(), c.getDescricao()
-            });
+            modelo.addRow(new Object[]{c.getId(), c.getNome(), c.getDescricao()});
         }
     }
-     
-     private Long getIdSelecionadoDaTabela() {
+    
+    private Long getIdSelecionadoDaTabela() {
         int linha = tblCategorias.getSelectedRow();
         if (linha == -1) {
             JOptionPane.showMessageDialog(this, "Selecione uma categoria na tabela.", "Atenção", JOptionPane.WARNING_MESSAGE);
             return null;
         }
-
         Object valorId = tblCategorias.getValueAt(linha, 0);
-        if (valorId == null) {
-            JOptionPane.showMessageDialog(this, "Não foi possível obter o ID da categoria.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-
+        if (valorId == null) return null;
         try {
             return Long.valueOf(valorId.toString());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "ID inválido na tabela.", "Erro", JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
-     
-      public void atualizarLista() {
-        carregarCategorias();
-    }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        txtBuscaNome = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblCategorias = new javax.swing.JTable();
-        btnBuscar = new javax.swing.JButton();
-        btnLimpar = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        btnInativar = new javax.swing.JButton();
-        btnAtualizar = new javax.swing.JButton();
-        btnAdicionar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("Buscar Nome: ");
-
-        tblCategorias.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "Descrição"
-            }
-        ));
-        jScrollPane1.setViewportView(tblCategorias);
-
-        btnBuscar.setText("BUSCAR");
-        btnBuscar.addActionListener(this::btnBuscarActionPerformed);
-
-        btnLimpar.setText("LIMPAR");
-        btnLimpar.addActionListener(this::btnLimparActionPerformed);
-
-        btnEditar.setText("EDITAR");
-        btnEditar.addActionListener(this::btnEditarActionPerformed);
-
-        btnInativar.setText("INATIVAR");
-        btnInativar.addActionListener(this::btnInativarActionPerformed);
-
-        btnAtualizar.setText("ATUALIZAR");
-        btnAtualizar.addActionListener(this::btnAtualizarActionPerformed);
-
-        btnAdicionar.setText("ADICIONAR");
-        btnAdicionar.addActionListener(this::btnAdicionarActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(58, 58, 58)
-                .addComponent(btnAdicionar)
-                .addGap(62, 62, 62)
-                .addComponent(btnEditar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnInativar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAtualizar)
-                .addGap(41, 41, 41))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBuscaNome, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnBuscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnLimpar)
-                .addContainerGap(28, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtBuscaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(btnBuscar)
-                    .addComponent(btnLimpar))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEditar)
-                    .addComponent(btnAtualizar)
-                    .addComponent(btnInativar)
-                    .addComponent(btnAdicionar))
-                .addContainerGap(63, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+    private void buscarPorNome() {
         try {
             String nome = txtBuscaNome.getText();
             List<Categoria> resultado = categoriaController.findByNome(nome);
             preencherTabela(resultado);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro na busca", JOptionPane.ERROR_MESSAGE);
-        }   
-    }//GEN-LAST:event_btnBuscarActionPerformed
+        }
+    }
 
-    private void btnLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparActionPerformed
-        // TODO add your handling code here:
-        txtBuscaNome.setText("");
-        carregarCategorias();
-    }//GEN-LAST:event_btnLimparActionPerformed
-
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        // TODO add your handling code here:
-        carregarCategorias();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    private void btnInativarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInativarActionPerformed
-        // TODO add your handling code here:
+    private void inativarCategoria() {
         Long id = getIdSelecionadoDaTabela();
         if (id == null) return;
-
-        int opcao = JOptionPane.showConfirmDialog(this,"Deseja realmente INATIVAR esta categoria?",
-            "Confirmar inativação",
-            JOptionPane.YES_NO_OPTION);
-
+        int opcao = JOptionPane.showConfirmDialog(this,"Deseja realmente INATIVAR esta categoria?", "Confirmar", JOptionPane.YES_NO_OPTION);
         if (opcao != JOptionPane.YES_OPTION) return;
-
         try {
             categoriaController.inativar(id);
-            JOptionPane.showMessageDialog(this, "Categoria inativada com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Categoria inativada com sucesso.");
             carregarCategorias();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao inativar", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnInativarActionPerformed
+    }
 
-    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-        // TODO add your handling code here:
+    private void editarCategoria() {
         Long id = getIdSelecionadoDaTabela();
         if (id == null) return;
-
         try {
             Categoria categoria = categoriaController.findByIdAtiva(id);
-
-        CategoriaEditar tela = new CategoriaEditar(this, categoriaController, categoria);
-        tela.setVisible(true);
-
+            CategoriaEditar tela = new CategoriaEditar(this, categoriaController, categoria);
+            tela.setVisible(true);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao editar", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnEditarActionPerformed
-
-    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        // TODO add your handling code here:
-        try {
-        CategoriaAdicionar tela = new CategoriaAdicionar(this, categoriaController);
-        tela.setVisible(true);
-    } catch (Exception ex) {
-        JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao abrir cadastro", JOptionPane.ERROR_MESSAGE);
     }
-    }//GEN-LAST:event_btnAdicionarActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar;
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnInativar;
-    private javax.swing.JButton btnLimpar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblCategorias;
-    private javax.swing.JTextField txtBuscaNome;
-    // End of variables declaration//GEN-END:variables
+    
+    public void atualizarLista() {
+        carregarCategorias();
+    }
 }

@@ -15,11 +15,12 @@ public class AutorEditar extends JFrame {
     private AutorListar telaPai;
     private Autor autorAtual; // O autor que estamos editando
 
-    private JTextField txtNome = new JTextField(20);
-    private JTextField txtNacionalidade = new JTextField(20);
-    private JTextField txtAnoNasc = new JTextField(10);
-    private JTextField txtAnoFalec = new JTextField(10);
-    private JTextArea txtBiografia = new JTextArea(5, 20);
+    private JTextField txtNome;
+    private JTextField txtNacionalidade;
+    private JTextField txtAnoNasc;
+    private JTextField txtAnoFalec;
+    private JTextArea txtBiografia;
+    private JButton btnSalvar, btnVoltar;
 
     public AutorEditar(AutorIController controller, AutorListar telaPai, Autor autor) {
         super("Editar Autor");
@@ -31,34 +32,94 @@ public class AutorEditar extends JFrame {
     }
 
     private void initComponents() {
-        setSize(400, 500);
-        setLayout(new GridLayout(6, 2, 10, 10));
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        add(new JLabel("Nome:"));
-        add(txtNome);
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
 
-        add(new JLabel("Nacionalidade:"));
-        add(txtNacionalidade);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        add(new JLabel("Ano Nascimento:"));
-        add(txtAnoNasc);
+        // Título
+        JLabel lblTitulo = new JLabel("EDITAR AUTOR");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
 
-        add(new JLabel("Ano Falecimento:"));
-        add(txtAnoFalec);
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        add(new JLabel("Biografia:"));
-        add(new JScrollPane(txtBiografia));
+        // Campos
+        adicionarCampo(pnlForm, gbc, 1, "Nome:", txtNome = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 2, "Nacionalidade:", txtNacionalidade = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 3, "Ano Nascimento:", txtAnoNasc = new JTextField(10));
+        adicionarCampo(pnlForm, gbc, 4, "Ano Falecimento:", txtAnoFalec = new JTextField(10));
 
-        JButton btnSalvar = new JButton("Salvar Alterações");
-        JButton btnCancelar = new JButton("Cancelar");
+        // Biografia
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        pnlForm.add(new JLabel("Biografia:"), gbc);
+        
+        txtBiografia = new JTextArea(5, 30);
+        txtBiografia.setLineWrap(true);
+        txtBiografia.setWrapStyleWord(true);
+        JScrollPane scrollBio = new JScrollPane(txtBiografia);
+        gbc.gridx = 1; gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0.5; // Expand vertical
+        pnlForm.add(scrollBio, gbc);
 
-        add(btnSalvar);
-        add(btnCancelar);
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
 
+        // --- BOTÕES ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114));
+        btnVoltar.addActionListener(e -> dispose());
+
+        btnSalvar = new JButton("Salvar Alterações");
+        estilizarBotao(btnSalvar, new Color(46, 204, 113));
         btnSalvar.addActionListener(e -> atualizarAutor());
-        btnCancelar.addActionListener(e -> dispose());
+
+        pnlBotoes.add(btnVoltar);
+        pnlBotoes.add(btnSalvar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+    }
+    
+    private void adicionarCampo(JPanel pnl, GridBagConstraints gbc, int row, String label, java.awt.Component comp) {
+        gbc.gridx = 0; gbc.gridy = row;
+        gbc.weighty = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        pnl.add(new JLabel(label), gbc);
+        gbc.gridx = 1; gbc.gridy = row;
+        pnl.add(comp, gbc);
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 
     private void preencherCampos() {
@@ -82,14 +143,18 @@ public class AutorEditar extends JFrame {
 
             if (!txtAnoNasc.getText().isEmpty()) 
                 autorAtual.setAnoNascimento(Integer.parseInt(txtAnoNasc.getText()));
+            else
+                autorAtual.setAnoNascimento(null);
             
             if (!txtAnoFalec.getText().isEmpty()) 
                 autorAtual.setAnoFalecimento(Integer.parseInt(txtAnoFalec.getText()));
+            else
+                 autorAtual.setAnoFalecimento(null);
 
             controller.update(autorAtual); // Manda atualizar no banco
             
             JOptionPane.showMessageDialog(this, "Autor atualizado com sucesso!");
-            telaPai.carregarDados(); // Atualiza a lista
+            if (telaPai != null) telaPai.carregarDados(); // Atualiza a lista
             dispose();
 
         } catch (NumberFormatException ex) {

@@ -15,6 +15,12 @@ public class LivroService implements LivroIService {
     // Injeta o repositório de livros para acessar o banco
     @Autowired
     private LivroRepository livroRepository;
+
+    @Autowired
+    private br.com.ifba.biblioteca.categoria.repository.CategoriaRepository categoriaRepository;
+
+    @Autowired
+    private br.com.ifba.biblioteca.editora.repository.EditoraRepository editoraRepository;
     
     @PersistenceContext
     private EntityManager entityManager;
@@ -25,6 +31,24 @@ public class LivroService implements LivroIService {
         if (existsByIsbn(livro.getIsbn())) {
             throw new RuntimeException("Já existe um livro com este ISBN.");
         }
+        
+        // CORREÇÃO: Busca entidade completa para garantir que o nome não seja nulo
+        if (livro.getCategoria() != null && livro.getCategoria().getId() != null) {
+            br.com.ifba.biblioteca.categoria.entity.Categoria cat = categoriaRepository.findById(livro.getCategoria().getId()).orElse(null);
+            if (cat != null) {
+                livro.setCategoria(cat); // Reanexa objeto completo
+                livro.setCategoriaNome(cat.getNome());
+            }
+        }
+        
+        if (livro.getEditora() != null && livro.getEditora().getId() != null) {
+            br.com.ifba.biblioteca.editora.entity.Editora ed = editoraRepository.findById(livro.getEditora().getId()).orElse(null);
+            if (ed != null) {
+                livro.setEditora(ed); // Reanexa objeto completo
+                livro.setEditoraNome(ed.getNome());
+            }
+        }
+        
         return livroRepository.save(livro);
     }
 
@@ -33,6 +57,24 @@ public class LivroService implements LivroIService {
         if (livro.getId() == null) {
             throw new RuntimeException("Livro não identificado para atualização.");
         }
+        
+        // CORREÇÃO: Busca entidade completa para garantir que o nome não seja nulo
+        if (livro.getCategoria() != null && livro.getCategoria().getId() != null) {
+            br.com.ifba.biblioteca.categoria.entity.Categoria cat = categoriaRepository.findById(livro.getCategoria().getId()).orElse(null);
+            if (cat != null) {
+                livro.setCategoria(cat);
+                livro.setCategoriaNome(cat.getNome());
+            }
+        }
+        
+        if (livro.getEditora() != null && livro.getEditora().getId() != null) {
+            br.com.ifba.biblioteca.editora.entity.Editora ed = editoraRepository.findById(livro.getEditora().getId()).orElse(null);
+            if (ed != null) {
+                livro.setEditora(ed);
+                livro.setEditoraNome(ed.getNome());
+            }
+        }
+        
         return livroRepository.save(livro);
     }
 
@@ -54,7 +96,8 @@ public class LivroService implements LivroIService {
     
     @Override
     public Livro findByIsbn(String isbn) {
-        return livroRepository.findByIsbn(isbn);
+        if (isbn == null) return null;
+        return livroRepository.findByIsbnIgnoreCase(isbn.trim());
     }
 
     @Override
@@ -71,14 +114,27 @@ public class LivroService implements LivroIService {
     public List<Object[]> findAllComNomeAutor() {
     List<Livro> livros = livroRepository.findAll();
 
-    return livros.stream().map(l -> new Object[]{
-        l.getId(),
-        l.getTitulo(),
-        l.getIsbn(),
-        l.getAutorNome(),
-        l.getEditora().getNome(),
-        l.getCategoria().getId(),
-        l.getAnoPublicacao()
+    return livros.stream().map(l -> {
+        // Usa o nome desnormalizado se existir, senão tenta obter do objeto relacionado
+        String nomeEditora = l.getEditoraNome();
+        if (nomeEditora == null && l.getEditora() != null) {
+            nomeEditora = l.getEditora().getNome();
+        }
+        
+        String nomeCategoria = l.getCategoriaNome();
+        if (nomeCategoria == null && l.getCategoria() != null) {
+            nomeCategoria = l.getCategoria().getNome();
+        }
+        
+        return new Object[]{
+            l.getId(),
+            l.getTitulo(),
+            l.getIsbn(),
+            l.getAutorNome(),
+            nomeEditora != null ? nomeEditora : "N/A",
+            nomeCategoria != null ? nomeCategoria : "N/A",
+            l.getAnoPublicacao()
+        };
     }).toList();
 }
 

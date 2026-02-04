@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package br.com.ifba.biblioteca.usuario.view;
 
 import br.com.ifba.biblioteca.pessoa.entity.NivelAcesso;
@@ -9,15 +5,27 @@ import br.com.ifba.biblioteca.pessoa.entity.StatusPessoa;
 import br.com.ifba.biblioteca.pessoa.entity.TipoPerfil;
 import br.com.ifba.biblioteca.usuario.controller.UsuarioIController;
 import br.com.ifba.biblioteca.usuario.entity.Usuario;
+import br.com.ifba.biblioteca.usuario.entity.Administrador;
+import br.com.ifba.biblioteca.usuario.entity.Bibliotecario;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-/**
- *
- * @author jeffe
- */
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+// import java.awt.Component; // REMOVED AMBIGUITY
 
 @Component
 public class UsuarioAdicionar extends javax.swing.JFrame {
@@ -25,23 +33,114 @@ public class UsuarioAdicionar extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UsuarioAdicionar.class.getName());
     
     @Autowired
-    
     private UsuarioIController usuarioController;
 
     private UsuarioListar usuarioListar;
+
+    // Componentes
+    private JTextField txtNome, txtCpf, txtTelefone, txtLogin, txtDataCadastro;
+    private JPasswordField txtSenha;
+    private JComboBox<TipoPerfil> cmbPerfil;
+    private JComboBox<NivelAcesso> cmbNivel;
+    private JComboBox<StatusPessoa> cmbStatus;
+    private JButton btnSalvar, btnCancelar;
 
     public void setUsuarioListar(UsuarioListar usuarioListar) {
         this.usuarioListar = usuarioListar;
     }
     
-    /**
-     * Creates new form UsuarioAdicionar
-     */
     public UsuarioAdicionar() {
         initComponents();
         carregarCombos();
         txtDataCadastro.setText(LocalDate.now().toString());
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+    }
+    
+    private void initComponents() {
+        setTitle("Cadastro de Usuário");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Título
+        JLabel lblTitulo = new JLabel("CADASTRAR USUÁRIO");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Campos
+        adicionarCampo(pnlForm, gbc, 1, "Nome Completo:", txtNome = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 2, "CPF:", txtCpf = new JTextField(15));
+        adicionarCampo(pnlForm, gbc, 3, "Telefone:", txtTelefone = new JTextField(15));
+        
+        txtDataCadastro = new JTextField(15);
         txtDataCadastro.setEditable(false);
+        adicionarCampo(pnlForm, gbc, 4, "Data Cadastro:", txtDataCadastro);
+        
+        adicionarCampo(pnlForm, gbc, 5, "Login:", txtLogin = new JTextField(15));
+        adicionarCampo(pnlForm, gbc, 6, "Senha:", txtSenha = new JPasswordField(15));
+
+        adicionarCampo(pnlForm, gbc, 7, "Perfil:", cmbPerfil = new JComboBox<>());
+        adicionarCampo(pnlForm, gbc, 8, "Nível:", cmbNivel = new JComboBox<>());
+        adicionarCampo(pnlForm, gbc, 9, "Status:", cmbStatus = new JComboBox<>());
+
+        // Container
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTÕES ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnCancelar = new JButton("Voltar");
+        estilizarBotao(btnCancelar, new Color(99, 110, 114));
+        
+        btnSalvar = new JButton("Confirmar");
+        estilizarBotao(btnSalvar, new Color(46, 204, 113));
+
+        pnlBotoes.add(btnCancelar);
+        pnlBotoes.add(btnSalvar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+
+        btnCancelar.addActionListener(e -> dispose());
+        btnSalvar.addActionListener(e -> salvarUsuario());
+    }
+
+    private void adicionarCampo(JPanel pnl, GridBagConstraints gbc, int row, String label, java.awt.Component comp) {
+        gbc.gridx = 0; gbc.gridy = row;
+        pnl.add(new JLabel(label), gbc);
+        gbc.gridx = 1; gbc.gridy = row;
+        pnl.add(comp, gbc);
+    }
+
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
     private void carregarCombos() {
@@ -55,7 +154,7 @@ public class UsuarioAdicionar extends javax.swing.JFrame {
         for (StatusPessoa s : StatusPessoa.values()) cmbStatus.addItem(s);
     }
     
-     private boolean validar() {
+    private boolean validar() {
         if (txtNome.getText().trim().isEmpty()) return false;
         if (txtCpf.getText().trim().isEmpty()) return false;
         if (txtTelefone.getText().trim().isEmpty()) return false;
@@ -63,191 +162,26 @@ public class UsuarioAdicionar extends javax.swing.JFrame {
         if (String.valueOf(txtSenha.getPassword()).trim().isEmpty()) return false;
         return true;
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        cmbPerfil = new javax.swing.JComboBox<>();
-        cmbStatus = new javax.swing.JComboBox<>();
-        txtNome = new javax.swing.JTextField();
-        txtCpf = new javax.swing.JTextField();
-        txtTelefone = new javax.swing.JTextField();
-        txtLogin = new javax.swing.JTextField();
-        txtSenha = new javax.swing.JPasswordField();
-        jLabel8 = new javax.swing.JLabel();
-        txtDataCadastro = new javax.swing.JTextField();
-        cmbNivel = new javax.swing.JComboBox<>();
-        jLabel9 = new javax.swing.JLabel();
-        btnSalvar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("Nome completo:");
-
-        jLabel2.setText("CPF:");
-
-        jLabel3.setText("Telefone:");
-
-        jLabel4.setText("Login:");
-
-        jLabel5.setText("Senha:");
-
-        jLabel6.setText("Perfil:");
-
-        jLabel7.setText("Status:");
-
-        cmbPerfil.setModel(new javax.swing.DefaultComboBoxModel<>(TipoPerfil.values()));
-        cmbPerfil.addActionListener(this::cmbPerfilActionPerformed);
-
-        cmbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(StatusPessoa.values()));
-
-        txtTelefone.addActionListener(this::txtTelefoneActionPerformed);
-
-        jLabel8.setText("Data de Cadastro:");
-
-        cmbNivel.setModel(new javax.swing.DefaultComboBoxModel<>(NivelAcesso.values()));
-        cmbNivel.addActionListener(this::cmbNivelActionPerformed);
-
-        jLabel9.setText("Nivel:");
-
-        btnSalvar.setText("SALVAR");
-        btnSalvar.addActionListener(this::btnSalvarActionPerformed);
-
-        btnCancelar.setText("CANCELAR");
-        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCpf)
-                            .addComponent(txtTelefone)
-                            .addComponent(txtDataCadastro, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)))
-                .addGap(244, 244, 244))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(183, 183, 183)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtSenha))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(btnSalvar)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCancelar)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(74, 74, 74))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtCpf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(txtDataCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(32, 32, 32)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
-                    .addComponent(cmbPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmbNivel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnCancelar))
-                .addGap(20, 20, 20))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtTelefoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefoneActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTelefoneActionPerformed
-
-    private void cmbNivelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbNivelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbNivelActionPerformed
-
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+    private void salvarUsuario() {
          if (!validar()) {
             JOptionPane.showMessageDialog(this, "Preencha todos os campos!");
             return;
         }
 
         try {
-            Usuario u = new Usuario();
+            TipoPerfil perfilSelecionado = (TipoPerfil) cmbPerfil.getSelectedItem();
+            Usuario u;
+
+            if (TipoPerfil.ADMINISTRADOR.equals(perfilSelecionado)) {
+                u = new Administrador();
+            } else { // Assumindo que o outro perfil é Bibliotecário
+                Bibliotecario bib = new Bibliotecario();
+                bib.setTurno("Matutino"); // Valor padrão/exemplo por enquanto
+                bib.setMatriculaFuncionario("AUTO-" + System.currentTimeMillis()); // Gerado auto para evitar erro agora
+                u = bib;
+            }
+
             u.setNomeCompleto(txtNome.getText().trim());
             u.setCpf(txtCpf.getText().trim());
             u.setTelefone(txtTelefone.getText().trim());
@@ -255,7 +189,7 @@ public class UsuarioAdicionar extends javax.swing.JFrame {
 
             u.setLogin(txtLogin.getText().trim());
             u.setSenha(String.valueOf(txtSenha.getPassword()).trim());
-
+            
             u.setTipoPerfil((TipoPerfil) cmbPerfil.getSelectedItem());
             u.setNivelAcesso((NivelAcesso) cmbNivel.getSelectedItem());
             u.setStatusPessoa((StatusPessoa) cmbStatus.getSelectedItem());
@@ -271,37 +205,5 @@ public class UsuarioAdicionar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao salvar: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btnSalvarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void cmbPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPerfilActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbPerfilActionPerformed
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnSalvar;
-    private javax.swing.JComboBox<NivelAcesso> cmbNivel;
-    private javax.swing.JComboBox<TipoPerfil> cmbPerfil;
-    private javax.swing.JComboBox<StatusPessoa> cmbStatus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField txtCpf;
-    private javax.swing.JTextField txtDataCadastro;
-    private javax.swing.JTextField txtLogin;
-    private javax.swing.JTextField txtNome;
-    private javax.swing.JPasswordField txtSenha;
-    private javax.swing.JTextField txtTelefone;
-    // End of variables declaration//GEN-END:variables
+    }
 }

@@ -59,219 +59,161 @@ public class BuscarEditora extends javax.swing.JFrame {
    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        btnBuscarId = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        spnID = new javax.swing.JSpinner();
-        btnBuscarId1 = new javax.swing.JButton();
-        btnLimparID = new javax.swing.JButton();
-        btnSelecionar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        btnAtualizar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblEditoras = new javax.swing.JTable();
-
-        btnBuscarId.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnBuscarId.setText("Buscar");
-        btnBuscarId.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarIdActionPerformed(evt);
-            }
-        });
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("BUSCANDO EDITORA");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel4.setText("ID:");
-
-        spnID.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-
-        btnBuscarId1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnBuscarId1.setText("Buscar");
-        btnBuscarId1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarId1ActionPerformed(evt);
-            }
-        });
-
-        btnLimparID.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnLimparID.setText("Limpar");
-        btnLimparID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLimparIDActionPerformed(evt);
-            }
-        });
-
-        btnSelecionar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSelecionar.setText("Selecionar");
-        btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionarActionPerformed(evt);
-            }
-        });
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
-            }
-        });
-
-        tblEditoras.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "CNPJ", "Nome", "Telefone", "Endereço"
-            }
-        ));
-        jScrollPane1.setViewportView(tblEditoras);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(112, 112, 112))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spnID, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnBuscarId1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnLimparID))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 417, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSelecionar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnCancelar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAtualizar)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(spnID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarId1)
-                    .addComponent(btnLimparID))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSelecionar)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnAtualizar))
-                .addContainerGap())
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarIdActionPerformed
-        
-    }//GEN-LAST:event_btnBuscarIdActionPerformed
-
-    private void btnBuscarId1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarId1ActionPerformed
-        Long id = Long.valueOf(spnID.getValue().toString());
-
-    DefaultTableModel model = (DefaultTableModel) tblEditoras.getModel();
-    model.setRowCount(0);
-
-    try {
-        Editora e = editoraService.findById(id);
-        model.addRow(new Object[]{
-            e.getId(),
-            e.getCnpj(),
-            e.getNome(),
-            e.getTelefone(),
-            e.getEndereco()
-        });
-    } catch (RuntimeException ex) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Editora não encontrada.");
-    }
-    }//GEN-LAST:event_btnBuscarId1ActionPerformed
-
-    private void btnLimparIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimparIDActionPerformed
-        spnID.setValue(0);
-        carregarEditoras();
-    }//GEN-LAST:event_btnLimparIDActionPerformed
-
-    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        int linha = tblEditoras.getSelectedRow();
-
-    if (linha == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Selecione uma editora.");
-        return;
-    }
-
-    Long idEditora = Long.valueOf(
-        tblEditoras.getValueAt(linha, 0).toString()
-    );
-
-    String nomeEditora = tblEditoras.getValueAt(linha, 2).toString();
-
-    if (telaLivro != null) {
-        telaLivro.setEditoraSelecionada(idEditora, nomeEditora);
-    } else if (telaEditar != null) {
-        telaEditar.setEditoraSelecionada(idEditora, nomeEditora);
-    }
-
-    dispose();
-    }//GEN-LAST:event_btnSelecionarActionPerformed
-
-    // fecha a tela BuscarEditora.
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    // atualiza a tabela das editoras existentes.
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarEditoras();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    
- 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnBuscarId;
-    private javax.swing.JButton btnBuscarId1;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnLimparID;
     private javax.swing.JButton btnSelecionar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner spnID;
     private javax.swing.JTable tblEditoras;
-    // End of variables declaration//GEN-END:variables
+
+    private void initComponents() {
+        setTitle("Listagem de Editoras");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new java.awt.BorderLayout());
+        getContentPane().setBackground(new java.awt.Color(240, 242, 245));
+
+        // --- PAINEL TOPO (Busca) ---
+        javax.swing.JPanel pnlTopo = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(java.awt.Color.WHITE);
+        pnlTopo.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(200, 200, 200)));
+
+        pnlTopo.add(new javax.swing.JLabel("ID:"));
+        spnID = new javax.swing.JSpinner(new javax.swing.SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+        spnID.setPreferredSize(new java.awt.Dimension(80, 25));
+        pnlTopo.add(spnID);
+
+        btnBuscarId = new javax.swing.JButton("Buscar");
+        estilizarBotao(btnBuscarId, new java.awt.Color(52, 152, 219)); // Blue
+        pnlTopo.add(btnBuscarId);
+
+        btnLimparID = new javax.swing.JButton("Limpar");
+        estilizarBotao(btnLimparID, new java.awt.Color(99, 110, 114)); // Grey
+        pnlTopo.add(btnLimparID);
+
+        add(pnlTopo, java.awt.BorderLayout.NORTH);
+
+        // --- TABELA CENTRAL ---
+        String[] colunas = {"ID", "CNPJ", "Nome", "Telefone", "Endereço"};
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+             @Override
+             public boolean isCellEditable(int row, int column) {
+                 return false;
+             }
+        };
+        
+        tblEditoras = new javax.swing.JTable(modelo);
+        tblEditoras.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        tblEditoras.setRowHeight(25);
+        tblEditoras.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        tblEditoras.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        
+        tblEditoras.getColumnModel().getColumn(0).setPreferredWidth(50); // ID
+        tblEditoras.getColumnModel().getColumn(1).setPreferredWidth(120); // CNPJ
+        tblEditoras.getColumnModel().getColumn(2).setPreferredWidth(200); // Nome
+
+        jScrollPane1 = new javax.swing.JScrollPane(tblEditoras);
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        // --- PAINEL BOTOES (Sul) ---
+        javax.swing.JPanel pnlSul = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 15, 15));
+        pnlSul.setBackground(java.awt.Color.WHITE);
+        pnlSul.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, new java.awt.Color(200, 200, 200)));
+
+        btnSelecionar = new javax.swing.JButton("Selecionar");
+        estilizarBotao(btnSelecionar, new java.awt.Color(46, 204, 113)); // Green
+        
+        btnAtualizar = new javax.swing.JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new java.awt.Color(241, 196, 15)); // Yellow
+        btnAtualizar.setForeground(java.awt.Color.DARK_GRAY);
+
+        btnCancelar = new javax.swing.JButton("Cancelar");
+        estilizarBotao(btnCancelar, new java.awt.Color(231, 76, 60)); // Red
+
+        pnlSul.add(btnAtualizar);
+        pnlSul.add(btnCancelar);
+        pnlSul.add(btnSelecionar);
+
+        add(pnlSul, java.awt.BorderLayout.SOUTH);
+
+        // Listeners
+        btnBuscarId.addActionListener(evt -> btnBuscarIdActionPerformed(evt));
+        btnLimparID.addActionListener(evt -> btnLimparIDActionPerformed(evt));
+        btnSelecionar.addActionListener(evt -> btnSelecionarActionPerformed(evt));
+        btnCancelar.addActionListener(evt -> btnCancelarActionPerformed(evt));
+        btnAtualizar.addActionListener(evt -> btnAtualizarActionPerformed(evt));
+
+        pack();
+        setSize(800, 500);
+    }
+
+    private void estilizarBotao(javax.swing.JButton btn, java.awt.Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(java.awt.Color.WHITE);
+        btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    private void btnBuscarIdActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            Long id = Long.valueOf(spnID.getValue().toString());
+            DefaultTableModel model = (DefaultTableModel) tblEditoras.getModel();
+            model.setRowCount(0);
+
+            if (id == 0) {
+                 carregarEditoras();
+                 return;
+            }
+
+            Editora e = editoraService.findById(id);
+            if (e != null) {
+                model.addRow(new Object[]{
+                    e.getId(),
+                    e.getCnpj(),
+                    e.getNome(),
+                    e.getTelefone(),
+                    e.getEndereco()
+                });
+            } else {
+                 javax.swing.JOptionPane.showMessageDialog(this, "Editora não encontrada.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (Exception ex) {
+             javax.swing.JOptionPane.showMessageDialog(this, "Editora não encontrada ou erro inesperado.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void btnLimparIDActionPerformed(java.awt.event.ActionEvent evt) {
+        spnID.setValue(0);
+        carregarEditoras();
+    }
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
+        dispose();
+    }
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {
+        carregarEditoras();
+    }
+
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
+        int linha = tblEditoras.getSelectedRow();
+        if (linha == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione uma editora na tabela.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Long idEditora = Long.valueOf(tblEditoras.getValueAt(linha, 0).toString());
+        String nomeEditora = tblEditoras.getValueAt(linha, 2).toString();
+
+        if (telaLivro != null) {
+            telaLivro.setEditoraSelecionada(idEditora, nomeEditora);
+        } else if (telaEditar != null) {
+            telaEditar.setEditoraSelecionada(idEditora, nomeEditora);
+        }
+        dispose();
+    }
 }
+

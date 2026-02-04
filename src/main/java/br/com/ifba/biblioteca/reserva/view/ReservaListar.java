@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package br.com.ifba.biblioteca.reserva.view;
 
 import br.com.ifba.biblioteca.reserva.entity.Reserva;
@@ -13,329 +9,205 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author misae
  */
 
-//Tela responsável por listar, filtrar e gerenciar reservas.
-
-@Component // Define a classe como um Bean gerenciado pelo Spring
-@Scope("prototype") // Cada chamada cria uma nova instância da tela
+@Component
+@Scope("prototype")
 public class ReservaListar extends javax.swing.JFrame {
     
-    // Logger para registro de eventos da aplicação
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ReservaListar.class.getName());
 
-    // Serviço responsável pelas regras de negócio de Reserva
     @Autowired
     private ReservaService reservaService;
     
-    // Contexto do Spring usado para obter outras telas como Beans
     @Autowired
     private ApplicationContext context;
 
-    // Lista usada para mapear a linha da tabela com o objeto Reserva
     private List<Reserva> reservasExibidas;
 
-    
-    /**
-     * Creates new form ReservaListar
-     */
-    
-    //Construtor da tela.
+    // Componentes de Tela
+    private JTable tblReservas;
+    private JComboBox<String> cbStatus;
+    private JTextField txtClienteId;
+    private JTextField txtExemplarId;
+    private JButton btnAdicionar, btnAtender, btnCancelar, btnFiltrar, btnAtualizar, btnVoltar;
+
     public ReservaListar() {
-        initComponents();// Inicializa os componentes da interface
-        setLocationRelativeTo(null); // centraliza
-        preencherComboStatus(); // Preenche o ComboBox com os status possíveis
-        
+        initComponents();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); // Tela Cheia
+        setLocationRelativeTo(null);
+        preencherComboStatus();
     }
     
+    private void initComponents() {
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setBackground(new Color(240, 242, 245));
+
+        // --- PAINEL TOPO (Filtros e Ações) ---
+        JPanel pnlTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(Color.WHITE);
+        pnlTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+
+        // Filtros
+        pnlTopo.add(new JLabel("Status:"));
+        cbStatus = new JComboBox<>();
+        pnlTopo.add(cbStatus);
+
+        pnlTopo.add(new JLabel("Cliente ID:"));
+        txtClienteId = new JTextField(5);
+        pnlTopo.add(txtClienteId);
+
+        pnlTopo.add(new JLabel("Exemplar ID:"));
+        txtExemplarId = new JTextField(5);
+        pnlTopo.add(txtExemplarId);
+
+        btnFiltrar = new JButton("Filtrar");
+        estilizarBotao(btnFiltrar, new Color(52, 152, 219)); // Azul
+        pnlTopo.add(btnFiltrar);
+
+        // Ações
+        btnAdicionar = new JButton("Nova Reserva");
+        estilizarBotao(btnAdicionar, new Color(46, 204, 113)); // Verde
+        pnlTopo.add(btnAdicionar);
+
+        btnAtender = new JButton("Atender");
+        estilizarBotao(btnAtender, new Color(155, 89, 182)); // Roxo
+        pnlTopo.add(btnAtender);
+
+        btnCancelar = new JButton("Cancelar");
+        estilizarBotao(btnCancelar, new Color(231, 76, 60)); // Vermelho
+        pnlTopo.add(btnCancelar);
+        
+        btnAtualizar = new JButton("Atualizar Lista");
+        estilizarBotao(btnAtualizar, new Color(241, 196, 15)); // Amarelo
+        btnAtualizar.setForeground(Color.DARK_GRAY);
+        pnlTopo.add(btnAtualizar);
+
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114)); // Cinza Escuro
+        pnlTopo.add(btnVoltar);
+
+        add(pnlTopo, BorderLayout.NORTH);
+
+        // --- TABELA ---
+        tblReservas = new JTable();
+        tblReservas.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblReservas.setRowHeight(25);
+        tblReservas.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
+        JScrollPane scrollPane = new JScrollPane(tblReservas);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Eventos
+        btnFiltrar.addActionListener(evt -> btnFiltrarActionPerformed(evt));
+        btnAdicionar.addActionListener(evt -> btnAdicionarActionPerformed(evt));
+        btnAtender.addActionListener(evt -> btnAtenderActionPerformed(evt));
+        btnCancelar.addActionListener(evt -> btnCancelarActionPerformed(evt));
+        btnAtualizar.addActionListener(evt -> btnAtualizarActionPerformed(evt));
+        btnVoltar.addActionListener(evt -> dispose());
+    }
+
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
     
-    //Preenche a tabela de reservas
     public void carregarTabela(List<Reserva> reservas) {
-        String[] colunas = {"Cliente", "Exemplar", "Data", "Status"};
-        javax.swing.table.DefaultTableModel modelo =
-                new javax.swing.table.DefaultTableModel(colunas, 0);
+        String[] colunas = {"ID", "Cliente", "Exemplar", "Data", "Status"};
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         for (Reserva r : reservas) {
-            Object[] linha = {
-                r.getCliente().getId(),
+            modelo.addRow(new Object[]{
+                r.getId(), // Adicionei ID para facilitar identificação visual
+                r.getCliente().getNomeCompleto(),
                 r.getExemplar().getNumeroTombamento(),
                 r.getDataReserva(),
                 r.getStatus()
-            };
-            modelo.addRow(linha);
+            });
         }
 
         tblReservas.setModel(modelo); 
-        this.reservasExibidas = reservas; // Guarda a lista exibida para ações futuras
+        this.reservasExibidas = reservas;
     }
     
     public void carregarDados() {
         carregarTabela(reservaService.findAll());
     }
     
-    //Preenche o combo de status a partir do enum StatusReserva
     private void preencherComboStatus() {
         cbStatus.removeAllItems();
+        cbStatus.addItem(""); // Opção vazia
         for (StatusReserva status : StatusReserva.values()) {
             cbStatus.addItem(status.name());
         }
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        txtProcurar = new javax.swing.JTextField();
-        txtProcurar1 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblReservas = new javax.swing.JTable();
-        btnAdicionar = new javax.swing.JButton();
-        btnAtender = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        lblStatus = new javax.swing.JLabel();
-        cbStatus = new javax.swing.JComboBox<>();
-        lblClienteId = new javax.swing.JLabel();
-        txtClienteId = new javax.swing.JTextField();
-        lblExemplarId = new javax.swing.JLabel();
-        txtExemplarId = new javax.swing.JTextField();
-        btnFiltrar = new javax.swing.JButton();
-        btnAtualizar = new javax.swing.JButton();
-
-        txtProcurar.setBackground(new java.awt.Color(255, 255, 255));
-        txtProcurar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtProcurar.setForeground(new java.awt.Color(80, 80, 80));
-        txtProcurar.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtProcurar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(180, 180, 180), 1, true));
-        txtProcurar.setOpaque(true);
-        txtProcurar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProcurarActionPerformed(evt);
-            }
-        });
-
-        txtProcurar1.setBackground(new java.awt.Color(255, 255, 255));
-        txtProcurar1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtProcurar1.setForeground(new java.awt.Color(80, 80, 80));
-        txtProcurar1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtProcurar1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(180, 180, 180), 1, true));
-        txtProcurar1.setOpaque(true);
-        txtProcurar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtProcurar1ActionPerformed(evt);
-            }
-        });
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        tblReservas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Cliente", "Exemplar", "Data", "Status"
-            }
-        ));
-        jScrollPane1.setViewportView(tblReservas);
-
-        btnAdicionar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAdicionar.setText("Adicionar");
-        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdicionarActionPerformed(evt);
-            }
-        });
-
-        btnAtender.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAtender.setText("Atender");
-        btnAtender.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtenderActionPerformed(evt);
-            }
-        });
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("RESERVAS");
-
-        lblStatus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblStatus.setText("Status:");
-
-        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PENDENTE", "ATENDIDA", "CANCELADA", " " }));
-        cbStatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbStatusActionPerformed(evt);
-            }
-        });
-
-        lblClienteId.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblClienteId.setText("Cliente ID:");
-
-        lblExemplarId.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblExemplarId.setText("Exemplar Tombamento:");
-
-        txtExemplarId.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtExemplarIdActionPerformed(evt);
-            }
-        });
-
-        btnFiltrar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnFiltrar.setText("Filtrar");
-        btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFiltrarActionPerformed(evt);
-            }
-        });
-
-        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(225, 225, 225)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnFiltrar)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblExemplarId)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtExemplarId, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(btnAdicionar)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnAtender)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(btnCancelar)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnAtualizar))
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(lblClienteId)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtClienteId))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(lblStatus)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addContainerGap(23, Short.MAX_VALUE))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblStatus)
-                    .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblClienteId)
-                    .addComponent(txtClienteId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblExemplarId)
-                    .addComponent(txtExemplarId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addComponent(btnFiltrar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdicionar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAtender, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtProcurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProcurarActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_txtProcurarActionPerformed
-
-    private void txtProcurar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProcurar1ActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_txtProcurar1ActionPerformed
-
-    //Abre a tela de cadastro de reserva.
-    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-        // Obtém a tela ReservaAdicionar como Bean do Spring
-        ReservaAdicionar tela = context.getBean(ReservaAdicionar.class);
-        tela.setTelaPai(this); // Define esta tela como tela pai
-        tela.setVisible(true);
-
-    }//GEN-LAST:event_btnAdicionarActionPerformed
-
-    //Abre a tela de atendimento da reserva selecionada.
-    private void btnAtenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtenderActionPerformed
-        int linha = tblReservas.getSelectedRow();
-
-        if (linha != -1) {
-            // Recupera a reserva correspondente à linha selecionada
-            Reserva reserva = reservasExibidas.get(linha);
-            ReservaAtender tela = new ReservaAtender(reserva, reservaService);
-
-            // Atualiza a tabela quando a tela fechar
-            tela.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent e) {
-                    carregarTabela(reservaService.findAll());
-                }
-            });
-
+    private void btnAdicionarActionPerformed(ActionEvent evt) {
+        try {
+            ReservaAdicionar tela = context.getBean(ReservaAdicionar.class);
+            tela.setTelaPai(this);
             tela.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao abrir tela: " + e.getMessage());
+        }
+    }
+
+    private void btnAtenderActionPerformed(ActionEvent evt) {
+        int linha = tblReservas.getSelectedRow();
+        if (linha != -1) {
+            // CUIDADO: Se tiver filtro aplicado a linha da tabela pode nao bater com o indice da lista
+            // Melhor pegar pelo ID da tabela
+            Long idReserva = (Long) tblReservas.getModel().getValueAt(linha, 0); // Coluna 0 é o ID agora
+            
+            // Buscar na lista exibida (ou buscar do banco se preferir segurança)
+            Reserva reserva = reservasExibidas.stream().filter(r -> r.getId().equals(idReserva)).findFirst().orElse(null);
+            
+            if (reserva != null) {
+                ReservaAtender tela = new ReservaAtender(reserva, reservaService);
+                tela.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        carregarDados();
+                    }
+                });
+                tela.setVisible(true);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione uma reserva para atender.");
         }
-    }//GEN-LAST:event_btnAtenderActionPerformed
+    }
 
-    private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbStatusActionPerformed
-
-    //Aplica filtros por status, cliente e exemplar.
-    private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
+    private void btnFiltrarActionPerformed(ActionEvent evt) {
         List<Reserva> filtradas = reservaService.findAll();
 
-        // Filtro por status
         String statusSelecionado = (String) cbStatus.getSelectedItem();
         if (statusSelecionado != null && !statusSelecionado.isBlank()) {
             filtradas = filtradas.stream()
@@ -343,7 +215,6 @@ public class ReservaListar extends javax.swing.JFrame {
                     .toList();
         }
 
-        // Filtro por Cliente ID
         if (!txtClienteId.getText().isBlank()) {
             try {
                 long clienteId = Long.parseLong(txtClienteId.getText());
@@ -351,15 +222,11 @@ public class ReservaListar extends javax.swing.JFrame {
                         .filter(r -> r.getCliente().getId() == clienteId)
                         .toList();
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this,
-                        "Cliente ID deve ser numérico!",
-                        "Erro",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Cliente ID deve ser numérico!");
                 return;
             }
         }
 
-        // Filtro por Exemplar (numero de tombamento)
         if (!txtExemplarId.getText().isBlank()) {
             try {
                 long exemplarId = Long.parseLong(txtExemplarId.getText());
@@ -367,88 +234,40 @@ public class ReservaListar extends javax.swing.JFrame {
                         .filter(r -> r.getExemplar().getNumeroTombamento() == exemplarId)
                         .toList();
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this,
-                        "Exemplar ID deve ser numérico!",
-                        "Erro",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Exemplar ID deve ser numérico!");
                 return;
             }
         }
 
         carregarTabela(filtradas);
-    }//GEN-LAST:event_btnFiltrarActionPerformed
-
-    //Recarrega todas as reservas na tabela.
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarTabela(reservaService.findAll());
-        JOptionPane.showMessageDialog(this, "Tabela atualizada!");
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    //Cancela a reserva selecionada.
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-       int linha = tblReservas.getSelectedRow();
-
-    if (linha != -1) {
-        Reserva reserva = reservasExibidas.get(linha); // pega a reserva selecionada
-
-        // Verifica se já está cancelada
-        if (reserva.getStatus() == StatusReserva.CANCELADA) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Esta reserva já está cancelada!",
-                "Aviso",
-                JOptionPane.WARNING_MESSAGE
-            );
-            return; // Sai do método
-        }
-
-        int opcao = JOptionPane.showConfirmDialog(
-                this,
-                "Deseja realmente cancelar esta reserva?",
-                "Confirmação",
-                JOptionPane.YES_NO_OPTION
-        );
-
-        if (opcao == JOptionPane.YES_OPTION) {
-            reservaService.delete(reserva); // Remove a reserva
-            carregarTabela(reservaService.findAll());
-            JOptionPane.showMessageDialog(this, "Reserva cancelada!");
-        }
-    } else {
-        JOptionPane.showMessageDialog(this,
-                "Selecione uma reserva para cancelar.",
-                "Aviso",
-                JOptionPane.WARNING_MESSAGE);
     }
-    }//GEN-LAST:event_btnCancelarActionPerformed
-    
-        
-    private void txtExemplarIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtExemplarIdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtExemplarIdActionPerformed
-    
-    /**
-     * @param args the command line arguments
-     */
-    
-   
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar;
-    private javax.swing.JButton btnAtender;
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnFiltrar;
-    private javax.swing.JComboBox<String> cbStatus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblClienteId;
-    private javax.swing.JLabel lblExemplarId;
-    private javax.swing.JLabel lblStatus;
-    public javax.swing.JTable tblReservas;
-    private javax.swing.JTextField txtClienteId;
-    private javax.swing.JTextField txtExemplarId;
-    private javax.swing.JTextField txtProcurar;
-    private javax.swing.JTextField txtProcurar1;
-    // End of variables declaration//GEN-END:variables
+    private void btnAtualizarActionPerformed(ActionEvent evt) {
+        carregarDados();
+        JOptionPane.showMessageDialog(this, "Tabela atualizada!");
+    }
+
+    private void btnCancelarActionPerformed(ActionEvent evt) {
+       int linha = tblReservas.getSelectedRow();
+       if (linha != -1) {
+            Long idReserva = (Long) tblReservas.getModel().getValueAt(linha, 0);
+            Reserva reserva = reservasExibidas.stream().filter(r -> r.getId().equals(idReserva)).findFirst().orElse(null);
+
+            if (reserva != null) {
+                if (reserva.getStatus() == StatusReserva.CANCELADA) {
+                    JOptionPane.showMessageDialog(this, "Esta reserva já está cancelada!", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                int opcao = JOptionPane.showConfirmDialog(this, "Deseja realmente cancelar esta reserva?", "Confirmação", JOptionPane.YES_NO_OPTION);
+                if (opcao == JOptionPane.YES_OPTION) {
+                    reservaService.delete(reserva);
+                    carregarDados();
+                    JOptionPane.showMessageDialog(this, "Reserva cancelada!");
+                }
+            }
+       } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma reserva para cancelar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+       }
+    }
 }

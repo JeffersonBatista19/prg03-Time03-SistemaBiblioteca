@@ -17,8 +17,8 @@ public class BibliotecaApplication {
                 .run(args);
 
         SwingUtilities.invokeLater(() -> {
-            TelaPrincipal tela =
-                context.getBean(TelaPrincipal.class);
+            br.com.ifba.biblioteca.login.view.LoginView tela =
+                context.getBean(br.com.ifba.biblioteca.login.view.LoginView.class);
             tela.setVisible(true);
         });
     }

@@ -16,279 +16,198 @@ public class BuscarLivro extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuscarLivro.class.getName());
 
+    private final LivroService service;
     private ExemplarAdicionar telaExemplar;
-    
+
     @Autowired
-    private LivroService service;
-
-
-    
-    public BuscarLivro() {
+    public BuscarLivro(LivroService service) {
+        this.service = service;
         initComponents();
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
-    
+
     public void setTelaExemplar(ExemplarAdicionar telaExemplar) {
-    this.telaExemplar = telaExemplar;
-}
+        this.telaExemplar = telaExemplar;
+    }
 
 
     
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblLivros = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblLivros1 = new javax.swing.JTable();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        txtIsbn = new javax.swing.JTextField();
-        btnBuscarISBN = new javax.swing.JButton();
-        btnSelecionar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        btnAtualizar = new javax.swing.JButton();
-
-        tblLivros.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        tblLivros.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Título", "ISBN", "Autor", "Editora", "Categoria", "Ano Publicação"
-            }
-        ));
-        jScrollPane1.setViewportView(tblLivros);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("CADASTRANDO LIVRO");
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel3.setText("Título:");
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        tblLivros1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        tblLivros1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Título", "ISBN", "Autor", "Editora", "Categoria", "Ano Publicação"
-            }
-        ));
-        jScrollPane2.setViewportView(tblLivros1);
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setText("LISTAGEM DE LIVROS");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel4.setText("ISBN:");
-
-        txtIsbn.setBackground(new java.awt.Color(255, 255, 255));
-        txtIsbn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtIsbnActionPerformed(evt);
-            }
-        });
-
-        btnBuscarISBN.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnBuscarISBN.setText("Buscar");
-        btnBuscarISBN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarISBNActionPerformed(evt);
-            }
-        });
-
-        btnSelecionar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnSelecionar.setText("Selecionar");
-        btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionarActionPerformed(evt);
-            }
-        });
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(238, 238, 238)
-                                .addComponent(jLabel2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnBuscarISBN)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 622, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnSelecionar)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnCancelar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAtualizar)))))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscarISBN))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSelecionar)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnAtualizar))
-                .addGap(14, 14, 14))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtIsbnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIsbnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIsbnActionPerformed
-
-    private void btnBuscarISBNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarISBNActionPerformed
-        try {
-        String isbn = txtIsbn.getText();
-
-        if (isbn == null || isbn.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Digite um ISBN para buscar.");
-            return;
-        }
-
-        Livro livro = service.findByIsbn(isbn.trim());
-
-        DefaultTableModel model =
-            (DefaultTableModel) tblLivros1.getModel();
-
-        model.setRowCount(0); // limpa tabela
-
-        if (livro != null) {
-            model.addRow(new Object[]{
-                livro.getId(),
-                livro.getTitulo(),
-                livro.getIsbn(),
-                livro.getAutorNome(),
-                livro.getEditoraNome(),
-                livro.getCategoriaNome(),
-                livro.getAnoPublicacao()
-            });
-        } else {
-            JOptionPane.showMessageDialog(this, "Nenhum livro encontrado com esse ISBN.");
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Erro ao buscar livro: " + e.getMessage()
-        );
-    }
-    }//GEN-LAST:event_btnBuscarISBNActionPerformed
-
-    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        int row = tblLivros1.getSelectedRow();
-
-    if (row == -1) {
-        JOptionPane.showMessageDialog(this, "Selecione um livro.");
-        return;
-    }
-
-    String isbn = tblLivros1.getValueAt(row, 2).toString(); // coluna ISBN
-
-    telaExemplar.setIsbnLivro(isbn); // método da tela ExemplarAdicionar
-    dispose();
-    }//GEN-LAST:event_btnSelecionarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        this.dispose(); // fecha apenas essa janela.
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarLivros();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    public void carregarLivros() {
-    try {
-        List<Livro> livros = service.findAll();
-
-        DefaultTableModel model =
-            (DefaultTableModel) tblLivros1.getModel();
-
-        model.setRowCount(0); // limpa tabela
-
-        for (Livro l : livros) {
-            model.addRow(new Object[]{
-                l.getId(),
-                l.getTitulo(),
-                l.getIsbn(),
-                l.getAutorNome(),
-                l.getEditoraNome(),
-                l.getCategoriaNome(),
-                l.getAnoPublicacao()
-     });
-        }
-
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "Erro ao carregar livros: " + e.getMessage()
-        );
-    }
-}
-    
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnBuscarISBN;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSelecionar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable tblLivros;
     private javax.swing.JTable tblLivros1;
     private javax.swing.JTextField txtIsbn;
-    // End of variables declaration//GEN-END:variables
+
+    private void initComponents() {
+        setTitle("Listagem de Livros");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new java.awt.BorderLayout());
+        getContentPane().setBackground(new java.awt.Color(240, 242, 245));
+
+        // --- PAINEL TOPO (Busca) ---
+        javax.swing.JPanel pnlTopo = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(java.awt.Color.WHITE);
+        pnlTopo.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(200, 200, 200)));
+
+        pnlTopo.add(new javax.swing.JLabel("ISBN:"));
+        txtIsbn = new javax.swing.JTextField(15);
+        pnlTopo.add(txtIsbn);
+
+        btnBuscarISBN = new javax.swing.JButton("Buscar");
+        estilizarBotao(btnBuscarISBN, new java.awt.Color(52, 152, 219)); // Blue
+        pnlTopo.add(btnBuscarISBN);
+
+        add(pnlTopo, java.awt.BorderLayout.NORTH);
+
+        // --- TABELA CENTRAL ---
+        String[] colunas = {"ID", "Título", "ISBN", "Autor", "Editora", "Categoria", "Ano Publicação"};
+        // Modelo não editável
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+             @Override
+             public boolean isCellEditable(int row, int column) {
+                 return false;
+             }
+        };
+        
+        tblLivros1 = new javax.swing.JTable(modelo);
+        tblLivros1.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        tblLivros1.setRowHeight(25);
+        tblLivros1.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        tblLivros1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        
+        // Esconder ID se quiser, mas deixarei visível pois a foto mostra
+        tblLivros1.getColumnModel().getColumn(0).setPreferredWidth(50);
+        tblLivros1.getColumnModel().getColumn(1).setPreferredWidth(200);
+
+        jScrollPane2 = new javax.swing.JScrollPane(tblLivros1);
+        add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        // --- PAINEL BOTOES (Sul) ---
+        javax.swing.JPanel pnlSul = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 15, 15));
+        pnlSul.setBackground(java.awt.Color.WHITE);
+        pnlSul.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, new java.awt.Color(200, 200, 200)));
+
+        btnSelecionar = new javax.swing.JButton("Selecionar");
+        estilizarBotao(btnSelecionar, new java.awt.Color(46, 204, 113)); // Green
+        
+        btnAtualizar = new javax.swing.JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new java.awt.Color(241, 196, 15)); // Yellow
+        btnAtualizar.setForeground(java.awt.Color.DARK_GRAY);
+
+        btnCancelar = new javax.swing.JButton("Cancelar");
+        estilizarBotao(btnCancelar, new java.awt.Color(231, 76, 60)); // Red
+
+        pnlSul.add(btnAtualizar);
+        pnlSul.add(btnCancelar);
+        pnlSul.add(btnSelecionar);
+
+        add(pnlSul, java.awt.BorderLayout.SOUTH);
+
+        // Listeners
+        btnBuscarISBN.addActionListener(evt -> btnBuscarISBNActionPerformed(evt));
+        btnSelecionar.addActionListener(evt -> btnSelecionarActionPerformed(evt));
+        btnCancelar.addActionListener(evt -> btnCancelarActionPerformed(evt));
+        btnAtualizar.addActionListener(evt -> btnAtualizarActionPerformed(evt));
+        
+        // Enter no campo de busca
+        txtIsbn.addActionListener(evt -> btnBuscarISBNActionPerformed(evt));
+
+        pack();
+        setSize(800, 500); // Tamanho inicial razoável
+    }
+
+    private void estilizarBotao(javax.swing.JButton btn, java.awt.Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(java.awt.Color.WHITE);
+        btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    private void btnBuscarISBNActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            String isbn = txtIsbn.getText();
+            if (isbn == null || isbn.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Digite um ISBN para buscar.");
+                return;
+            }
+            Livro livro = service.findByIsbn(isbn.trim());
+            DefaultTableModel model = (DefaultTableModel) tblLivros1.getModel();
+            model.setRowCount(0);
+
+            if (livro != null) {
+                String catNome = livro.getCategoriaNome();
+                if (catNome == null && livro.getCategoria() != null) catNome = livro.getCategoria().getNome();
+                
+                String edtNome = livro.getEditoraNome();
+                if (edtNome == null && livro.getEditora() != null) edtNome = livro.getEditora().getNome();
+
+                model.addRow(new Object[]{
+                    livro.getId(),
+                    livro.getTitulo(),
+                    livro.getIsbn(),
+                    livro.getAutorNome(),
+                    edtNome,
+                    catNome,
+                    livro.getAnoPublicacao()
+                });
+            } else {
+                JOptionPane.showMessageDialog(this, "Nenhum livro encontrado com esse ISBN.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao buscar livro: " + e.getMessage());
+        }
+    }
+
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
+        int row = tblLivros1.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um livro.");
+            return;
+        }
+        String isbn = tblLivros1.getValueAt(row, 2).toString();
+        if (telaExemplar != null) {
+            telaExemplar.setIsbnLivro(isbn);
+        }
+        dispose();
+    }
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
+        dispose();
+    }
+
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {
+        carregarLivros();
+    }
+
+    public void carregarLivros() {
+        try {
+            List<Livro> livros = service.findAll();
+            DefaultTableModel model = (DefaultTableModel) tblLivros1.getModel();
+            model.setRowCount(0);
+            for (Livro l : livros) {
+                String catNome = l.getCategoriaNome();
+                if (catNome == null && l.getCategoria() != null) catNome = l.getCategoria().getNome();
+                
+                String edtNome = l.getEditoraNome();
+                if (edtNome == null && l.getEditora() != null) edtNome = l.getEditora().getNome();
+
+                model.addRow(new Object[]{
+                    l.getId(),
+                    l.getTitulo(),
+                    l.getIsbn(),
+                    l.getAutorNome(),
+                    edtNome,
+                    catNome,
+                    l.getAnoPublicacao()
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar livros: " + e.getMessage());
+        }
+    }
 }

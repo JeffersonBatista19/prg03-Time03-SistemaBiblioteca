@@ -1,16 +1,28 @@
 package br.com.ifba.biblioteca.exemplar.view;
+
 import br.com.ifba.biblioteca.exemplar.controller.ExemplarController;
 import br.com.ifba.biblioteca.exemplar.entity.Exemplar;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import org.springframework.stereotype.Component;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTable;
 
 @Component
 @Scope("prototype")
@@ -22,288 +34,204 @@ public class ExemplarListar extends javax.swing.JFrame {
     @Autowired
     private ExemplarController exemplarController;
 
-
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ExemplarListar.class.getName());
+    private JTable tblExemplares;
+    private JSpinner spnTombamento;
+    private JButton btnAdicionar, btnEditar, btnExcluir, btnAtualizar, btnVoltar;
 
     public ExemplarListar() {
         initComponents();
-        spnTombamento.addChangeListener(e -> filtrarPorTombamento());
-        setLocationRelativeTo(null); // centraliza
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
         
-        // Esconde a coluna ID
-    jTable1.getColumnModel().getColumn(4).setMinWidth(0);
-    jTable1.getColumnModel().getColumn(4).setMaxWidth(0);
-    jTable1.getColumnModel().getColumn(4).setWidth(0);
-    jTable1.getColumnModel().getColumn(4).setPreferredWidth(0);
-   
+        // Carrega dados automaticamente quando a janela é mostrada
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            private boolean primeiraVez = true;
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                if (primeiraVez) {
+                    carregarExemplares();
+                    primeiraVez = false;
+                }
+            }
+        });
     }
     
-    public javax.swing.JTable getjTable1() {
-        return jTable1;
-    }
-
-
-   
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        setTitle("Gestão de Exemplares");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        btnAdicionar = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        spnTombamento = new javax.swing.JSpinner();
-        btnAtualizar = new javax.swing.JButton();
+        // --- PAINEL TOPO ---
+        JPanel pnlTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(Color.WHITE);
+        pnlTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jTable1.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Tombamento", "Estado de Conservação", "Localização", "Status", "ID", "ISBN"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        btnAdicionar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAdicionar.setText("Adicionar");
-        btnAdicionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdicionarActionPerformed(evt);
-            }
-        });
-
-        btnExcluir.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnExcluir.setText("Excluir");
-        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExcluirActionPerformed(evt);
-            }
-        });
-
-        btnEditar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEditar.setText("Editar");
-        btnEditar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditarActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setText("Buscar Tombamento:");
-
-        spnTombamento.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        spnTombamento.setModel(new javax.swing.SpinnerNumberModel());
-
-        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 556, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnAdicionar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnEditar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnExcluir))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnAtualizar)))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdicionar)
-                    .addComponent(btnExcluir)
-                    .addComponent(btnEditar)
-                    .addComponent(jLabel2)
-                    .addComponent(spnTombamento, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAtualizar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
-    ExemplarAdicionar telaAdicionar = context.getBean(ExemplarAdicionar.class);
-    telaAdicionar.setExemplarListar(this); // <-- passa a instância atual da tela
-
-    JFrame frame = new JFrame("Adicionar Exemplar");
-    frame.setContentPane(telaAdicionar);
-    frame.pack(); // ajusta o tamanho
-    frame.setLocationRelativeTo(null); // centraliza
-    frame.setVisible(true);
-    }//GEN-LAST:event_btnAdicionarActionPerformed
-
-    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        int linhaSelecionada = jTable1.getSelectedRow();
-if (linhaSelecionada == -1) {
-    JOptionPane.showMessageDialog(this,
-        "Selecione um exemplar para excluir!",
-        "Aviso",
-        JOptionPane.WARNING_MESSAGE);
-    return;
-}
-
-// pega o id do exemplar na coluna oculta
-Long idExemplar = (Long) jTable1.getValueAt(linhaSelecionada, 4);
-
-try {
-    // busca o exemplar pelo id
-    Exemplar ex = exemplarController.findById(idExemplar);
-
-    // confirma exclusão
-    int opcao = JOptionPane.showConfirmDialog(this,
-        "Deseja realmente excluir o exemplar?",
-        "Confirmação",
-        JOptionPane.YES_NO_OPTION);
-
-    if (opcao == JOptionPane.YES_OPTION) {
-        exemplarController.delete(ex); // exclui pelo objeto
-        carregarExemplares(); // atualiza a tabela
+        pnlTopo.add(new JLabel("Tombamento:"));
+        spnTombamento = new JSpinner(new javax.swing.SpinnerNumberModel());
+        spnTombamento.setPreferredSize(new java.awt.Dimension(80, 25));
+        spnTombamento.addChangeListener(e -> filtrarPorTombamento());
+        pnlTopo.add(spnTombamento);
         
-        // mensagem de sucesso
-        javax.swing.JOptionPane.showMessageDialog(this,
-        "Exemplar excluído com sucesso!",
-        "Sucesso",
-        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        btnAdicionar = new JButton("Adicionar");
+        estilizarBotao(btnAdicionar, new Color(46, 204, 113));
+        pnlTopo.add(btnAdicionar);
+        
+        btnEditar = new JButton("Editar");
+        estilizarBotao(btnEditar, new Color(52, 152, 219));
+        pnlTopo.add(btnEditar);
+        
+        btnExcluir = new JButton("Excluir");
+        estilizarBotao(btnExcluir, new Color(231, 76, 60));
+        pnlTopo.add(btnExcluir);
+        
+        btnAtualizar = new JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new Color(241, 196, 15));
+        btnAtualizar.setForeground(Color.DARK_GRAY);
+        pnlTopo.add(btnAtualizar);
+        
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114));
+        pnlTopo.add(btnVoltar);
+        
+        add(pnlTopo, BorderLayout.NORTH);
+
+        // --- TABELA ---
+        String[] colunas = {"Tombamento", "Estado", "Localização", "Status", "ID", "ISBN"};
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+             @Override
+             public boolean isCellEditable(int row, int column) {
+                 return false;
+             }
+        };
+        tblExemplares = new JTable(modelo);
+        tblExemplares.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblExemplares.setRowHeight(25);
+        tblExemplares.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
+        // Ocultar coluna ID (index 4)
+        tblExemplares.getColumnModel().getColumn(4).setMinWidth(0);
+        tblExemplares.getColumnModel().getColumn(4).setMaxWidth(0);
+        tblExemplares.getColumnModel().getColumn(4).setWidth(0);
+        
+        add(new JScrollPane(tblExemplares), BorderLayout.CENTER);
+
+        // LISTENERS
+        btnAdicionar.addActionListener(e -> btnAdicionarActionPerformed(e));
+        btnEditar.addActionListener(e -> btnEditarActionPerformed(e));
+        btnExcluir.addActionListener(e -> btnExcluirActionPerformed(e));
+        btnAtualizar.addActionListener(e -> carregarExemplares());
+        btnVoltar.addActionListener(e -> dispose());
     }
 
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this,
-        "Erro ao excluir exemplar: " + e.getMessage(),
-        "Erro",
-        JOptionPane.ERROR_MESSAGE);
-}
-
-    }//GEN-LAST:event_btnExcluirActionPerformed
-
-    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-      int linhaSelecionada = jTable1.getSelectedRow();
-
-    if (linhaSelecionada == -1) {
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "Selecione um exemplar para editar!",
-            "Aviso",
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 
-    // pega os dados da linha
-    int tombamento = (Integer) jTable1.getValueAt(linhaSelecionada, 0);
-    String conservacao = jTable1.getValueAt(linhaSelecionada, 1).toString();
-    String local = jTable1.getValueAt(linhaSelecionada, 2).toString();
-    String status = jTable1.getValueAt(linhaSelecionada, 3).toString();
-    Long idExemplar = (Long) jTable1.getValueAt(linhaSelecionada, 4);
-    String isbn = jTable1.getValueAt(linhaSelecionada, 5).toString();
+    // Método get para compatibilidade se algo externo precisar
+    public javax.swing.JTable getjTable1() {
+        return tblExemplares;
+    }
 
-    ExemplarEditar editar = context.getBean(
-    ExemplarEditar.class, tombamento, conservacao, local, status, isbn, idExemplar, this
-);
-editar.setVisible(true);
+    private void btnAdicionarActionPerformed(ActionEvent evt) {
+        ExemplarAdicionar telaAdicionar = context.getBean(ExemplarAdicionar.class);
+        telaAdicionar.setExemplarListar(this);
+        // Não criar novo JFrame, pois ExemplarAdicionar já é um JFrame
+        telaAdicionar.setVisible(true);
+    }
 
+    private void btnExcluirActionPerformed(ActionEvent evt) {
+        int linhaSelecionada = tblExemplares.getSelectedRow();
+        if (linhaSelecionada == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um exemplar para excluir!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        Long idExemplar = (Long) tblExemplares.getValueAt(linhaSelecionada, 4);
+        try {
+            Exemplar ex = exemplarController.findById(idExemplar);
+            int opcao = JOptionPane.showConfirmDialog(this, "Deseja realmente excluir o exemplar?", "Confirmação", JOptionPane.YES_NO_OPTION);
+            if (opcao == JOptionPane.YES_OPTION) {
+                exemplarController.delete(ex);
+                carregarExemplares();
+                JOptionPane.showMessageDialog(this, "Exemplar excluído com sucesso!");
+            }
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+             JOptionPane.showMessageDialog(this, "Não é possível excluir este exemplar pois ele está vinculado a Empréstimos ou Reservas.", "Erro de Vínculo", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            if (msg != null && (msg.contains("ConstraintViolation") || msg.contains("Foreign Key"))) {
+                 JOptionPane.showMessageDialog(this, "Não é possível excluir este exemplar pois ele está vinculado a outro registro (Emprestimo/Reserva).", "Erro de Vínculo", JOptionPane.ERROR_MESSAGE);
+            } else {
+                 JOptionPane.showMessageDialog(this, "Erro ao excluir: " + e.getMessage());
+            }
+        }
+    }
 
+    private void btnEditarActionPerformed(ActionEvent evt) {
+        int linhaSelectionada = tblExemplares.getSelectedRow();
+        if (linhaSelectionada == -1) {
+            JOptionPane.showMessageDialog(this, "Selecione um exemplar para editar!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int tombamento = (Integer) tblExemplares.getValueAt(linhaSelectionada, 0);
+        String conservacao = tblExemplares.getValueAt(linhaSelectionada, 1).toString();
+        String local = tblExemplares.getValueAt(linhaSelectionada, 2).toString();
+        String status = tblExemplares.getValueAt(linhaSelectionada, 3).toString();
+        Long idExemplar = (Long) tblExemplares.getValueAt(linhaSelectionada, 4);
+        String isbn = tblExemplares.getValueAt(linhaSelectionada, 5).toString();
 
-    }//GEN-LAST:event_btnEditarActionPerformed
-
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarExemplares();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
+        ExemplarEditar editar = context.getBean(ExemplarEditar.class, tombamento, conservacao, local, status, isbn, idExemplar, this);
+        editar.setVisible(true);
+    }
     
     public void carregarExemplares() {
-    try {
-        List<Exemplar> exemplares = exemplarController.findAll();
-
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // limpa a tabela antes de carregar
-
-        for (Exemplar ex : exemplares) {
-            // adiciona ID como coluna oculta no final
-            model.addRow(new Object[]{
-                ex.getNumeroTombamento(),
-                ex.getConservacao(),
-                ex.getLocalizacaoFisica(),
-                ex.getStatus(),
-                ex.getId(), // coluna ID oculta
-                ex.getIsbnLivro()      
-            });
-        }
-
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Erro ao carregar exemplares: " + e.getMessage());
-    }
-}
-private void filtrarPorTombamento() {
-    int valor = (Integer) spnTombamento.getValue();
-    if (valor == 0) {
-        carregarExemplares();
-        return;
-    }
-
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    model.setRowCount(0);
-
-    try {
-        for (Exemplar ex : exemplarController.findAll()) {
-            if (ex.getNumeroTombamento() == valor) {
+         try {
+            List<Exemplar> exemplares = exemplarController.findAll();
+            DefaultTableModel model = (DefaultTableModel) tblExemplares.getModel();
+            model.setRowCount(0);
+            for (Exemplar ex : exemplares) {
                 model.addRow(new Object[]{
                     ex.getNumeroTombamento(),
                     ex.getConservacao(),
                     ex.getLocalizacaoFisica(),
                     ex.getStatus(),
                     ex.getId(),
-                    ex.getIsbnLivro()  
+                    ex.getIsbnLivro()      
                 });
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao carregar exemplares: " + e.getMessage());
         }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Erro ao filtrar: " + e.getMessage());
     }
-}
 
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar;
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JButton btnExcluir;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JSpinner spnTombamento;
-    // End of variables declaration//GEN-END:variables
+    private void filtrarPorTombamento() {
+        int valor = (Integer) spnTombamento.getValue();
+        if (valor == 0) {
+            carregarExemplares();
+            return;
+        }
+        DefaultTableModel model = (DefaultTableModel) tblExemplares.getModel();
+        model.setRowCount(0);
+        try {
+            for (Exemplar ex : exemplarController.findAll()) {
+                if (ex.getNumeroTombamento() == valor) {
+                    model.addRow(new Object[]{
+                        ex.getNumeroTombamento(),
+                        ex.getConservacao(),
+                        ex.getLocalizacaoFisica(),
+                        ex.getStatus(),
+                        ex.getId(),
+                        ex.getIsbnLivro()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao filtrar: " + e.getMessage());
+        }
+    }
 }

@@ -8,6 +8,19 @@ import br.com.ifba.biblioteca.editora.service.EditoraService;
 import br.com.ifba.biblioteca.livro.entity.Livro;
 import br.com.ifba.biblioteca.livro.service.LivroService;
 import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
 
 public class LivroAdicionar extends javax.swing.JFrame {
     
@@ -19,371 +32,210 @@ public class LivroAdicionar extends javax.swing.JFrame {
     private EditoraService editoraService;
     private CategoriaService categoriaService;
 
-    
     private Long idEditoraSelecionada;
     private Long idCategoriaSelecionada;
 
+    // Componentes
+    private JTextField txtTitulo, txtIsbn, txtAutor, txtEditora, txtCategoria;
+    private JSpinner spnAno;
+    private JButton btnAutor, btnEditora, btnCategoria, btnCadastrar, btnCancelar;
 
-
-  
-    // construtor recebe tela listar, service, autor e editora.
     public LivroAdicionar(LivroListar telaListar, LivroService service, AutorService autorService, EditoraService editoraService, CategoriaService categoriaService) {
-    this.telaListar = telaListar;
-    this.service = service;
-    this.autorService = autorService;
-    this.editoraService = editoraService;
-    this.categoriaService = categoriaService;
-    initComponents();
-    txtAutor.setEditable(false); 
-    txtEditora.setEditable(false);
-    txtCategoria.setEditable(false); 
-    setLocationRelativeTo(null);
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-}
-
-
-    public void setEditoraSelecionada(Long idEditora, String nomeEditora) {
-    this.idEditoraSelecionada = idEditora;
-    txtEditora.setText(nomeEditora);
-}
-
-   public void setAutor(String nomeAutor){
-    txtAutor.setText(nomeAutor);
-}
-
-public void setCategoriaSelecionada(Long idCategoria, String nomeCategoria) {
-    this.idCategoriaSelecionada = idCategoria;
-    txtCategoria.setText(nomeCategoria);
-}
-
-
-
-
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+        this.telaListar = telaListar;
+        this.service = service;
+        this.autorService = autorService;
+        this.editoraService = editoraService;
+        this.categoriaService = categoriaService;
+        initComponents();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+    }
+    
     private void initComponents() {
+        setTitle("Cadastrar Livro");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        jLabel1 = new javax.swing.JLabel();
-        btnCategoria = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        txtTitulo = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        txtIsbn = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        txtAutor = new javax.swing.JTextField();
-        btnAutor = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        txtEditora = new javax.swing.JTextField();
-        btnEditora = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        txtCategoria = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        spnAno = new javax.swing.JSpinner();
-        btnCadastrar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setText("CADASTRANDO LIVRO");
+        // Header
+        JLabel lblTitulo = new JLabel("CADASTRANDO LIVRO");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        btnCategoria.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCategoria.setText("Buscar Categoria");
-        btnCategoria.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCategoriaActionPerformed(evt);
-            }
+        // Titulo
+        gbc.gridx = 0; gbc.gridy = 1;
+        pnlForm.add(new JLabel("Título:"), gbc);
+        txtTitulo = new JTextField(30);
+        gbc.gridx = 1; gbc.gridy = 1; gbc.gridwidth = 2;
+        pnlForm.add(txtTitulo, gbc);
+        gbc.gridwidth = 1;
+
+        // ISBN
+        gbc.gridx = 0; gbc.gridy = 2;
+        pnlForm.add(new JLabel("ISBN:"), gbc);
+        txtIsbn = new JTextField(20);
+        gbc.gridx = 1; gbc.gridy = 2; gbc.gridwidth = 2;
+        pnlForm.add(txtIsbn, gbc);
+        gbc.gridwidth = 1;
+
+        // Autor
+        gbc.gridx = 0; gbc.gridy = 3;
+        pnlForm.add(new JLabel("Autor:"), gbc);
+        txtAutor = new JTextField(20);
+        txtAutor.setEditable(false);
+        gbc.gridx = 1; gbc.gridy = 3; 
+        pnlForm.add(txtAutor, gbc);
+        btnAutor = new JButton("Buscar Autor");
+        estilizarBotao(btnAutor, new Color(52, 152, 219));
+        gbc.gridx = 2; gbc.gridy = 3;
+        pnlForm.add(btnAutor, gbc);
+
+        // Editora
+        gbc.gridx = 0; gbc.gridy = 4;
+        pnlForm.add(new JLabel("Editora:"), gbc);
+        txtEditora = new JTextField(20);
+        txtEditora.setEditable(false);
+        gbc.gridx = 1; gbc.gridy = 4;
+        pnlForm.add(txtEditora, gbc);
+        btnEditora = new JButton("Buscar Editora");
+        estilizarBotao(btnEditora, new Color(52, 152, 219));
+        gbc.gridx = 2; gbc.gridy = 4;
+        pnlForm.add(btnEditora, gbc);
+
+        // Categoria
+        gbc.gridx = 0; gbc.gridy = 5;
+        pnlForm.add(new JLabel("Categoria:"), gbc);
+        txtCategoria = new JTextField(20);
+        txtCategoria.setEditable(false);
+        gbc.gridx = 1; gbc.gridy = 5;
+        pnlForm.add(txtCategoria, gbc);
+        btnCategoria = new JButton("Buscar Categoria");
+        estilizarBotao(btnCategoria, new Color(52, 152, 219));
+        gbc.gridx = 2; gbc.gridy = 5;
+        pnlForm.add(btnCategoria, gbc);
+        
+        // Ano
+        gbc.gridx = 0; gbc.gridy = 6;
+        pnlForm.add(new JLabel("Ano Publicação:"), gbc);
+        spnAno = new JSpinner();
+        spnAno.setPreferredSize(new java.awt.Dimension(80, 25));
+        gbc.gridx = 1; gbc.gridy = 6;
+        pnlForm.add(spnAno, gbc);
+
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTOES SUL ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnCancelar = new JButton("Voltar");
+        estilizarBotao(btnCancelar, new Color(99, 110, 114));
+        
+        btnCadastrar = new JButton("Cadastrar");
+        estilizarBotao(btnCadastrar, new Color(46, 204, 113));
+
+        pnlBotoes.add(btnCancelar);
+        pnlBotoes.add(btnCadastrar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+        
+        // Listeners
+        btnAutor.addActionListener(e -> {
+            BuscarAutor tela = new BuscarAutor(this, autorService);
+            tela.setVisible(true);
         });
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel2.setText("Título:");
-
-        txtTitulo.setBackground(new java.awt.Color(255, 255, 255));
-        txtTitulo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTituloActionPerformed(evt);
-            }
+        btnEditora.addActionListener(e -> {
+            BuscarEditora tela = new BuscarEditora(this, editoraService);
+            tela.setVisible(true);
         });
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel3.setText("ISBN:");
-
-        txtIsbn.setBackground(new java.awt.Color(255, 255, 255));
-        txtIsbn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtIsbnActionPerformed(evt);
-            }
+        btnCategoria.addActionListener(e -> {
+            BuscarCategoria tela = new BuscarCategoria(this, categoriaService);
+            tela.setVisible(true);
         });
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel4.setText("Autor:");
-
-        txtAutor.setBackground(new java.awt.Color(255, 255, 255));
-        txtAutor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtAutorActionPerformed(evt);
-            }
-        });
-
-        btnAutor.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnAutor.setText("Buscar Autor");
-        btnAutor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAutorActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel5.setText("Editora:");
-
-        txtEditora.setBackground(new java.awt.Color(255, 255, 255));
-        txtEditora.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEditoraActionPerformed(evt);
-            }
-        });
-
-        btnEditora.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnEditora.setText("Buscar Editora");
-        btnEditora.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditoraActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel6.setText("Categoria:");
-
-        txtCategoria.setBackground(new java.awt.Color(255, 255, 255));
-        txtCategoria.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCategoriaActionPerformed(evt);
-            }
-        });
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 3, 12)); // NOI18N
-        jLabel7.setText("Ano publicação:");
-
-        spnAno.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-
-        btnCadastrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCadastrar.setText("Cadastrar");
-        btnCadastrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCadastrarActionPerformed(evt);
-            }
-        });
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(125, 125, 125)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spnAno, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(104, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtAutor)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnAutor))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnCadastrar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnCancelar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCategoria)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnCategoria))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtEditora)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnEditora)))
-                        .addGap(19, 19, 19))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(txtIsbn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtAutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAutor))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(txtEditora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEditora))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCategoria))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(spnAno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnCadastrar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtTituloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTituloActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTituloActionPerformed
-
-    private void txtIsbnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIsbnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIsbnActionPerformed
-
-    private void txtAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAutorActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAutorActionPerformed
-
-    private void txtEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEditoraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEditoraActionPerformed
-
-    private void txtCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCategoriaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCategoriaActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        this.dispose(); // fecha apenas essa janela.
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnAutorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAutorActionPerformed
-        BuscarAutor tela = new BuscarAutor(this, autorService); // abre tela buscar autor.
-        tela.setVisible(true);
-    }//GEN-LAST:event_btnAutorActionPerformed
-
-    private void btnEditoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditoraActionPerformed
-        BuscarEditora tela = new BuscarEditora(this, editoraService); // abre tela buscar editora.
-        tela.setVisible(true);
-    }//GEN-LAST:event_btnEditoraActionPerformed
-
-    private void btnCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriaActionPerformed
-            BuscarCategoria tela =
-        new BuscarCategoria(this, categoriaService);
-    tela.setVisible(true);
-    }//GEN-LAST:event_btnCategoriaActionPerformed
-
-    private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
-    String titulo = txtTitulo.getText();
-    String isbn = txtIsbn.getText();
-
-    if (titulo.isEmpty() || isbn.isEmpty()
-        || idCategoriaSelecionada == null
-        || idEditoraSelecionada == null) {
-
-        JOptionPane.showMessageDialog(this,
-            "Preencha todos os campos e selecione autor, editora e categoria!",
-            "Erro",
-            JOptionPane.ERROR_MESSAGE);
-        return;
+        btnCancelar.addActionListener(e -> dispose());
+        btnCadastrar.addActionListener(e -> salvarLivro());
     }
 
-    try {
-        Livro livro = new Livro();
-        livro.setTitulo(titulo);
-        livro.setIsbn(isbn);
-        livro.setAnoPublicacao((Integer) spnAno.getValue());
-        livro.setAutorNome(txtAutor.getText());
-
-        // categoria (relacionamento)
-        Categoria categoria = new Categoria();
-        categoria.setId(idCategoriaSelecionada);
-        livro.setCategoria(categoria);
-        livro.setCategoriaNome(txtCategoria.getText());
-
-        // editora (relacionamento)
-        Editora editora = new Editora();
-        editora.setId(idEditoraSelecionada);
-        livro.setEditora(editora);
-        livro.setEditoraNome(txtEditora.getText());
-
-        service.save(livro);
-
-        JOptionPane.showMessageDialog(this,
-            "Livro \"" + titulo + "\" adicionado com sucesso!");
-
-        telaListar.carregarLivros();
-        this.dispose();
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this,
-            "Erro ao salvar livro: " + e.getMessage(),
-            "Erro",
-            JOptionPane.ERROR_MESSAGE);
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
-    }//GEN-LAST:event_btnCadastrarActionPerformed
+    
+    public void setEditoraSelecionada(Long idEditora, String nomeEditora) {
+        this.idEditoraSelecionada = idEditora;
+        txtEditora.setText(nomeEditora);
+    }
 
+    public void setAutor(String nomeAutor){
+        txtAutor.setText(nomeAutor);
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAutor;
-    private javax.swing.JButton btnCadastrar;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCategoria;
-    private javax.swing.JButton btnEditora;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JSpinner spnAno;
-    private javax.swing.JTextField txtAutor;
-    private javax.swing.JTextField txtCategoria;
-    private javax.swing.JTextField txtEditora;
-    private javax.swing.JTextField txtIsbn;
-    private javax.swing.JTextField txtTitulo;
-    // End of variables declaration//GEN-END:variables
+    public void setCategoriaSelecionada(Long idCategoria, String nomeCategoria) {
+        this.idCategoriaSelecionada = idCategoria;
+        txtCategoria.setText(nomeCategoria);
+    }
+    
+    private void salvarLivro() {
+        String titulo = txtTitulo.getText();
+        String isbn = txtIsbn.getText();
+
+        if (titulo.isEmpty() || isbn.isEmpty() || idCategoriaSelecionada == null || idEditoraSelecionada == null) {
+            JOptionPane.showMessageDialog(this, "Preencha todos os campos e selecione autor, editora e categoria!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            Livro livro = new Livro();
+            livro.setTitulo(titulo);
+            livro.setIsbn(isbn);
+            livro.setAnoPublicacao((Integer) spnAno.getValue());
+            livro.setAutorNome(txtAutor.getText());
+
+            Categoria categoria = new Categoria();
+            categoria.setId(idCategoriaSelecionada);
+            livro.setCategoria(categoria);
+            livro.setCategoriaNome(txtCategoria.getText());
+
+            Editora editora = new Editora();
+            editora.setId(idEditoraSelecionada);
+            livro.setEditora(editora);
+            livro.setEditoraNome(txtEditora.getText());
+
+            service.save(livro);
+
+            JOptionPane.showMessageDialog(this, "Livro \"" + titulo + "\" adicionado com sucesso!");
+
+            telaListar.carregarLivros();
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao salvar livro: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

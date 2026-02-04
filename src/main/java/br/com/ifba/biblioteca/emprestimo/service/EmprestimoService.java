@@ -46,6 +46,11 @@ public class EmprestimoService implements EmprestimoIService {
         Exemplar exemplar = exemplarRepository.findById(emprestimo.getExemplar().getId())
                 .orElseThrow(() -> new RuntimeException("Exemplar não encontrado."));
 
+        // Validação CRÍTICA: Verifica se o exemplar está disponível
+        if (exemplar.getStatus() != StatusExemplar.DISPONIVEL) {
+            throw new RuntimeException("Empréstimo negado: Este exemplar não está disponível. Status atual: " + exemplar.getStatus());
+        }
+
         // Validações do ENUM
         if (cliente.getStatusPessoa() != StatusPessoa.ATIVO) {
             throw new RuntimeException("Empréstimo negado: Usuário inativo ou bloqueado.");
@@ -96,6 +101,10 @@ public class EmprestimoService implements EmprestimoIService {
         emprestimo.setDataPrevistaDevolucao(dataPrevista);
         emprestimo.setDataPrevistaDevolucaoRedundante(dataPrevista); // Satisfaz redundância do BD
         emprestimo.setStatus(Emprestimo.StatusEmprestimo.ATIVO);
+
+        // CRÍTICO: Atualiza o status do exemplar para EMPRESTADO
+        exemplar.setStatus(StatusExemplar.EMPRESTADO);
+        exemplarRepository.save(exemplar);
 
         return repository.save(emprestimo);
     }

@@ -23,8 +23,11 @@ public class BuscarCliente extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger =
             java.util.logging.Logger.getLogger(BuscarCliente.class.getName());
 
-    // Tela que chamou esta (ReservaAdicionar)
+    // Tela que chamou esta (ReservaAdicionar) - LEGADO
     private  ReservaAdicionar telaPai;
+    
+    // Callback para retorno genérico 
+    private java.util.function.Consumer<Cliente> callback;
     
     private  ClienteService clienteService;
 
@@ -36,12 +39,10 @@ public class BuscarCliente extends javax.swing.JFrame {
 
         logger.info("Tela BuscarCliente aberta");
         atualizarTabela(clienteService.findAll()); //atualiza a tabela com todos os clientes
-        
-        // Esconde a coluna ID 
-        tblClientes1.getColumnModel().getColumn(0).setMinWidth(0);
-        tblClientes1.getColumnModel().getColumn(0).setMaxWidth(0);
-        tblClientes1.getColumnModel().getColumn(0).setWidth(0);
-        tblClientes1.getColumnModel().getColumn(0).setPreferredWidth(0);
+    }
+    
+    public void setCallback(java.util.function.Consumer<Cliente> callback) {
+        this.callback = callback;
     }
     
     public void setTelaPai(ReservaAdicionar telaPai) {
@@ -50,9 +51,104 @@ public class BuscarCliente extends javax.swing.JFrame {
     }
 
     
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnSelecionar;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblClientes; // Renomeado de tblClientes1 para ficar padrao
+    private javax.swing.JTextField txtCliente;
+
+    private void initComponents() {
+        setTitle("Listagem de Clientes");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new java.awt.BorderLayout());
+        getContentPane().setBackground(new java.awt.Color(240, 242, 245));
+
+        // --- PAINEL TOPO (Busca) ---
+        javax.swing.JPanel pnlTopo = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(java.awt.Color.WHITE);
+        pnlTopo.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(200, 200, 200)));
+
+        pnlTopo.add(new javax.swing.JLabel("Nome:"));
+        txtCliente = new javax.swing.JTextField(30);
+        pnlTopo.add(txtCliente);
+
+        btnBuscar = new javax.swing.JButton("Buscar");
+        estilizarBotao(btnBuscar, new java.awt.Color(52, 152, 219)); // Blue
+        pnlTopo.add(btnBuscar);
+
+        add(pnlTopo, java.awt.BorderLayout.NORTH);
+
+        // --- TABELA CENTRAL ---
+        String[] colunas = {"ID", "Nome", "CPF", "Telefone", "TipoCliente", "Limite", "Status"};
+        DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
+             @Override
+             public boolean isCellEditable(int row, int column) {
+                 return false;
+             }
+        };
+        
+        tblClientes = new javax.swing.JTable(modelo);
+        tblClientes.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 14));
+        tblClientes.setRowHeight(25);
+        tblClientes.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 14));
+        tblClientes.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        
+        // Esconde ID
+        tblClientes.getColumnModel().getColumn(0).setMinWidth(0);
+        tblClientes.getColumnModel().getColumn(0).setMaxWidth(0);
+        tblClientes.getColumnModel().getColumn(0).setWidth(0);
+        
+        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(200); // Nome
+
+        jScrollPane1 = new javax.swing.JScrollPane(tblClientes);
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        // --- PAINEL BOTOES (Sul) ---
+        javax.swing.JPanel pnlSul = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 15, 15));
+        pnlSul.setBackground(java.awt.Color.WHITE);
+        pnlSul.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, new java.awt.Color(200, 200, 200)));
+
+        btnSelecionar = new javax.swing.JButton("Selecionar");
+        estilizarBotao(btnSelecionar, new java.awt.Color(46, 204, 113)); // Green
+        
+        btnAtualizar = new javax.swing.JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new java.awt.Color(241, 196, 15)); // Yellow
+        btnAtualizar.setForeground(java.awt.Color.DARK_GRAY);
+
+        btnCancelar = new javax.swing.JButton("Cancelar");
+        estilizarBotao(btnCancelar, new java.awt.Color(231, 76, 60)); // Red
+
+        pnlSul.add(btnAtualizar);
+        pnlSul.add(btnCancelar);
+        pnlSul.add(btnSelecionar);
+
+        add(pnlSul, java.awt.BorderLayout.SOUTH);
+
+        // Listeners
+        btnBuscar.addActionListener(evt -> btnBuscarActionPerformed(evt));
+        txtCliente.addActionListener(evt -> btnBuscarActionPerformed(evt)); // Enter no campo busca
+        btnSelecionar.addActionListener(evt -> btnSelecionarActionPerformed(evt));
+        btnCancelar.addActionListener(evt -> btnCancelarActionPerformed(evt));
+        btnAtualizar.addActionListener(evt -> btnAtualizarActionPerformed(evt));
+
+        pack();
+        setSize(900, 600); // Um pouco maior pois tem mais colunas
+    }
+
+    private void estilizarBotao(javax.swing.JButton btn, java.awt.Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(java.awt.Color.WHITE);
+        btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(javax.swing.BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
     //Atualiza a tabela com a lista informada
     private void atualizarTabela(List<Cliente> clientes) {
-        DefaultTableModel model = (DefaultTableModel) tblClientes1.getModel();
+        DefaultTableModel model = (DefaultTableModel) tblClientes.getModel();
         model.setRowCount(0);
 
         for (Cliente c : clientes) {
@@ -68,156 +164,8 @@ public class BuscarCliente extends javax.swing.JFrame {
         }
     }
 
-    
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblClientes = new javax.swing.JTable();
-        btnBuscar1 = new javax.swing.JButton();
-        txtCliente = new javax.swing.JTextField();
-        btnBuscar = new javax.swing.JButton();
-        btnSelecionar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tblClientes1 = new javax.swing.JTable();
-        btnAtualizar = new javax.swing.JButton();
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jTable1);
-
-        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "CPF", "Telefone", "TipoCliente", "Limite", "Status"
-            }
-        ));
-        jScrollPane1.setViewportView(tblClientes);
-
-        btnBuscar1.setText("Buscar");
-        btnBuscar1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscar1ActionPerformed(evt);
-            }
-        });
-
-        txtCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtClienteActionPerformed(evt);
-            }
-        });
-
-        btnBuscar.setText("Buscar");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
-            }
-        });
-
-        btnSelecionar.setText("Selecionar");
-        btnSelecionar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionarActionPerformed(evt);
-            }
-        });
-
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("LISTAGEM DE CLIENTES");
-
-        tblClientes1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        tblClientes1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Nome", "CPF", "Telefone", "TipoCliente", "Limite", "Status"
-            }
-        ));
-        jScrollPane3.setViewportView(tblClientes1);
-
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnSelecionar)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCancelar)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtCliente))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnAtualizar, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(426, 426, 426)
-                .addComponent(jLabel1)
-                .addContainerGap(503, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBuscar))
-                .addGap(6, 6, 6)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSelecionar)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnAtualizar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    
     //Botão Buscar – filtra clientes pelo nome
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {
         String texto = txtCliente.getText().trim().toLowerCase();
         
         // Se não digitou nada, mostra todos
@@ -235,69 +183,42 @@ public class BuscarCliente extends javax.swing.JFrame {
             }
         }
 
-
         atualizarTabela(filtrados);
 
         if (filtrados.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Nenhum cliente encontrado.");
         }
-    }//GEN-LAST:event_btnBuscarActionPerformed
+    }
 
     //envia o cliente selecionado para a tela de reserva
-    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionarActionPerformed
-        int linha = tblClientes1.getSelectedRow();
+    private void btnSelecionarActionPerformed(java.awt.event.ActionEvent evt) {
+        int linha = tblClientes.getSelectedRow();
 
         if (linha == -1) {
             JOptionPane.showMessageDialog(this, "Selecione um cliente.");
             return;
         }
 
-        Long clienteId = (Long) tblClientes1.getValueAt(linha, 0);
+        Long clienteId = (Long) tblClientes.getValueAt(linha, 0);
         Cliente cliente = clienteService.findById(clienteId);
 
-        // Envia o cliente selecionado para a tela de ReservaAdicionar
-        telaPai.setClienteSelecionado(cliente);
+        // Envia o cliente selecionado
+        if (callback != null) {
+            callback.accept(cliente);
+        } else if (telaPai != null) {
+            telaPai.setClienteSelecionado(cliente);
+        }
 
         this.dispose(); // Fecha a tela após selecionar
-    }//GEN-LAST:event_btnSelecionarActionPerformed
+    }
 
-    private void txtClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtClienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtClienteActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {
          this.dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }
 
-    private void btnBuscar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscar1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscar1ActionPerformed
-
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {
         // atualiza a tabela com todos os clientes cadastrados
         atualizarTabela(clienteService.findAll());
         txtCliente.setText(""); // limpa o campo de busca
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    
-    
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnBuscar1;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnSelecionar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable tblClientes;
-    private javax.swing.JTable tblClientes1;
-    private javax.swing.JTextField txtCliente;
-    // End of variables declaration//GEN-END:variables
+    }
 }

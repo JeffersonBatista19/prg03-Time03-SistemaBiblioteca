@@ -28,8 +28,9 @@ public class CategoriaService implements CategoriaIService {
     public Categoria save(Categoria categoria) {
         validar(categoria);
 
-        if (repository.existsByNomeIgnoreCase(categoria.getNome().trim())) {
-            throw new RuntimeException("Erro: Categoria já existente.");
+        // Verifica duplicidade globalmente (ativas e inativas)
+        if (!repository.findByNomeIgnoreCase(categoria.getNome().trim()).isEmpty()) {
+            throw new RuntimeException("Erro: Categoria '" + categoria.getNome() + "' já existe (pode estar inativa).");
         }
 
         categoria.setNome(categoria.getNome().trim());
@@ -46,11 +47,15 @@ public class CategoriaService implements CategoriaIService {
         validar(categoria);
 
         Categoria atual = findByIdAtiva(categoria.getId());
-
         String nomeNovo = categoria.getNome().trim();
-        if (!atual.getNome().equalsIgnoreCase(nomeNovo)
-                && repository.existsByNomeIgnoreCase(nomeNovo)) {
-            throw new RuntimeException("Erro: Já existe outra categoria com esse nome.");
+
+        // VALIDACAO ROBUSTA: Verifica se existe QUALQUER categoria (ativa ou inativa) com mesmo nome e ID diferente
+        List<Categoria> duplicadas = repository.findByNomeIgnoreCase(nomeNovo);
+        
+        for (Categoria c : duplicadas) {
+            if (!c.getId().equals(categoria.getId())) {
+                 throw new RuntimeException("Erro: Já existe outra categoria com o nome '" + nomeNovo + "' (pode estar inativa).");
+            }
         }
 
         atual.setNome(nomeNovo);

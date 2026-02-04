@@ -1,154 +1,151 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package br.com.ifba.biblioteca.categoria.view;
 
 import br.com.ifba.biblioteca.categoria.controller.CategoriaIController;
 import br.com.ifba.biblioteca.categoria.entity.Categoria;
 import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
-/**
- *
- * @author jeffe
- */
 public class CategoriaAdicionar extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CategoriaAdicionar.class.getName());
     private CategoriaListar telaListar;
     private CategoriaIController categoriaController;
 
-    /**
-     * Creates new form CategoriaAdicionar
-     */
-    public CategoriaAdicionar(CategoriaListar telaListar, CategoriaIController categoriaController) {
-        initComponents();
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    private JTextField txtNome;
+    private JTextArea txtDescricao;
+    private JButton btnSalvar, btnCancelar;
 
+    public CategoriaAdicionar(CategoriaListar telaListar, CategoriaIController categoriaController) {
         this.telaListar = telaListar;
         this.categoriaController = categoriaController;
+        initComponents();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+    }
+    
+    private void initComponents() {
+        setTitle("Adicionar Categoria");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+        
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Header
+        JLabel lblTitulo = new JLabel("ADICIONAR CATEGORIA");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
+        
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Nome
+        gbc.gridx = 0; gbc.gridy = 1;
+        pnlForm.add(new JLabel("Nome:"), gbc);
+        txtNome = new JTextField(20);
+        gbc.gridx = 1; gbc.gridy = 1;
+        pnlForm.add(txtNome, gbc);
+
+        // Descrição
+        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        pnlForm.add(new JLabel("Descrição:"), gbc);
+        txtDescricao = new JTextArea(5, 20);
+        txtDescricao.setLineWrap(true);
+        JScrollPane scroll = new JScrollPane(txtDescricao);
+        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 0.5;
+        pnlForm.add(scroll, gbc);
+
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTOES SUL ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnCancelar = new JButton("Voltar");
+        estilizarBotao(btnCancelar, new Color(99, 110, 114));
+        
+        btnSalvar = new JButton("Salvar");
+        estilizarBotao(btnSalvar, new Color(46, 204, 113));
+
+        pnlBotoes.add(btnCancelar);
+        pnlBotoes.add(btnSalvar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+        
+        // Listeners
+        btnCancelar.addActionListener(e -> dispose());
+        btnSalvar.addActionListener(e -> salvarCategoria());
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtDescricao = new javax.swing.JTextArea();
-        txtNome = new javax.swing.JTextField();
-        btnSalvar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("Nome:");
-
-        jLabel2.setText("Descrição:");
-
-        txtDescricao.setColumns(20);
-        txtDescricao.setRows(5);
-        jScrollPane1.setViewportView(txtDescricao);
-
-        btnSalvar.setText("SALVAR");
-        btnSalvar.addActionListener(this::btnSalvarActionPerformed);
-
-        btnCancelar.setText("CANCELAR");
-        btnCancelar.addActionListener(this::btnCancelarActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                            .addComponent(txtNome))
-                        .addContainerGap(87, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSalvar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar)
-                        .addGap(51, 51, 51))))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnCancelar))
-                .addGap(75, 75, 75))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
+    private void salvarCategoria() {
         try {
             String nome = txtNome.getText();
             String descricao = txtDescricao.getText();
 
-        if (nome == null || nome.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Informe o nome da categoria.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+            if (nome == null || nome.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Informe o nome da categoria.", "Atenção", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        Categoria categoria = new Categoria();
-        categoria.setNome(nome.trim());
-        categoria.setDescricao(descricao);
-        categoria.setAtivo(true);
+            Categoria categoria = new Categoria();
+            categoria.setNome(nome.trim());
+            categoria.setDescricao(descricao);
+            categoria.setAtivo(true);
 
-        categoriaController.save(categoria);
+            categoriaController.save(categoria);
 
-        JOptionPane.showMessageDialog(this, "Categoria cadastrada com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Categoria cadastrada com sucesso.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-        if (telaListar != null) {
-            telaListar.atualizarLista();
-        }
+            if (telaListar != null) {
+                telaListar.atualizarLista();
+            }
 
-        dispose();
+            dispose();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Erro ao cadastrar", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        // TODO add your handling code here:
-        dispose();
-    }//GEN-LAST:event_btnSalvarActionPerformed
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnSalvar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea txtDescricao;
-    private javax.swing.JTextField txtNome;
-    // End of variables declaration//GEN-END:variables
+    }
 }

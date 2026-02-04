@@ -56,6 +56,29 @@ public class MultaService implements MultaIService {
     @Override
     public Multa gerarMultaManual(Emprestimo emprestimo, int diasAtraso, BigDecimal valorPorDia) {
 
+        // Validação CRÍTICA: Verifica se há atraso real
+        LocalDate hoje = LocalDate.now();
+        LocalDate dataPrevista = emprestimo.getDataPrevistaDevolucao();
+        
+        // Se o empréstimo ainda não venceu, não pode gerar multa
+        if (hoje.isBefore(dataPrevista) || hoje.isEqual(dataPrevista)) {
+            throw new RuntimeException("Não é possível gerar multa: O empréstimo ainda não está atrasado. Data prevista de devolução: " + dataPrevista);
+        }
+        
+        // Calcula os dias de atraso reais
+        long diasAtrasoReais = ChronoUnit.DAYS.between(dataPrevista, hoje);
+        
+        // Se o usuário passou um valor diferente, usa o menor entre os dois (segurança)
+        if (diasAtraso > diasAtrasoReais) {
+            throw new RuntimeException("Dias de atraso informados (" + diasAtraso + ") são maiores que o atraso real (" + diasAtrasoReais + " dias).");
+        }
+        
+        // Verifica se já existe multa para este empréstimo
+        Optional<Multa> multaExistente = findByEmprestimo(emprestimo);
+        if (multaExistente.isPresent()) {
+            throw new RuntimeException("Já existe uma multa cadastrada para este empréstimo (ID: " + multaExistente.get().getId() + ").");
+        }
+
         BigDecimal valorTotal = valorPorDia.multiply(BigDecimal.valueOf(diasAtraso));
 
         Multa multa = new Multa();

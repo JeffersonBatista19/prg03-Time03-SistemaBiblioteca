@@ -8,6 +8,8 @@ package br.com.ifba.biblioteca.usuario.entity;
 import br.com.ifba.biblioteca.pessoa.entity.Pessoa;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,12 +24,12 @@ import lombok.Setter;
 // Representa usuários do sistema (Administrador, Bibliotecário)
 @Entity
 @Table(name = "usuario")
+@Inheritance(strategy = InheritanceType.JOINED) //Uma tabela para cada classe
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class Usuario extends Pessoa {
+public abstract class Usuario extends Pessoa {
 
     @Column(nullable = false, unique = true)
     private String login;

@@ -28,6 +28,14 @@ public class EventoService implements EventoIService {
     public List<Evento> findByTitulo(String titulo) {
         return repository.findByTituloContainingIgnoreCase(titulo);
     }
+    
+    public List<Evento> findByStatus(StatusEvento status) {
+        return repository.findByStatus(status);
+    }
+
+    public List<Evento> findByStatusNot(StatusEvento status) {
+        return repository.findByStatusNot(status);
+    }
 
     @Override
     public Evento findById(Long id) {

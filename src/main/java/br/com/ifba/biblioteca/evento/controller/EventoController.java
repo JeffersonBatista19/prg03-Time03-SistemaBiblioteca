@@ -34,6 +34,14 @@ public class EventoController {
         return service.findByTitulo(titulo);
     }
 
+    public List<Evento> findByStatus(br.com.ifba.biblioteca.evento.entity.StatusEvento status) {
+        return service.findByStatus(status);
+    }
+
+    public List<Evento> findByStatusNot(br.com.ifba.biblioteca.evento.entity.StatusEvento status) {
+        return service.findByStatusNot(status);
+    }
+
     public Evento findById(Long id) {
         return service.findById(id);
     }

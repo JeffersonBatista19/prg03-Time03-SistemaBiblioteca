@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package br.com.ifba.biblioteca.usuario.view;
 
 import br.com.ifba.biblioteca.usuario.controller.UsuarioIController;
@@ -14,12 +10,17 @@ import javax.swing.table.TableRowSorter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import jakarta.annotation.PostConstruct;
-
-/**
- *
- * @author jeffe
- */
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 @Component
 public class UsuarioListar extends javax.swing.JFrame {
@@ -34,22 +35,60 @@ public class UsuarioListar extends javax.swing.JFrame {
     @Autowired
     private ApplicationContext context;
 
-    /**
-     * Creates new form UsuarioListar
-     */
-    public UsuarioListar() {
-        initComponents();
-        configurarTabela();
-    }
-    
-    @PostConstruct
-    public void init() {
-        carregarDados();
-    }
-    
-    private void configurarTabela() {
-        String[] colunas = {"ID", "Nome", "CPF", "Telefone", "Login", "Perfil", "Nível", "Status"};
+    // Componentes Visuais
+    private JTable tblUsuarios;
+    private JTextField txtBuscar;
+    private JButton btnAdicionar, btnEditar, btnAtualizar, btnVoltar;
 
+    public UsuarioListar() {
+        initComponents(); // Inicia com o construtor vazio pra configurar layout básico se precisar antes do PostConstruct
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+    }
+
+
+    private void initComponents() {
+        setTitle("Gestão de Usuários");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+
+        // --- PAINEL TOPO ---
+        JPanel pnlTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlTopo.setBackground(Color.WHITE);
+        pnlTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+
+        pnlTopo.add(new JLabel("Buscar:"));
+        txtBuscar = new JTextField(25);
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                aplicarFiltro();
+            }
+        });
+        pnlTopo.add(txtBuscar);
+
+        btnAdicionar = new JButton("Adicionar");
+        estilizarBotao(btnAdicionar, new Color(46, 204, 113)); // Verde
+        pnlTopo.add(btnAdicionar);
+
+        btnEditar = new JButton("Editar");
+        estilizarBotao(btnEditar, new Color(52, 152, 219)); // Azul
+        pnlTopo.add(btnEditar);
+        
+        btnAtualizar = new JButton("Atualizar");
+        estilizarBotao(btnAtualizar, new Color(241, 196, 15)); // Amarelo
+        btnAtualizar.setForeground(Color.DARK_GRAY);
+        pnlTopo.add(btnAtualizar);
+        
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114)); // Cinza
+        pnlTopo.add(btnVoltar);
+
+        add(pnlTopo, BorderLayout.NORTH);
+
+        // --- TABELA ---
+        String[] colunas = {"ID", "Nome", "CPF", "Telefone", "Login", "Perfil", "Nível", "Status"};
         DefaultTableModel modelo = new DefaultTableModel(colunas, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -57,10 +96,29 @@ public class UsuarioListar extends javax.swing.JFrame {
             }
         };
 
-        tblUsuarios.setModel(modelo);
-
+        tblUsuarios = new JTable(modelo);
+        tblUsuarios.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tblUsuarios.setRowHeight(25);
+        tblUsuarios.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
         sorter = new TableRowSorter<>(modelo);
         tblUsuarios.setRowSorter(sorter);
+        
+        add(new JScrollPane(tblUsuarios), BorderLayout.CENTER);
+
+        // EVENTOS
+        btnAdicionar.addActionListener(e -> btnAdicionarActionPerformed(e));
+        btnEditar.addActionListener(e -> btnEditarActionPerformed(e));
+        btnAtualizar.addActionListener(e -> carregarDados());
+        btnVoltar.addActionListener(e -> dispose());
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
     
     public void carregarDados() {
@@ -90,116 +148,14 @@ public class UsuarioListar extends javax.swing.JFrame {
     
      private void aplicarFiltro() {
         String texto = txtBuscar.getText().trim();
-
         if (texto.isEmpty()) {
             sorter.setRowFilter(null);
             return;
         }
-
         sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
     }
-    
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblUsuarios = new javax.swing.JTable();
-        btnAdicionar = new javax.swing.JButton();
-        btnEditar = new javax.swing.JButton();
-        btnAtualizar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setText("Buscar: ");
-
-        txtBuscar.addActionListener(this::txtBuscarActionPerformed);
-        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyReleased(evt);
-            }
-        });
-
-        tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "CPF", "Telefone", "Login", "Perfil", "Status"
-            }
-        ));
-        jScrollPane1.setViewportView(tblUsuarios);
-
-        btnAdicionar.setText("Adicionar");
-        btnAdicionar.addActionListener(this::btnAdicionarActionPerformed);
-
-        btnEditar.setText("Editar");
-        btnEditar.addActionListener(this::btnEditarActionPerformed);
-
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(this::btnAtualizarActionPerformed);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(187, 187, 187))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addComponent(btnAdicionar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEditar)
-                .addGap(138, 138, 138)
-                .addComponent(btnAtualizar)
-                .addGap(102, 102, 102))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdicionar)
-                    .addComponent(btnEditar)
-                    .addComponent(btnAtualizar))
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBuscarActionPerformed
-
-    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
-        aplicarFiltro();
-    }//GEN-LAST:event_txtBuscarKeyReleased
-
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        carregarDados();
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarActionPerformed
+    private void btnAdicionarActionPerformed(java.awt.event.ActionEvent evt) {
         try {
             UsuarioAdicionar tela = context.getBean(UsuarioAdicionar.class);
             tela.setUsuarioListar(this);
@@ -210,9 +166,9 @@ public class UsuarioListar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao abrir tela: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btnAdicionarActionPerformed
+    }
 
-    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {
        int linhaSelecionada = tblUsuarios.getSelectedRow();
 
         if (linhaSelecionada == -1) {
@@ -240,15 +196,5 @@ public class UsuarioListar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Erro ao abrir edição: " + e.getMessage());
             e.printStackTrace();
         }
-    }//GEN-LAST:event_btnEditarActionPerformed
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdicionar;
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnEditar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblUsuarios;
-    private javax.swing.JTextField txtBuscar;
-    // End of variables declaration//GEN-END:variables
+    }
 }

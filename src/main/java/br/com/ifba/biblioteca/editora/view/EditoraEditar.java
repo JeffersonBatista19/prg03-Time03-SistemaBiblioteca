@@ -2,215 +2,160 @@ package br.com.ifba.biblioteca.editora.view;
 
 import br.com.ifba.biblioteca.editora.controller.EditoraIController;
 import br.com.ifba.biblioteca.editora.entity.Editora;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-/**
- *
- * @author misae
- */
-public class EditoraEditar extends javax.swing.JFrame {
+public class EditoraEditar extends JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(EditoraEditar.class.getName());
     
     private final EditoraIController controller;
     private final Long id;
 
-    /**
-     * Creates new form EditoraEditar
-     */
-    
+    // Componentes
+    private JTextField txtNome, txtCNPJ, txtTelefone, txtEndereco;
+    private JButton btnAtualizar, btnCancelar;
+
     // inicializa a tela de edição da editora selecionada
     public EditoraEditar(EditoraIController controller, Long id) {
         this.controller = controller;
         this.id = id;
+        
         initComponents();
+        
         // Bloquear edição do CNPJ
         txtCNPJ.setEditable(false);
+        txtCNPJ.setBackground(new Color(230, 230, 230));
         
         carregarEditora();
     }
     
+    private void initComponents() {
+        setTitle("Editar Editora");
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
+
+        // --- PAINEL FORMULÁRIO ---
+        JPanel pnlForm = new JPanel(new GridBagLayout());
+        pnlForm.setBackground(Color.WHITE);
+        pnlForm.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(220, 220, 220)),
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Título
+        JLabel lblTitulo = new JLabel("EDITAR EDITORA");
+        lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        pnlForm.add(lblTitulo, gbc);
+
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Campos
+        adicionarCampo(pnlForm, gbc, 1, "Nome:", txtNome = new JTextField(30));
+        adicionarCampo(pnlForm, gbc, 2, "CNPJ:", txtCNPJ = new JTextField(20));
+        adicionarCampo(pnlForm, gbc, 3, "Telefone:", txtTelefone = new JTextField(20));
+        adicionarCampo(pnlForm, gbc, 4, "Endereço:", txtEndereco = new JTextField(30));
+
+        // Container Central
+        JPanel pnlCenterContainer = new JPanel(new GridBagLayout());
+        pnlCenterContainer.setBackground(new Color(240, 242, 245));
+        pnlCenterContainer.add(pnlForm);
+        add(pnlCenterContainer, BorderLayout.CENTER);
+
+        // --- BOTÕES ---
+        JPanel pnlBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 15));
+        pnlBotoes.setBackground(Color.WHITE);
+        pnlBotoes.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(200, 200, 200)));
+
+        btnCancelar = new JButton("Cancelar");
+        estilizarBotao(btnCancelar, new Color(99, 110, 114));
+        btnCancelar.addActionListener(e -> dispose());
+        
+        btnAtualizar = new JButton("Salvar Alterações");
+        estilizarBotao(btnAtualizar, new Color(46, 204, 113));
+        btnAtualizar.addActionListener(e -> salvarAlteracoes());
+
+        pnlBotoes.add(btnCancelar);
+        pnlBotoes.add(btnAtualizar);
+        add(pnlBotoes, BorderLayout.SOUTH);
+    }
+    
+    private void adicionarCampo(JPanel pnl, GridBagConstraints gbc, int row, String label, java.awt.Component comp) {
+        gbc.gridx = 0; gbc.gridy = row;
+        pnl.add(new JLabel(label), gbc);
+        gbc.gridx = 1; gbc.gridy = row;
+        pnl.add(comp, gbc);
+    }
+
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
     private void carregarEditora() {
-        Editora editora = controller.findById(id);
-        if (editora != null) {
-            txtNome.setText(editora.getNome());
-            txtCNPJ.setText(editora.getCnpj());
-            txtTelefone.setText(editora.getTelefone());
-            txtEndereco.setText(editora.getEndereco());
-            
-            // Bloquear edição do CNPJ
-            txtCNPJ.setEditable(false);
-            txtCNPJ.setBackground(java.awt.Color.LIGHT_GRAY); // Mudar cor de fundo para indicar que não pode editar
-        } else {
-            JOptionPane.showMessageDialog(this, "Editora não encontrada!");
-            dispose();
+        try {
+            Editora editora = controller.findById(id);
+            if (editora != null) {
+                txtNome.setText(editora.getNome());
+                txtCNPJ.setText(editora.getCnpj());
+                txtTelefone.setText(editora.getTelefone());
+                txtEndereco.setText(editora.getEndereco());
+            } else {
+                JOptionPane.showMessageDialog(this, "Editora não encontrada!");
+                dispose();
+            }
+        } catch (Exception e) {
+             JOptionPane.showMessageDialog(this, "Erro ao carregar editora: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+             dispose();
         }
     }
     
+    private void salvarAlteracoes() {
+        try {
+            Editora editora = controller.findById(id);
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+            if (editora != null) {
+                editora.setNome(txtNome.getText());
+                // CNPJ não é atualizado pois é chave ou fixo nesta tela
+                editora.setTelefone(txtTelefone.getText());
+                editora.setEndereco(txtEndereco.getText());
 
-        jLabel1 = new javax.swing.JLabel();
-        lblNome = new javax.swing.JLabel();
-        lblCNPJ = new javax.swing.JLabel();
-        lblTelefone = new javax.swing.JLabel();
-        lblEndereco = new javax.swing.JLabel();
-        txtNome = new javax.swing.JTextField();
-        txtCNPJ = new javax.swing.JTextField();
-        txtTelefone = new javax.swing.JTextField();
-        txtEndereco = new javax.swing.JTextField();
-        btnAtualizar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+                controller.update(editora); 
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("EDITAR EDITORA");
-
-        lblNome.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblNome.setText("Nome:");
-
-        lblCNPJ.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblCNPJ.setText("CNPJ");
-
-        lblTelefone.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblTelefone.setText("Telefone:");
-
-        lblEndereco.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lblEndereco.setText("Endereço:");
-
-        txtCNPJ.setEditable(false);
-
-        btnAtualizar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAtualizar.setText("Atualizar");
-        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtualizarActionPerformed(evt);
+                JOptionPane.showMessageDialog(this, "Editora atualizada com sucesso!");
+                dispose(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "Editora não encontrada!");
+                dispose();
             }
-        });
-
-        btnCancelar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(122, 122, 122)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblNome)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(lblTelefone)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtTelefone))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lblCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(btnAtualizar)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnCancelar))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(lblEndereco)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(31, 31, 31)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblNome)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblCNPJ)
-                    .addComponent(txtCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTelefone)
-                    .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblEndereco)
-                    .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAtualizar)
-                    .addComponent(btnCancelar))
-                .addGap(17, 17, 17))
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    // atualiza os dados da editora selecionada
-    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
-        Editora editora = controller.findById(id);
-        
-        if (editora != null) {
-            editora.setNome(txtNome.getText());
-            editora.setCnpj(txtCNPJ.getText());
-            editora.setTelefone(txtTelefone.getText());
-            editora.setEndereco(txtEndereco.getText());
-
-            controller.update(editora); // chama o serviço para salvar
-
-            JOptionPane.showMessageDialog(this, "Editora atualizada com sucesso!");
-            dispose(); // fecha a tela
-        } else {
-            JOptionPane.showMessageDialog(this, "Editora não encontrada!");
-            dispose();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar editora: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnAtualizarActionPerformed
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAtualizar;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel lblCNPJ;
-    private javax.swing.JLabel lblEndereco;
-    private javax.swing.JLabel lblNome;
-    private javax.swing.JLabel lblTelefone;
-    private javax.swing.JTextField txtCNPJ;
-    private javax.swing.JTextField txtEndereco;
-    private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtTelefone;
-    // End of variables declaration//GEN-END:variables
+    }
 }

@@ -32,8 +32,8 @@ public class Livro extends PersistenceEntity {
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    // usado só na VIEW
-    @Transient
+    // Campo redundante para desnormalização (usado no BD)
+    @Column(name = "categoria_nome", nullable = true)
     private String categoriaNome;
 
     // relacionamento editora
@@ -41,7 +41,7 @@ public class Livro extends PersistenceEntity {
     @JoinColumn(name = "editora_id", nullable = false)
     private Editora editora;
 
-    // usado só na VIEW
-    @Transient
+    // Campo redundante para desnormalização (usado no BD)
+    @Column(name = "editora_nome", nullable = true)
     private String editoraNome;
 }

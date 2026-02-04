@@ -23,62 +23,82 @@ public class AutorListar extends JFrame {
     private JTable tabela;
     private DefaultTableModel modeloTabela;
     private JTextField txtBusca;
+    private JButton btnBuscar, btnAdicionar, btnEditar, btnRemover, btnAtualizar, btnVoltar;
 
     public AutorListar() {
         super("Gerenciar Autores");
         initComponents();
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Tela Cheia
+        setLocationRelativeTo(null);
     }
 
     private void initComponents() {
-        setSize(800, 600);
-        setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null); // Centraliza na tela
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(new Color(240, 242, 245));
 
-        // --- Painel Superior (Busca) ---
-        JPanel painelTopo = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        txtBusca = new JTextField(30);
-        JButton btnBuscar = new JButton("Buscar por Nome");
-        
+        // --- Painel Superior (Busca e Ações) ---
+        JPanel painelTopo = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        painelTopo.setBackground(Color.WHITE);
+        painelTopo.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)));
+
         painelTopo.add(new JLabel("Nome:"));
+        txtBusca = new JTextField(25);
+        txtBusca.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         painelTopo.add(txtBusca);
+        
+        btnBuscar = new JButton("Buscar");
+        estilizarBotao(btnBuscar, new Color(52, 152, 219)); // Azul
         painelTopo.add(btnBuscar);
+        
+        btnAdicionar = new JButton("Adicionar");
+        estilizarBotao(btnAdicionar, new Color(46, 204, 113)); // Verde
+        painelTopo.add(btnAdicionar);
+        
+        btnEditar = new JButton("Editar");
+        estilizarBotao(btnEditar, new Color(243, 156, 18)); // Laranja
+        painelTopo.add(btnEditar);
+        
+        btnRemover = new JButton("Remover");
+        estilizarBotao(btnRemover, new Color(231, 76, 60)); // Vermelho
+        painelTopo.add(btnRemover);
+        
+        btnAtualizar = new JButton("Atualizar Lista");
+        estilizarBotao(btnAtualizar, new Color(241, 196, 15)); // Amarelo
+        btnAtualizar.setForeground(Color.DARK_GRAY);
+        painelTopo.add(btnAtualizar);
+        
+        btnVoltar = new JButton("Voltar");
+        estilizarBotao(btnVoltar, new Color(99, 110, 114)); // Cinza
+        painelTopo.add(btnVoltar);
+        
         add(painelTopo, BorderLayout.NORTH);
 
         // --- Tabela (Centro) ---
         String[] colunas = {"ID", "Nome", "Nacionalidade", "Obras"};
-        modeloTabela = new DefaultTableModel(colunas, 0);
+        modeloTabela = new DefaultTableModel(colunas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tabela = new JTable(modeloTabela);
+        tabela.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        tabela.setRowHeight(25);
+        tabela.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 14));
+        
         add(new JScrollPane(tabela), BorderLayout.CENTER);
 
-        // --- Painel Inferior (Botões) ---
-        JPanel painelBotoes = new JPanel();
-        JButton btnAdicionar = new JButton("Adicionar");
-        JButton btnEditar = new JButton("Editar");
-        JButton btnRemover = new JButton("Remover");
-        JButton btnAtualizar = new JButton("Atualizar Lista");
-
-        painelBotoes.add(btnAdicionar);
-        painelBotoes.add(btnEditar);
-        painelBotoes.add(btnRemover);
-        painelBotoes.add(btnAtualizar);
-        add(painelBotoes, BorderLayout.SOUTH);
-
         // --- Ações dos Botões ---
-        
-        // Botão Buscar
         btnBuscar.addActionListener(e -> buscarPorNome());
-
-        // Botão Atualizar (Recarrega tudo)
         btnAtualizar.addActionListener(e -> carregarDados());
 
-        // Botão Adicionar: Abre a tela de cadastro
         btnAdicionar.addActionListener(e -> {
             AutorAdicionar telaAdicionar = new AutorAdicionar(autorController, this);
+            telaAdicionar.setLocationRelativeTo(null);
             telaAdicionar.setVisible(true);
         });
 
-        // Botão Editar: Pega o selecionado e abre a tela de edição
         btnEditar.addActionListener(e -> {
             int linha = tabela.getSelectedRow();
             if (linha >= 0) {
@@ -91,12 +111,22 @@ public class AutorListar extends JFrame {
             }
         });
 
-        // Botão Remover
         btnRemover.addActionListener(e -> deletarAutor());
+        btnVoltar.addActionListener(e -> dispose());
+        
+        // Listener ENTER na busca
+        txtBusca.addActionListener(e -> buscarPorNome());
+    }
+    
+    private void estilizarBotao(JButton btn, Color cor) {
+        btn.setBackground(cor);
+        btn.setForeground(Color.WHITE);
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        btn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }
 
-    // Método chamado pelo Spring ou manualmente para carregar a tabela ao abrir
-    // Dica: Chame este metodo logo após fazer o setVisible(true) na Main ou no construtor se o controller já estiver injetado
     public void carregarDados() {
         modeloTabela.setRowCount(0); // Limpa tabela
         List<Autor> lista = autorController.findAll();

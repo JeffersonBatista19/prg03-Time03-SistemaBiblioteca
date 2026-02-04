@@ -22,5 +22,6 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> findByTituloContainingIgnoreCase(String titulo);
     List<Evento> findByDataHorarioBetween(LocalDateTime inicio, LocalDateTime fim);
     List<Evento> findByStatus(StatusEvento status);
+    List<Evento> findByStatusNot(StatusEvento status);
     List<Evento> findByLocalEntityNomeContainingIgnoreCase(String localNome);
 }
